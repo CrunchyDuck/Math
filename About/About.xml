@@ -6,24 +6,24 @@
 		<li>1.3</li>
 	</supportedVersions>
 	<packageId>CrunchyDuck.Math</packageId>
-	<description>Math! Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
+	<description>[b]Math![/b] Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
 
-[h2]Why would I use Math!?[/h2]
-A lot of bills are made to fit your colony's situation - Each colonist eats 2 meals a day, we want 3 days of food, so `2 * 3 * colonists`. We want `colonists` number of t-shirts and hats and bionic hearts. Math! gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] Math! will remember these equations and regularly update bills to adapt to any changes in their variables, automating much of the work required to maintain recipes.
+[h2]Why would I use [b]Math![/b]?[/h2]
+A lot of bills are made to fit your colony's situation - Each colonist eats 2 meals a day, we want 3 days of food, so [u]2 * 3 * colonists[/u]. We want [u]colonists[/u] number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and regularly update bills to adapt to any changes in their variables, automating much of the work required to maintain recipes.
 
-[h2]How do I use Math!?[/h2]
+[h2]How do I use [b]Math![/b]?[/h2]
 Type it in!!
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/typed_in_math.png[/img]
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [url=https://github.com/ncalc/ncalc]NCalc[/url] can do! Take a look at its [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
 
 [h2]Variables[/h2]
-I've defined a few variables you'll want to use. All variables are based on the map that the bill is contained in. So, if you have 4 colonists total but only 2 in the bill's map, `col` will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.
+I've defined a few variables you'll want to use. All variables are based on the map that the bill is contained in. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.
 If you have ideas for others, feel free to suggest them!
 
-`pawns` or `pwn` - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
-`colonists` or `col` - How many colonists (Not slaves or prisoners)
-`prisoners` or `pri` - How many prisoners
-`slaves` or `slv` - How many slaves
+[u]pawns[/u] or [u]pwn[/u] - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
+[u]colonists[/u] or [u]col[/u] - How many colonists (Not slaves or prisoners)
+[u]prisoners[/u] or [u]pri[/u] - How many prisoners
+[u]slaves[/u] or [u]slv[/u] - How many slaves
 
 [h2]Compatibility[/h2]
 Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
@@ -32,11 +32,12 @@ Goodness I don't know. I haven't tested it with any mods that I don't use, and I
 I'd like to do these things in the future, but right now I don't know if they're important enough to do yet. If you really would like something, lemme know and it'll make me more likely to pursue it.
 Make the text field red if an equation is invalid.
 Expand equation field.
-Allow resources to be used as variables (such as `steel`). I haven't added this yet because of how small the equation field is.
+Allow resources to be used as variables (such as [u]steel[/u]). I haven't added this yet because of how small the equation field is.
 
-
-[h3]donation[/h3]
-ill probably not have this in the release</description>
+[b]Links:[/b]
+Github: https://github.com/CrunchyDuck/Math
+NCalc: https://github.com/ncalc/ncalc
+donate: don't</description>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>

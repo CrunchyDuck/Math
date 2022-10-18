@@ -4,10 +4,10 @@ using HarmonyLib;
 using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
-	// TODO: Check if this gets destroyed when the save is changed/exited.
 	// TODO: check how this works with medical bills.
-	// TODO: How do we know when a bill is destroyed?
+	// TODO: How do we know when a bill is destroyed? Guess it doesn't matter too much.
 	// TODO: Handle copy/pasting.
+	// TODO: Support for Pause When Satisfied + Do X Times
 	class BillManager : GameComponent {
 		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
 
@@ -31,6 +31,11 @@ namespace CrunchyDuck.Math {
 		public override void GameComponentTick() {
 			base.GameComponentTick();
 			// Make sure bills are up to date.
+			foreach (BillComponent item in billTable.Values) {
+				var num = item.targetBill.targetCount;
+				Math.DoMath(item.last_valid_input, ref num, item);
+				item.targetBill.targetCount = num;
+			}
 		}
 
 		public static int GetBillID(Bill_Production bill_production) {
