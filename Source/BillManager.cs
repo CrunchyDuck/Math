@@ -7,7 +7,7 @@ namespace CrunchyDuck.Math {
 	// TODO: check how this works with medical bills.
 	// TODO: How do we know when a bill is destroyed? Guess it doesn't matter too much.
 	// TODO: Handle copy/pasting.
-	// TODO: Support for Pause When Satisfied + Do X Times
+	// TODO: The + and - recipe buttons don't work. This is because of how my last_valid is filled.
 	class BillManager : GameComponent {
 		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
 
@@ -32,9 +32,9 @@ namespace CrunchyDuck.Math {
 			base.GameComponentTick();
 			// Make sure bills are up to date.
 			foreach (BillComponent item in billTable.Values) {
-				var num = item.targetBill.targetCount;
-				Math.DoMath(item.last_valid_input, ref num, item);
-				item.targetBill.targetCount = num;
+				Math.DoMath(item.target_count_last_valid, ref item.targetBill.targetCount, item);
+				Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
+				Math.DoMath(item.unpause_last_valid, ref item.targetBill.unpauseWhenYouHave, item);
 			}
 		}
 
