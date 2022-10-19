@@ -48,7 +48,6 @@ namespace CrunchyDuck.Math {
 			string equation = is_unpause ? bc.unpause_last_valid : field;
 			int test_val = val;
 			Math.DoMath(equation, ref test_val, bc);
-			Log.Message("test_val = " + test_val + " val = " + val);
 			// User pressed one of the buttons, and we should clear the field and accept the number.
 			if (test_val != val) {
 				field = val.ToString();

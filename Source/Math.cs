@@ -39,6 +39,14 @@ namespace CrunchyDuck.Math {
 			prefix = null; // new HarmonyMethod(typeof(PatchBill_Production), "Prefix");
 			postfix = new HarmonyMethod(typeof(PatchBill_ProductionConstructor), "Postfix");
 			harmony.Patch(PatchBill_ProductionConstructor.Target(), prefix: prefix, postfix: postfix);
+
+			//prefix = null; // new HarmonyMethod(typeof(PatchBill_Production), "Prefix");
+			//postfix = new HarmonyMethod(typeof(PatchBillCloning), "Postfix1");
+			//harmony.Patch(PatchBillCloning.Target1(), prefix: prefix, postfix: postfix);
+
+			//prefix = null; // new HarmonyMethod(typeof(PatchBill_Production), "Prefix");
+			//postfix = new HarmonyMethod(typeof(PatchBillCloning), "Postfix2");
+			//harmony.Patch(PatchBillCloning.Target2(), prefix: prefix, postfix: postfix);
 		}
 
 		/// <returns>True if sequence is valid.</returns>
