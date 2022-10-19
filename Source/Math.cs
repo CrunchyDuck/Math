@@ -6,10 +6,9 @@ using Verse;
 using UnityEngine;
 using NCalc;
 using System;
+using System.Linq;
 
 namespace CrunchyDuck.Math {
-	// TODO: Utilize Find.CurrentMap to get the number X for recipe values.
-	// TODO: Add dependence on Harmony.
 	[StaticConstructorOnStartup]
 	class Math {
 		static Math() {
@@ -61,24 +60,11 @@ namespace CrunchyDuck.Math {
 			}
 
 			Type type = result.GetType();
-			// I don't like this code :(
-			if (type == typeof(int)) {
-				val = (int)result;
-			}
-			else if (type == typeof(decimal)) {
-				val = (int)(decimal)result;
-			}
-			else if (type == typeof(double)) {
-				val = (int)(double)result;
-			}
-			// Library I'm using doesn't evaluate to float.
-			//else if (type == typeof(float)) {
-			//	val = (int)(float)result;
-			//}
-			else {
+			Type[] accepted_types = new Type[] { typeof(int), typeof(decimal), typeof(double), typeof(float) };
+			if (!accepted_types.Contains(type))
 				return false;
-			}
-
+			
+			val = (int)Convert.ChangeType(result, type);
 			return true;
 		}
 

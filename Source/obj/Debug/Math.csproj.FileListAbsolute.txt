@@ -3,3 +3,4 @@ D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\Debug\
 D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\Debug\Math.csproj.CoreCompileInputs.cache
 D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\Debug\Math.dll
 D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\Debug\Math.csproj.CopyComplete
+D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\v1.3\Assemblies\Math.dll
