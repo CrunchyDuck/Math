@@ -80,9 +80,10 @@ namespace CrunchyDuck.Math {
 		// TODO: Add support for amount_of_resource.
 		public static void AddParameters(Expression e, BillComponent bc) {
 			// "Spawned" means that the thing isn't held in a container/held. Non spawned things are in a container.
-			e.Parameters["col"] = e.Parameters["colonists"] = bc.targetBill.Map.mapPawns.FreeColonistsCount;
+			int slaves = bc.targetBill.Map.mapPawns.SlavesOfColonySpawned.Count;
 			e.Parameters["pri"] = e.Parameters["prisoners"] = bc.targetBill.Map.mapPawns.PrisonersOfColonyCount;
-			e.Parameters["slv"] = e.Parameters["slaves"] = bc.targetBill.Map.mapPawns.SlavesOfColonySpawned.Count;
+			e.Parameters["col"] = e.Parameters["colonists"] = bc.targetBill.Map.mapPawns.FreeColonistsCount - slaves;  // Not sure if there's a more direct way to get *only* colonists. Thought this worked originally but it doesn't.
+			e.Parameters["slv"] = e.Parameters["slaves"] = slaves;
 			e.Parameters["pwn"] = e.Parameters["pawns"] = bc.targetBill.Map.mapPawns.ColonistCount;
 			//e.Parameters["anim"] = bc.targetBill.Map.mapPawns.SpawnedColonyAnimals;  // TODO: This doesn't work. 
 		}
