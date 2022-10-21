@@ -18,13 +18,19 @@ Type it in!!
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
 
 [h2]Variables[/h2]
-I've defined a few variables you'll want to use. All variables are based on the map that the bill is contained in. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.
+I've defined a few variables you'll want to use. All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.
 I'd quite like ideas for more variables, so lemme know if you have any.
 
 [u]pawns[/u] or [u]pwn[/u] - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
 [u]colonists[/u] or [u]col[/u] - How many colonists (Not slaves or prisoners)
 [u]prisoners[/u] or [u]pri[/u] - How many prisoners
 [u]slaves[/u] or [u]slv[/u] - How many slaves
+[u]animals[/u] or [u]anim[/u] - How many animals.
+
+Each of the above also have an intake variable, that allows you to calculate based on their cumulative food consumed per day:
+[u]anim_in[/u] or [u]animals_intake[/u] - Total intake of all animals per day.
+[u]pwn_in[/u] or [u]pawns_intake[/u] - Total intake of all pawns per day.
+etc.
 
 [h2]Compatibility[/h2]
 Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
@@ -32,6 +38,7 @@ Goodness I don't know. I haven't tested it with any mods that I don't use, and I
 [h3]Future plans[/h3]
 I'd like to do these things in the future, but right now I don't know if they're important enough to do yet. If you really would like something, lemme know and it'll make me more likely to pursue it.
 Make the text field red if an equation is invalid.
+Add an in-game area that shows a list of variables you can use (but im not sure where to put it).
 Expand equation field.
 Allow resources to be used as variables (such as [u]steel[/u]). I haven't added this yet because of how small the equation field is.
 

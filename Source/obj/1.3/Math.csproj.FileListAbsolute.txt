@@ -1,0 +1,4 @@
+D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\v1.3\Assemblies\Math.dll
+D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\1.3\Math.csprojAssemblyReference.cache
+D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\1.3\Math.csproj.CoreCompileInputs.cache
+D:\Games_&_emulators\Steam\steamapps\common\RimWorld\Mods\Math\Source\obj\1.3\Math.dll

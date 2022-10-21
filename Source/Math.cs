@@ -7,10 +7,25 @@ using UnityEngine;
 using NCalc;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CrunchyDuck.Math {
+	// TODO: Show decimal values in Currently Have, Repeat and Unpause At, but round the ultimate value.
 	[StaticConstructorOnStartup]
 	class Math {
+		// variables
+		public static List<Pawn> pawns = new List<Pawn>();
+		public static List<Pawn> colonists = new List<Pawn>();
+		public static List<Pawn> prisoners = new List<Pawn>();
+		public static List<Pawn> slaves = new List<Pawn>();
+		public static List<Pawn> ownedAnimals = new List<Pawn>();
+		public static float pawnsIntake = 0;
+		public static float colonistsIntake = 0;
+		public static float prisonersIntake = 0;
+		public static float slavesIntake = 0;
+		public static float ownedAnimalsIntake = 0;
+		public static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
+
 		static Math() {
 			PerformPatches();
 		}
@@ -71,21 +86,66 @@ namespace CrunchyDuck.Math {
 			Type[] accepted_types = new Type[] { typeof(int), typeof(decimal), typeof(double), typeof(float) };
 			if (!accepted_types.Contains(type))
 				return false;
-			
-			val = (int)Convert.ChangeType(result, type);
+
+			// this is dumb but necessary
+			val = (int)Convert.ChangeType(Convert.ChangeType(result, type), typeof(int));
 			return true;
 		}
 
 
 		// TODO: Add support for amount_of_resource.
 		public static void AddParameters(Expression e, BillComponent bc) {
+			// TODO: Mech variable.
+			// TODO: Cache these to improve performance
 			// "Spawned" means that the thing isn't held in a container/held. Non spawned things are in a container.
-			int slaves = bc.targetBill.Map.mapPawns.SlavesOfColonySpawned.Count;
-			e.Parameters["pri"] = e.Parameters["prisoners"] = bc.targetBill.Map.mapPawns.PrisonersOfColonyCount;
-			e.Parameters["col"] = e.Parameters["colonists"] = bc.targetBill.Map.mapPawns.FreeColonistsCount - slaves;  // Not sure if there's a more direct way to get *only* colonists. Thought this worked originally but it doesn't.
-			e.Parameters["slv"] = e.Parameters["slaves"] = slaves;
-			e.Parameters["pwn"] = e.Parameters["pawns"] = bc.targetBill.Map.mapPawns.ColonistCount;
-			//e.Parameters["anim"] = bc.targetBill.Map.mapPawns.SpawnedColonyAnimals;  // TODO: This doesn't work. 
+			// TODO: Maybe redo this with a loop on pawns so there's only 1 call.
+			pawns = bc.targetBill.Map.mapPawns.FreeColonistsAndPrisoners;
+			slaves = bc.targetBill.Map.mapPawns.SlavesOfColonySpawned;
+			colonists = bc.targetBill.Map.mapPawns.FreeColonists.Except(slaves).ToList();
+			prisoners = bc.targetBill.Map.mapPawns.PrisonersOfColony;
+			// stolen from MainTabWindow_Animals.Pawns :)
+			ownedAnimals = bc.targetBill.Map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).ToList();
+
+			pawnsIntake = CountIntake(pawns);
+			colonistsIntake = CountIntake(colonists);
+			slavesIntake = CountIntake(slaves);
+			prisonersIntake = CountIntake(prisoners);
+			ownedAnimalsIntake = CountIntake(ownedAnimals);
+
+			e.Parameters["pwn"] = e.Parameters["pawns"] = pawns.Count();
+			e.Parameters["col"] = e.Parameters["colonists"] = colonists.Count();
+			e.Parameters["slv"] = e.Parameters["slaves"] = slaves.Count();
+			e.Parameters["pri"] = e.Parameters["prisoners"] = prisoners.Count();
+			e.Parameters["anim"] = e.Parameters["animals"] = ownedAnimals.Count();
+
+			e.Parameters["pwn_in"] = e.Parameters["pawns_intake"] = pawnsIntake;
+			e.Parameters["col_in"] = e.Parameters["colonists_intake"] = colonistsIntake;
+			e.Parameters["slv_in"] = e.Parameters["slaves_intake"] = slavesIntake;
+			e.Parameters["pri_in"] = e.Parameters["prisoners_intake"] = prisonersIntake;
+			e.Parameters["anim_in"] = e.Parameters["animals_intake"] = ownedAnimalsIntake;
+		}
+
+		private static float CountIntake(List<Pawn> pawns) {
+			float intake = 0;
+			foreach (Pawn p in pawns) {
+				// This whole thing feels absurd, but I don't know how else I'm meant to get the hunger rate.
+				// I searched everywhere but it does seem like the stats menu is the only location it's displayed with all modifiers.
+				try {
+#if v1_3
+					Match match = v13_getIntake.Match(RaceProperties.NutritionEatenPerDayExplanation(p, showCalculations: true));
+					if (match.Success) {
+						intake += float.Parse(match.Groups[1].Value);
+					}
+					//intake += float.Parse(RaceProperties.NutritionEatenPerDayExplanation(p, showCalculations: true));
+#elif v1_4
+					intake += float.Parse(RaceProperties.NutritionEatenPerDay(p));
+#endif
+				}
+				catch (ArgumentNullException) {
+					Log.Warning("Could not parse nutrition of pawn. Name: " + p.Name + ". Please let me (CrunchyDuck) know so I can fix it!");
+				}
+			}
+			return intake;
 		}
 	}
 }
