@@ -32,6 +32,18 @@ Each of the above also have an intake variable, that allows you to calculate bas
 [u]pwn_in[/u] or [u]pawns_intake[/u] - Total intake of all pawns per day.
 etc.
 
+[b]ThingDef searching[/b]
+You can search for the count of [u]any[/u] ThingDef (items, ostriches, doors, rocks...) on the map. Anything that is forbidden will not be counted.
+You'll need to convert the name of that thing into a valid parameter, which is simple to do!
+First, if it's a crafted/built item, ignore the material/quality of the item. For stacks, ignore the quantity.
+Then, make it all lowercase.
+Finally, replace spaces with underscores.
+
+Let's look at some examples:
+Compacted steel -> compacted_steel
+Medicine x5 -> medicine
+Plasteel flak helmet (excellent) -> flak_helmet
+
 [h2]Compatibility[/h2]
 Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
 
@@ -40,12 +52,13 @@ I'd like to do these things in the future, but right now I don't know if they're
 Make the text field red if an equation is invalid.
 Add an in-game area that shows a list of variables you can use (but im not sure where to put it).
 Expand equation field.
-Allow resources to be used as variables (such as [u]steel[/u]). I haven't added this yet because of how small the equation field is.
 
 [b]Links:[/b]
 Github: https://github.com/CrunchyDuck/Math
 NCalc: https://github.com/ncalc/ncalc
-donate: I will keep doing what I do regardless of income. https://ko-fi.com/crunchyduck</description>
+donate: I will keep doing what I do regardless of income. https://ko-fi.com/crunchyduck
+
+[img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/licence_image.png[/img]</description>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>

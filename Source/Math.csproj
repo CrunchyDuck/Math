@@ -61,6 +61,8 @@
   <ItemGroup>
     <Compile Include="BillComponent.cs" />
     <Compile Include="BillManager.cs" />
+    <Compile Include="CachedMapData.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="PatchBillCloning.cs" />
     <Compile Include="PatchBill_ProductionConstructor.cs" />

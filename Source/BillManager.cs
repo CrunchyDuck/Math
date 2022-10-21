@@ -2,6 +2,8 @@
 using Verse;
 using HarmonyLib;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace CrunchyDuck.Math {
 	// TODO: How do we know when a bill is destroyed? Guess it doesn't matter too much.
@@ -10,7 +12,7 @@ namespace CrunchyDuck.Math {
 	class BillManager : GameComponent {
 		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
 		public const int updateRegularity = 2500;  // 1 in game hour.
-
+		public static Dictionary<string, ThingDef> searchabeThings = new Dictionary<string, ThingDef>();
 
 		public BillManager(Game game) {}
 
@@ -37,6 +39,8 @@ namespace CrunchyDuck.Math {
 					Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
 					Math.DoMath(item.unpause_last_valid, ref item.targetBill.unpauseWhenYouHave, item);
 				}
+
+				Math.ClearCacheMaps();
 			}
 		}
 
