@@ -12,7 +12,7 @@ namespace CrunchyDuck.Math {
 		public int target_count_last_result = 0;
 
 		public BillComponent(Bill_Production bill) {
-			this.targetBill = bill;
+			targetBill = bill;
 			repeat_count_last_valid = bill.repeatCount.ToString();
 			target_count_last_valid = bill.targetCount.ToString();
 			unpause_last_valid = bill.unpauseWhenYouHave.ToString();

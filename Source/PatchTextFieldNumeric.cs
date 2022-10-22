@@ -57,9 +57,20 @@ namespace CrunchyDuck.Math {
 				return false;
 			}
 
+
 			string name = "TextField" + rect.y.ToString("F0") + rect.x.ToString("F0");
 			GUI.SetNextControlName(name);
+			var base_color = GUI.color;
+
+			// Check if equation last was valid, tint red if not.
+			// We can't tint this on the same frame because the act of rendering the text field is also the act of polling.
+			// Therefore we can't poll and check the new value, then retroactively change the colour.
+			test_val = 0;
+			if (!Math.DoMath(buffer, ref test_val, bc))
+				GUI.color = new Color(1, 0, 0, 0.8f);
+
 			string str = Widgets.TextField(rect, buffer);
+			GUI.color = base_color;
 			if (buffer != str) {
 				buffer = str;
 				if (is_unpause)

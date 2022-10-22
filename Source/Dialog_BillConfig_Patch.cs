@@ -11,11 +11,11 @@ namespace CrunchyDuck.Math {
 	/// <summary>
 	/// This patch is used to check when PatchNumbericTextField is being invoked, and to pass a reference to the calling Dialogue_BillConfig.
 	/// </summary>
-	// TODO: Make field red if invalid.
 	class Dialog_BillConfig_Patch {
 		public static Dialog_BillConfig bill_dialogue = null;
 		public static bool didTargetCount = false;
 		public static Rect r;
+		// TODO: Move this to mod option
 		public static float textInputAreaBonus = 100f;
 
 		public static Bill_Production BillRef {
@@ -44,21 +44,17 @@ namespace CrunchyDuck.Math {
 			didTargetCount = false;
 			bill_dialogue = __instance;
 			r = inRect;
-
             //ReimplementMethod(__instance, inRect);
             return true;
 		}
 
+#if v1_4
 		// oh jeez oh gosh how do i use this
 		public static IEnumerable<CodeInstruction> Transpiler1(IEnumerable<CodeInstruction> instructions) {
 			var codes = new List<CodeInstruction>(instructions);
-			int codes_to_find = 1;
 			int num_codes_found = 0;
 			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
 			float panel_allocation = textInputAreaBonus / 3;
-
-			int blt_found = 0;
-			int block_code_to_remove = 14;
 
 			for (var i = 0; i < codes.Count; i++) {
 				// Increase size of panel
@@ -77,20 +73,40 @@ namespace CrunchyDuck.Math {
 					}
 					num_codes_found++;
 				}
-
-				// Override unpause logic.
-				//else if (codes[i].opcode == OpCodes.Blt_S) {
-				//	blt_found++;
-				//	if (blt_found == 2) {
-				//		for (int j = 0; j < block_code_to_remove; j++) {
-				//			codes[i + j + 1] = new CodeInstruction(OpCodes.Nop);
-				//		}
-				//	}
-				//}
 			}
 
 			return codes.AsEnumerable();
 		}
+#elif v1_3
+		// oh jeez oh gosh how do i use this
+		public static IEnumerable<CodeInstruction> Transpiler1(IEnumerable<CodeInstruction> instructions) {
+			var codes = new List<CodeInstruction>(instructions);
+			int num_codes_found = 0;
+			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
+			float panel_allocation = textInputAreaBonus / 3;
+
+			for (var i = 0; i < codes.Count; i++) {
+				// Increase size of panel
+				if (codes[i].opcode == OpCodes.Ldloc_1) {
+					switch (num_codes_found) {
+						// Shrink the panel to the left
+						case 0:
+							codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldc_R4, panel_allocation));
+							codes.Insert(i + 2, new CodeInstruction(OpCodes.Sub));
+							break;
+						// Expand the panel to the right.
+						case 1:
+							codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldc_R4, panel_allocation * 2));
+							codes.Insert(i + 2, new CodeInstruction(OpCodes.Add));
+							break;
+					}
+					num_codes_found++;
+				}
+			}
+
+			return codes.AsEnumerable();
+		}
+#endif
 
 		// Finished render
 		public static void Postfix1(Rect inRect) {
