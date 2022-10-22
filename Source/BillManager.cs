@@ -8,7 +8,6 @@ using System;
 namespace CrunchyDuck.Math {
 	// TODO: How do we know when a bill is destroyed? Guess it doesn't matter too much.
 	// TODO: Handle copy/pasting.
-	// TODO: Using the + or - on the bill preview menu doesn't update BillComponents. I couldn't find the methods for these are located, and they're not super important.
 	class BillManager : GameComponent {
 		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
 		public const int updateRegularity = 2500;  // 1 in game hour.
