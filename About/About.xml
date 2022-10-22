@@ -19,8 +19,8 @@ It can evaluate if statements, perform trigonometry, and so much more! Heck, I d
 
 [h2]Variables[/h2]
 I've defined a few variables you'll want to use. All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.
-I'd quite like ideas for more variables, so lemme know if you have any.
 
+[b]Pawn variables[/b]
 [u]pawns[/u] or [u]pwn[/u] - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
 [u]colonists[/u] or [u]col[/u] - How many colonists (Not slaves or prisoners)
 [u]prisoners[/u] or [u]pri[/u] - How many prisoners
@@ -40,9 +40,9 @@ Then, make it all lowercase.
 Finally, replace spaces with underscores.
 
 Let's look at some examples:
-Compacted steel -> compacted_steel
-Medicine x5 -> medicine
-Plasteel flak helmet (excellent) -> flak_helmet
+Compacted steel -> [u]compacted_steel[/u]
+Medicine x5 -> [u]medicine[/u]
+Plasteel flak helmet (excellent) -> [u]flak_helmet[/u]
 
 [h2]Compatibility[/h2]
 Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.

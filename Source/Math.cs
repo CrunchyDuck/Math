@@ -102,7 +102,13 @@ namespace CrunchyDuck.Math {
 				return false;
 
 			// this is dumb but necessary
-			val = (int)Convert.ChangeType(Convert.ChangeType(result, type), typeof(int));
+			try {
+				val = (int)Convert.ChangeType(Convert.ChangeType(result, type), typeof(int));
+			}
+			// Divide by 0, mostly.
+			catch (OverflowException) {
+				val = 999999;
+			}
 			return true;
 		}
 
