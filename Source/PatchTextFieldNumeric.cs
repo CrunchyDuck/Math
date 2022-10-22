@@ -12,13 +12,13 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static bool Prefix(Rect rect, ref int val, ref string buffer, float min = 0.0f, float max = 1E+09f) {
-			if (PatchDoWindowContents.bill_dialogue != null) {
-				BillComponent bc = BillManager.AddGetBillComponent(PatchDoWindowContents.BillRef);
+			if (Dialog_BillConfig_Patch.bill_dialogue != null) {
+				BillComponent bc = BillManager.AddGetBillComponent(Dialog_BillConfig_Patch.BillRef);
 				bool is_repeat = bc.targetBill.repeatMode == BillRepeatModeDefOf.RepeatCount;
-				bool is_target = bc.targetBill.repeatMode == BillRepeatModeDefOf.TargetCount && !PatchDoWindowContents.didTargetCount;
-				bool is_unpause = bc.targetBill.repeatMode == BillRepeatModeDefOf.TargetCount && PatchDoWindowContents.didTargetCount;
+				bool is_target = bc.targetBill.repeatMode == BillRepeatModeDefOf.TargetCount && !Dialog_BillConfig_Patch.didTargetCount;
+				bool is_unpause = bc.targetBill.repeatMode == BillRepeatModeDefOf.TargetCount && Dialog_BillConfig_Patch.didTargetCount;
 				if (is_target)
-					PatchDoWindowContents.didTargetCount = true;
+					Dialog_BillConfig_Patch.didTargetCount = true;
 
 				if (is_repeat)
 					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.repeat_count_last_valid, is_unpause);

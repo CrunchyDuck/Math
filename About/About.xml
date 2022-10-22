@@ -16,6 +16,7 @@ A lot of bills are made to fit your colony's situation - Each colonist eats 2 me
 Type it in!!
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/typed_in_math.png[/img]
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
+The text field has been expanded to make room for large calculations! (Mod option to change how much it's expanded coming soon)
 
 [h2]Variables[/h2]
 I've defined a few variables you'll want to use. All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.

@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 
 namespace CrunchyDuck.Math {
 	// TODO: Show decimal values in Currently Have, Repeat and Unpause At, but round the ultimate value.
-	// TODO: Update mod page to show off using pawn intake to plan food.
 	// TODO: Change default bill type to "do until you have x"
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
 	[StaticConstructorOnStartup]
@@ -44,14 +43,20 @@ namespace CrunchyDuck.Math {
 			var harmony = new Harmony("CrunchyDuck.Math");
 			HarmonyMethod prefix;
 			HarmonyMethod postfix;
+			HarmonyMethod trans;
 
 			prefix = new HarmonyMethod(typeof(PatchTextFieldNumeric), "Prefix");  // Might be a nicer way to do this than using a string.
 			postfix = null; // new HarmonyMethod(typeof(PatchNumericTextField), "Postfix");
 			harmony.Patch(PatchTextFieldNumeric.Target(), prefix: prefix, postfix: postfix);
 
-			prefix = new HarmonyMethod(typeof(PatchDoWindowContents), "Prefix");
-			postfix = new HarmonyMethod(typeof(PatchDoWindowContents), "Postfix");
-			harmony.Patch(PatchDoWindowContents.Target(), prefix: prefix, postfix: postfix);
+			prefix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Prefix1");
+			postfix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Postfix1");
+			trans = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Transpiler1");
+			harmony.Patch(Dialog_BillConfig_Patch.Target1(), prefix: prefix, postfix: postfix, transpiler: trans);
+
+			prefix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Prefix2");
+			postfix = null;// new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Postfix2");
+			harmony.Patch(Dialog_BillConfig_Patch.Target2(), prefix: prefix);
 
 			prefix = null; // new HarmonyMethod(typeof(PatchExposeData), "Prefix");
 			postfix = new HarmonyMethod(typeof(PatchExposeData), "Postfix");
