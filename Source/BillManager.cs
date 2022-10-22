@@ -35,7 +35,13 @@ namespace CrunchyDuck.Math {
 			// Make sure bills are up to date.
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
 				foreach (BillComponent item in billTable.Values) {
-					Math.DoMath(item.target_count_last_valid, ref item.targetBill.targetCount, item);
+					// Number changed, likely because they pressed + or -.
+					if (item.targetBill.targetCount != item.target_count_last_result) {
+						item.target_count_last_result = item.targetBill.targetCount;
+						item.target_count_last_valid = item.targetBill.targetCount.ToString();
+					}
+					else
+						Math.DoMath(item.target_count_last_valid, ref item.targetBill.targetCount, item);
 					//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
 					Math.DoMath(item.unpause_last_valid, ref item.targetBill.unpauseWhenYouHave, item);
 				}

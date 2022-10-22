@@ -137,7 +137,14 @@ namespace CrunchyDuck.Math {
 			e.Parameters["pri_in"] = e.Parameters["prisoners_intake"] = cache.prisonersIntake;
 			e.Parameters["anim_in"] = e.Parameters["animals_intake"] = cache.ownedAnimalsIntake;
 
-			foreach(string parameter in parameter_list) {
+#if v1_4
+			e.Parameters["bab"] = e.Parameters["babies"] = cache.babies.Count();
+			e.Parameters["kid"] = e.Parameters["kids"] = cache.kids.Count();
+			e.Parameters["kid_in"] = e.Parameters["kids_intake"] = cache.kidsIntake;
+			e.Parameters["bab_in"] = e.Parameters["babies_intake"] = cache.babiesIntake;
+#endif
+
+			foreach (string parameter in parameter_list) {
 				if (e.Parameters.ContainsKey(parameter))
 					continue;
 				if (!searchabeThings.ContainsKey(parameter))

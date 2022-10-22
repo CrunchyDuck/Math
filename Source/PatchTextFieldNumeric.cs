@@ -51,6 +51,7 @@ namespace CrunchyDuck.Math {
 			// User pressed one of the buttons, and we should clear the field and accept the number.
 			if (test_val != val) {
 				field = val.ToString();
+				buffer = field;
 				if (is_unpause)
 					bc.unpause_buffer = val.ToString();
 				return false;

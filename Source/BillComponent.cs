@@ -9,6 +9,7 @@ namespace CrunchyDuck.Math {
 		public string unpause_last_valid = "";
 		public string unpause_buffer = "";
 		public string target_count_last_valid = "";
+		public int target_count_last_result = 0;
 
 		public BillComponent(Bill_Production bill) {
 			this.targetBill = bill;
@@ -20,6 +21,7 @@ namespace CrunchyDuck.Math {
 		public void ExposeData() {
 			Scribe_Values.Look(ref repeat_count_last_valid, "repeat_count_last_valid");
 			Scribe_Values.Look(ref target_count_last_valid, "target_count_last_valid");
+			Scribe_Values.Look(ref target_count_last_result, "target_count_last_result");
 			Scribe_Values.Look(ref unpause_last_valid, "unpause_last_valid");
 		}
 	}
