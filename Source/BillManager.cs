@@ -36,7 +36,7 @@ namespace CrunchyDuck.Math {
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
 				foreach (BillComponent item in billTable.Values) {
 					Math.DoMath(item.target_count_last_valid, ref item.targetBill.targetCount, item);
-					Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
+					//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
 					Math.DoMath(item.unpause_last_valid, ref item.targetBill.unpauseWhenYouHave, item);
 				}
 
