@@ -23,6 +23,7 @@ namespace CrunchyDuck.Math {
 			Scribe_Values.Look(ref target_count_last_valid, "target_count_last_valid");
 			Scribe_Values.Look(ref target_count_last_result, "target_count_last_result");
 			Scribe_Values.Look(ref unpause_last_valid, "unpause_last_valid");
+			unpause_buffer = unpause_last_valid;
 		}
 	}
 }

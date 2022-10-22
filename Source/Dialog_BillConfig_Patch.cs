@@ -57,7 +57,11 @@ namespace CrunchyDuck.Math {
 			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
 			float panel_allocation = textInputAreaBonus / 3;
 
+			int blt_found = 0;
+			int block_code_to_remove = 14;
+
 			for (var i = 0; i < codes.Count; i++) {
+				// Increase size of panel
 				if (codes[i].opcode == OpCodes.Ldloc_0) {
 					switch (num_codes_found) {
 						// Shrink the panel to the left
@@ -71,11 +75,18 @@ namespace CrunchyDuck.Math {
 							codes.Insert(i + 2, new CodeInstruction(OpCodes.Add));
 							break;
 					}
-
-					if (num_codes_found == codes_to_find)
-						break;
 					num_codes_found++;
 				}
+
+				// Override unpause logic.
+				//else if (codes[i].opcode == OpCodes.Blt_S) {
+				//	blt_found++;
+				//	if (blt_found == 2) {
+				//		for (int j = 0; j < block_code_to_remove; j++) {
+				//			codes[i + j + 1] = new CodeInstruction(OpCodes.Nop);
+				//		}
+				//	}
+				//}
 			}
 
 			return codes.AsEnumerable();
