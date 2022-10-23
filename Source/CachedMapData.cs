@@ -77,12 +77,18 @@ namespace CrunchyDuck.Math {
 			}
 			return intake;
 		}
-	
+
 		// TODO: Do multiple passes of DoMath, where the first tallies up all resources they want to search, and the second searches for all of them at once.
-		public int SearchForResource(string parameter_name) {
+		public bool SearchForResource(string parameter_name, out int count) {
+			count = 0;
+			if (parameter_name.NullOrEmpty())
+				return false;
+			if (!Math.searchabeThings.ContainsKey(parameter_name))
+				return false;
+
 			if (!resources.ContainsKey(parameter_name)) {
 				List<Thing> things = map.listerThings.ThingsOfDef(Math.searchabeThings[parameter_name]);
-				int count = 0;
+				count = 0;
 				foreach (Thing thing in things) {
 					if (thing.IsForbidden(Faction.OfPlayer))
 						continue;
@@ -90,8 +96,8 @@ namespace CrunchyDuck.Math {
 				}
 				resources[parameter_name] = count;
 			}
-
-			return resources[parameter_name];
+			count = resources[parameter_name];
+			return true;
 		}
 	}
 }

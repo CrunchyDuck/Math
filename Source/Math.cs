@@ -150,12 +150,10 @@ namespace CrunchyDuck.Math {
 #endif
 
 			foreach (string parameter in parameter_list) {
-				if (e.Parameters.ContainsKey(parameter))
-					continue;
-				if (!searchabeThings.ContainsKey(parameter))
-					continue;
-
-				e.Parameters[parameter] = cache.SearchForResource(parameter);
+				int count;
+				if (cache.SearchForResource(parameter, out count)) {
+					e.Parameters[parameter] = count;
+				}
 			}
 		}
 	}
