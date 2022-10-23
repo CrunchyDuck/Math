@@ -4,6 +4,7 @@ using Verse;
 namespace CrunchyDuck.Math {
 	class BillComponent {
 		public Bill_Production targetBill;
+		public CachedMapData Cache { get { return Math.GetCachedMap(targetBill.Map); } }
 		public int loadID { get { return BillManager.GetBillID(targetBill); } }
 		public string repeat_count_last_valid = "";
 		public string unpause_last_valid = "";

@@ -13,12 +13,15 @@ namespace CrunchyDuck.Math {
 	// TODO: Show decimal values in Currently Have, Repeat and Unpause At, but round the ultimate value.
 	// TODO: Change default bill type to "do until you have x"
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
+	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
+	// TODO: Add math variable name to the i menu of all objects.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
 		private static Regex parameterNames = new Regex(@"(\w+)", RegexOptions.Compiled);
 		public static Dictionary<string, ThingDef> searchabeThings = new Dictionary<string, ThingDef>();
+		public static Texture2D infoButtonImage = ContentFinder<Texture2D>.Get("yin_yang_kobold");
 
 		static Math() {
 			PerformPatches();
@@ -117,18 +120,22 @@ namespace CrunchyDuck.Math {
 			return true;
 		}
 
+		public static CachedMapData GetCachedMap(Map map) {
+			if (!cachedMaps.ContainsKey(map)) {
+				// Generate cache.
+				cachedMaps[map] = new CachedMapData(map);
+			}
+			CachedMapData cache = cachedMaps[map];
+			return cache;
+		}
+
 		// TODO: Add groups of resources, such as "Meals"
 		public static void AddParameters(Expression e, BillComponent bc, List<string> parameter_list) {
 			// TODO: Mech variable.
 			// TODO: Cache these to improve performance
 			// "Spawned" means that the thing isn't held in a container/held. Non spawned things are in a container.
 			// TODO: Maybe redo this with a loop on pawns so there's only 1 call.
-			Map map = bc.targetBill.Map;
-			if (!cachedMaps.ContainsKey(map)) {
-				// Generate cache.
-				cachedMaps[map] = new CachedMapData(map);
-			}
-			CachedMapData cache = cachedMaps[map];
+			CachedMapData cache = bc.Cache;
 
 			e.Parameters["pwn"] = e.Parameters["pawns"] = cache.pawns.Count();
 			e.Parameters["col"] = e.Parameters["colonists"] = cache.colonists.Count();

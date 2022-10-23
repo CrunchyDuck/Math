@@ -115,6 +115,19 @@ namespace CrunchyDuck.Math {
 			Math.DoMath(bc.unpause_last_valid, ref bc.targetBill.unpauseWhenYouHave, bc);
 			AccessTools.Field(typeof(Dialog_BillConfig), "unpauseCountEditBuffer").SetValue(bill_dialogue, bc.unpause_buffer);
 			bill_dialogue = null;
+
+			// Render help button.
+			// TODO: Finish this.
+			// Touch lazy to copy this from the method, but oh well.
+			float width = (int)((inRect.width - 34.0) / 3.0);
+			Rect rect1 = new Rect(0.0f, 80f, width, inRect.height - 80f);
+			Rect rect2 = new Rect(rect1.xMax + 17f, 50f, width, inRect.height - 50f - Window.CloseButSize.y);
+			Rect rect3 = new Rect(rect2.xMax + 17f, 50f, 0.0f, inRect.height - 50f - Window.CloseButSize.y);
+			Rect rect = new Rect(rect1.x + 24 + 4, rect3.y, 24, 24);
+			
+			if (Widgets.ButtonImage(rect, Math.infoButtonImage, GUI.color)) {
+				Find.WindowStack.Add(new Dialog_MathCard(bc));
+			}
 		}
 
 

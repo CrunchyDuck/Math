@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <StatCategoryDef>
+    <defName>CDBasics</defName>
+    <label>Basics</label>
+    <displayOrder>1</displayOrder>
+  </StatCategoryDef>
+
+  <StatCategoryDef>
+    <defName>CDPawns</defName>
+    <label>Pawn variables</label>
+    <displayOrder>3</displayOrder>
+  </StatCategoryDef>
+
+  <StatCategoryDef>
+    <defName>CDExamples</defName>
+    <label>Examples</label>
+    <displayOrder>2</displayOrder>
+  </StatCategoryDef>
+
+  <StatCategoryDef>
+    <defName>CDFunctions</defName>
+    <label>Useful functions</label>
+    <displayOrder>5</displayOrder>
+  </StatCategoryDef>
+
+  <StatCategoryDef>
+    <defName>CDModifiers</defName>
+    <label>Modifiers</label>
+    <displayOrder>4</displayOrder>
+  </StatCategoryDef>
+</Defs>
