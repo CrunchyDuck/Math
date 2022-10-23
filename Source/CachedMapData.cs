@@ -70,6 +70,10 @@ namespace CrunchyDuck.Math {
 				catch (System.ArgumentNullException) {
 					Log.Warning("Could not parse nutrition of pawn. Name: " + p.Name + ". Please let me (CrunchyDuck) know so I can fix it!");
 				}
+				// Not sure when this triggered, but someone reported it happening after a baby was born.
+				catch (System.NullReferenceException) {
+					continue;
+				}
 			}
 			return intake;
 		}
