@@ -85,6 +85,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Math.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="PatchBillCloning.cs" />
     <Compile Include="PatchBill_ProductionConstructor.cs" />
     <Compile Include="Dialog_BillConfig_Patch.cs" />

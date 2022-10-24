@@ -6,7 +6,6 @@ using System.Linq;
 using System;
 
 namespace CrunchyDuck.Math {
-	// TODO: How do we know when a bill is destroyed? Guess it doesn't matter too much.
 	// TODO: Handle copy/pasting.
 	class BillManager : GameComponent {
 		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();

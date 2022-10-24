@@ -16,7 +16,6 @@ namespace CrunchyDuck.Math {
 		public static bool didTargetCount = false;
 		public static Rect r;
 		// TODO: Move this to mod option
-		public static float textInputAreaBonus = 100f;
 
 		public static Bill_Production BillRef {
 			get {
@@ -54,7 +53,7 @@ namespace CrunchyDuck.Math {
 			var codes = new List<CodeInstruction>(instructions);
 			int num_codes_found = 0;
 			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
-			float panel_allocation = textInputAreaBonus / 3;
+			float panel_allocation = Settings.textInputAreaBonus / 3;
 
 			for (var i = 0; i < codes.Count; i++) {
 				// Increase size of panel
@@ -117,7 +116,6 @@ namespace CrunchyDuck.Math {
 			bill_dialogue = null;
 
 			// Render help button.
-			// TODO: Finish this.
 			// Touch lazy to copy this from the method, but oh well.
 			float width = (int)((inRect.width - 34.0) / 3.0);
 			Rect rect1 = new Rect(0.0f, 80f, width, inRect.height - 80f);
@@ -138,7 +136,7 @@ namespace CrunchyDuck.Math {
 		public static bool Prefix2(Window __instance) {
 			if (__instance.GetType() == typeof(Dialog_BillConfig)) {
 				Vector2 initialSize = __instance.InitialSize;
-				initialSize.x += textInputAreaBonus;
+				initialSize.x += Settings.textInputAreaBonus;
 				__instance.windowRect = new Rect((float)(((double)UI.screenWidth - (double)initialSize.x) / 2.0), (float)(((double)UI.screenHeight - (double)initialSize.y) / 2.0), initialSize.x, initialSize.y);
 				__instance.windowRect = __instance.windowRect.Rounded();
 				return false;
