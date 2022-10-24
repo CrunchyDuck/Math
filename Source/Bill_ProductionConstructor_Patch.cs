@@ -6,7 +6,7 @@ using System;
 
 namespace CrunchyDuck.Math {
 	// Patches the constructor, so we know when a new bill was made.
-	class PatchBill_ProductionConstructor {
+	class Bill_ProductionConstructor_Patch {
 		public static ConstructorInfo Target() {
 			return AccessTools.Constructor(typeof(Bill_Production), new Type[] { typeof(RecipeDef), typeof(Precept_ThingStyle) });
 		}

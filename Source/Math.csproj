@@ -43,6 +43,10 @@
       <HintPath>D:\Games_%26_emulators\RimWorld_v1.3\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>D:\Games_%26_emulators\RimWorld_v1.3\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == '1.4|AnyCPU'">
     <Reference Include="Assembly-CSharp">
@@ -55,6 +59,10 @@
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -87,10 +95,10 @@
     <Compile Include="Math.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="PatchBillCloning.cs" />
-    <Compile Include="PatchBill_ProductionConstructor.cs" />
-    <Compile Include="Dialog_BillConfig_Patch.cs" />
+    <Compile Include="Bill_ProductionConstructor_Patch.cs" />
+    <Compile Include="BillMenu_Patch.cs" />
     <Compile Include="PatchExposeData.cs" />
-    <Compile Include="PatchTextFieldNumeric.cs" />
+    <Compile Include="TextFieldNumeric_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

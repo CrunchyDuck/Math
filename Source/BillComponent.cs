@@ -11,6 +11,9 @@ namespace CrunchyDuck.Math {
 		public string unpause_buffer = "";
 		public string target_count_last_valid = "";
 		public int target_count_last_result = 0;
+		public bool isDoXTimes { get { return targetBill.repeatMode == BillRepeatModeDefOf.RepeatCount; } }
+		public bool isDoUntilX { get { return targetBill.repeatMode == BillRepeatModeDefOf.TargetCount; } }
+
 
 		public BillComponent(Bill_Production bill) {
 			targetBill = bill;

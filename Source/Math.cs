@@ -43,49 +43,54 @@ namespace CrunchyDuck.Math {
 				if (thingDef.label == null) {
 					continue;
 				}
-				string param_name = thingDef.label.ToParameter();
+				string param_name = thingDef.label.ToCategory();
 				searchabeCategories[param_name] = thingDef;
 			}
 		}
 
 		private static void PerformPatches() {
-			// I'll be honest, I couldn't figure out how to use annotations/attributes when patching a private/protected method.
-			// I already knew how to do manual patching from OwO Stawdew Vawwey, so I just did that.
-			// Read this but couldn't get it to work for me. https://github.com/pardeike/Harmony/issues/121
-			// If you know, do tell me.
 			var harmony = new Harmony("CrunchyDuck.Math");
-			HarmonyMethod prefix;
-			HarmonyMethod postfix;
-			HarmonyMethod trans;
+			HarmonyMethod prefix = null;
+			HarmonyMethod postfix = null;
+			HarmonyMethod trans = null;
 
-			prefix = new HarmonyMethod(typeof(PatchTextFieldNumeric), "Prefix");  // Might be a nicer way to do this than using a string.
-			postfix = null; // new HarmonyMethod(typeof(PatchNumericTextField), "Postfix");
-			harmony.Patch(PatchTextFieldNumeric.Target(), prefix: prefix, postfix: postfix);
+			prefix = new HarmonyMethod(typeof(TextFieldNumeric_Patch), nameof(TextFieldNumeric_Patch.Prefix));
+			harmony.Patch(TextFieldNumeric_Patch.Target(), prefix: prefix, postfix: postfix);
+			prefix = null;
+			postfix = null;
+			trans = null;
 
-			prefix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Prefix1");
-			postfix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Postfix1");
-			trans = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Transpiler1");
-			harmony.Patch(Dialog_BillConfig_Patch.Target1(), prefix: prefix, postfix: postfix, transpiler: trans);
+			prefix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.Prefix));
+			postfix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.Postfix));
+			trans = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.Transpiler));
+			harmony.Patch(Dialog_BillConfig_Patch.Target(), prefix: prefix, postfix: postfix, transpiler: trans);
+			prefix = null;
+			postfix = null;
+			trans = null;
 
-			prefix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Prefix2");
-			postfix = null;// new HarmonyMethod(typeof(Dialog_BillConfig_Patch), "Postfix2");
-			harmony.Patch(Dialog_BillConfig_Patch.Target2(), prefix: prefix);
+			prefix = new HarmonyMethod(typeof(SetInitialSizeAndPosition_Patch), nameof(SetInitialSizeAndPosition_Patch.Prefix));
+			harmony.Patch(SetInitialSizeAndPosition_Patch.Target(), prefix: prefix, postfix: postfix, transpiler: trans);
+			prefix = null;
+			postfix = null;
+			trans = null;
 
-			prefix = null; // new HarmonyMethod(typeof(PatchExposeData), "Prefix");
-			postfix = new HarmonyMethod(typeof(PatchExposeData), "Postfix");
+			postfix = new HarmonyMethod(typeof(PatchExposeData), nameof(PatchExposeData.Postfix));
 			harmony.Patch(PatchExposeData.Target(), prefix: prefix, postfix: postfix);
+			prefix = null;
+			postfix = null;
+			trans = null;
 
-			prefix = null; // new HarmonyMethod(typeof(PatchBill_Production), "Prefix");
-			postfix = new HarmonyMethod(typeof(PatchBill_ProductionConstructor), "Postfix");
-			harmony.Patch(PatchBill_ProductionConstructor.Target(), prefix: prefix, postfix: postfix);
+			postfix = new HarmonyMethod(typeof(Bill_ProductionConstructor_Patch), nameof(Bill_ProductionConstructor_Patch.Postfix));
+			harmony.Patch(Bill_ProductionConstructor_Patch.Target(), prefix: prefix, postfix: postfix);
+			prefix = null;
+			postfix = null;
+			trans = null;
 
-			//prefix = null; // new HarmonyMethod(typeof(PatchBill_Production), "Prefix");
-			//postfix = new HarmonyMethod(typeof(PatchBillCloning), "Postfix1");
-			//harmony.Patch(PatchBillCloning.Target1(), prefix: prefix, postfix: postfix);
-
-			//prefix = null; // new HarmonyMethod(typeof(PatchBill_Production), "Prefix");
-			//postfix = new HarmonyMethod(typeof(PatchBillCloning), "Postfix2");
-			//harmony.Patch(PatchBillCloning.Target2(), prefix: prefix, postfix: postfix);
+			prefix = new HarmonyMethod(typeof(IntEntry_Patch), nameof(IntEntry_Patch.Prefix));
+			harmony.Patch(IntEntry_Patch.Target(), prefix: prefix, postfix: postfix);
+			prefix = null;
+			postfix = null;
+			trans = null;
 		}
 
 		public static void ClearCacheMaps() {
