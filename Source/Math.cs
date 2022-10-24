@@ -15,7 +15,6 @@ namespace CrunchyDuck.Math {
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
 	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
-	// TODO: Update mod page.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -133,7 +132,6 @@ namespace CrunchyDuck.Math {
 		// TODO: Add groups of resources, such as "Meals"
 		public static void AddParameters(Expression e, BillComponent bc, List<string> parameter_list) {
 			// TODO: Mech variable.
-			// TODO: Cache these to improve performance
 			// "Spawned" means that the thing isn't held in a container/held. Non spawned things are in a container.
 			// TODO: Maybe redo this with a loop on pawns so there's only 1 call.
 			CachedMapData cache = bc.Cache;

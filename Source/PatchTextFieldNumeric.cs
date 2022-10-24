@@ -5,7 +5,6 @@ using UnityEngine;
 using RimWorld;
 
 namespace CrunchyDuck.Math {
-	// TODO: unpause amount still goes up/down when target amount is changed with buttons. Low priority fix.
 	class PatchTextFieldNumeric {
 		public static MethodInfo Target() {
 			return AccessTools.Method(typeof(Widgets), "TextFieldNumeric", generics: new System.Type[] { typeof(int) });

@@ -11,7 +11,6 @@ namespace CrunchyDuck.Math {
 	// the interface is so simple, yet for some reason instead of abstracting it down,
 	// they have a shit load of different modes for different types of defs
 	// it is some of the most poorly thought out code i've seen in a while
-	// TODO: Mess with StatDrawEntry.LabelCap to stop it capitalizing variable names.
 	class Dialog_MathCard : Window {
 		public List<StatDrawEntry> statEntries;
 		public BillComponent attachedBill;
@@ -98,18 +97,18 @@ namespace CrunchyDuck.Math {
 			//stats.Add(new StatDrawEntry(cat, "if statements", "", "Example:\nif(fine_meal > 10, 10, 0)\n\n", 2999));
 
 			cat = catPawns;
-			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map.", 3001));
-			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map. Does not include prisoners or slaves.", 3000));
-			stats.Add(new StatDrawEntry(cat, "​slaves", attachedBill.Cache.slaves.Count().ToString(), "Alias: slv\nNumber of owned slaves on the map.", 2999));
-			stats.Add(new StatDrawEntry(cat, "​prisoners", attachedBill.Cache.prisoners.Count().ToString(), "Alias: pri\nNumber of owned prisoners on the map.", 2998));
-			stats.Add(new StatDrawEntry(cat, "​animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "Alias: anim\nNumber of owned animals on the map.", 2997));
+			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map the bill is contained in.", 3001));
+			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map the bill is contained in. Does not include prisoners or slaves.", 3000));
+			stats.Add(new StatDrawEntry(cat, "​slaves", attachedBill.Cache.slaves.Count().ToString(), "Alias: slv\nNumber of owned slaves on the map the bill is contained in.", 2999));
+			stats.Add(new StatDrawEntry(cat, "​prisoners", attachedBill.Cache.prisoners.Count().ToString(), "Alias: pri\nNumber of owned prisoners on the map the bill is contained in.", 2998));
+			stats.Add(new StatDrawEntry(cat, "​animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "Alias: anim\nNumber of owned animals on the map the bill is contained in.", 2997));
 #if v1_4
-			stats.Add(new StatDrawEntry(cat, "​babies", attachedBill.Cache.babies.Count().ToString(), "Alias: bab\nNumber of owned babies on the map.", 2996));
-			stats.Add(new StatDrawEntry(cat, "​kids", attachedBill.Cache.kids.Count().ToString(), "Alias: kid\nNumber of owned children on the map.", 2995));
+			stats.Add(new StatDrawEntry(cat, "​babies", attachedBill.Cache.babies.Count().ToString(), "Alias: bab\nNumber of owned babies on the map the bill is contained in.", 2996));
+			stats.Add(new StatDrawEntry(cat, "​kids", attachedBill.Cache.kids.Count().ToString(), "Alias: kid\nNumber of owned children on the map the bill is contained in.", 2995));
 #endif
 
 			cat = catModifiers;
-			stats.Add(new StatDrawEntry(cat, "​pawns_intake", attachedBill.Cache.pawnsIntake.ToString(), "Alias: pwn_in\nThe _in modifier can be used on any group of pawns like slv_in, pri_in, etc. It returns the amount of nutrition a pawn requires per day after all modifiers have been applied.\n\nThis number can also be seen in a pawn's info card under \"Food consumption\".", 2995));
+			stats.Add(new StatDrawEntry(cat, "​pawns_intake", attachedBill.Cache.pawnsIntake.ToString(), "Alias: pwn_in\nThe _in modifier can be used on any group of pawns like slv_in, anim_in, etc. It returns the amount of nutrition a pawn requires per day after all modifiers have been applied.\n\nThis number can also be seen in a pawn's info card under \"Food consumption\".", 2995));
 
 			return stats;
 		}

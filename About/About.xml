@@ -10,23 +10,26 @@
 	<description>[b]Math![/b] Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
 
 [h2]Why would I use [b]Math![/b]?[/h2]
-A lot of bills are made to fit your colony's situation - Each colonist eats 2 meals a day, we want 3 days of food, so [u]2 * 3 * colonists[/u]. We want [u]colonists[/u] number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
+A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be [u]col_in * 5[/u]. We want [u]colonists[/u] number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
 
 [h2]How do I use [b]Math![/b]?[/h2]
 Type it in!!
-[img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/tesco_meal_deal.png[/img]
+[img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/tesco_meal_deal2.png[/img]
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
-The text field has been expanded to make room for large calculations! (Mod option to change how much it's expanded coming soon)
+The text field has also been expanded to make room for large calculations!
 
 [h2]Variables[/h2]
-I've defined a few variables you'll want to use. All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes.
+I've defined a few variables you'll want to use, and they can all be seen from the handy-handy in-bill info card.
+[img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/infocard.png[/img]
+All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes. Forbidden items also aren't counted.
+Some of the most useful variables are...
 
-[b]Pawn variables[/b]
 [u]pawns[/u] or [u]pwn[/u] - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
 [u]colonists[/u] or [u]col[/u] - How many colonists (Not slaves or prisoners)
 [u]prisoners[/u] or [u]pri[/u] - How many prisoners
 [u]slaves[/u] or [u]slv[/u] - How many slaves
 [u]animals[/u] or [u]anim[/u] - How many animals.
+[u]babies[/u] or [u]bab[/u] - How many babies.
 
 Each of the above also have an intake variable, that allows you to calculate based on their cumulative food consumed per day:
 [u]anim_in[/u] or [u]animals_intake[/u] - Total intake of all animals per day.
@@ -47,12 +50,6 @@ Plasteel flak helmet (excellent) -> [u]flak_helmet[/u]
 
 [h2]Compatibility[/h2]
 Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
-
-[h3]Future plans[/h3]
-I'd like to do these things in the future, but right now I don't know if they're important enough to do yet. If you really would like something, lemme know and it'll make me more likely to pursue it.
-Make the text field red if an equation is invalid.
-Add an in-game area that shows a list of variables you can use (but im not sure where to put it).
-Expand equation field.
 
 [b]Links:[/b]
 Github: https://github.com/CrunchyDuck/Math
