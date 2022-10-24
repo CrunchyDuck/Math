@@ -13,7 +13,9 @@ namespace CrunchyDuck.Math {
 		public string unpauseBuffer = "";
 		public string doUntilXLastValid = "";
 		public string doUntilXBuffer = "";
-		public int target_count_last_result = 0;
+		public int doUntilXLastResult = 0;
+		public int doXTimesLastResult = 0;
+		public int unpauseLastResult = 0;
 		public bool isDoXTimes { get { return targetBill.repeatMode == BillRepeatModeDefOf.RepeatCount; } }
 		public bool isDoUntilX { get { return targetBill.repeatMode == BillRepeatModeDefOf.TargetCount; } }
 
@@ -26,10 +28,13 @@ namespace CrunchyDuck.Math {
 		}
 
 		public void ExposeData() {
+			// I wanna change these but that'd break peoples' saves lmao
 			Scribe_Values.Look(ref doXTimesLastValid, "repeat_count_last_valid");
 			Scribe_Values.Look(ref doUntilXLastValid, "target_count_last_valid");
-			Scribe_Values.Look(ref target_count_last_result, "target_count_last_result");
 			Scribe_Values.Look(ref unpauseLastValid, "unpause_last_valid");
+			Scribe_Values.Look(ref doUntilXLastResult, "target_count_last_result");
+			Scribe_Values.Look(ref doXTimesLastResult, "doXTimesLastResult");
+			Scribe_Values.Look(ref unpauseLastResult, "unpauseLastResult");
 			unpauseBuffer = unpauseLastValid;
 		}
 	}

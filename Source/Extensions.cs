@@ -19,5 +19,10 @@ namespace CrunchyDuck.Math {
 		public static string ToCategory(this string str) {
 			return "c_" + str.ToParameter();
 		}
+
+		public static bool HasMethod(this object objectToCheck, string methodName) {
+			var type = objectToCheck.GetType();
+			return type.GetMethod(methodName) != null;
+		}
 	}
 }

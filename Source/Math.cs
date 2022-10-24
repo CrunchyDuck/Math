@@ -15,6 +15,7 @@ namespace CrunchyDuck.Math {
 	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
 	// TODO: Clothing restriction category.
+	// TODO: Fix outer + and - buttons.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -50,47 +51,20 @@ namespace CrunchyDuck.Math {
 
 		private static void PerformPatches() {
 			var harmony = new Harmony("CrunchyDuck.Math");
-			HarmonyMethod prefix = null;
-			HarmonyMethod postfix = null;
-			HarmonyMethod trans = null;
+			AddPatch(harmony, typeof(DoConfigInterface_Patch));
+			AddPatch(harmony, typeof(IntEntry_Patch));
+			AddPatch(harmony, typeof(Bill_ProductionConstructor_Patch));
+			AddPatch(harmony, typeof(PatchExposeData));
+			AddPatch(harmony, typeof(SetInitialSizeAndPosition_Patch));
+			AddPatch(harmony, typeof(Dialog_BillConfig_Patch));
+			AddPatch(harmony, typeof(TextFieldNumeric_Patch));
+		}
 
-			prefix = new HarmonyMethod(typeof(TextFieldNumeric_Patch), nameof(TextFieldNumeric_Patch.Prefix));
-			harmony.Patch(TextFieldNumeric_Patch.Target(), prefix: prefix, postfix: postfix);
-			prefix = null;
-			postfix = null;
-			trans = null;
-
-			prefix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.Prefix));
-			postfix = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.Postfix));
-			trans = new HarmonyMethod(typeof(Dialog_BillConfig_Patch), nameof(Dialog_BillConfig_Patch.Transpiler));
-			harmony.Patch(Dialog_BillConfig_Patch.Target(), prefix: prefix, postfix: postfix, transpiler: trans);
-			prefix = null;
-			postfix = null;
-			trans = null;
-
-			prefix = new HarmonyMethod(typeof(SetInitialSizeAndPosition_Patch), nameof(SetInitialSizeAndPosition_Patch.Prefix));
-			harmony.Patch(SetInitialSizeAndPosition_Patch.Target(), prefix: prefix, postfix: postfix, transpiler: trans);
-			prefix = null;
-			postfix = null;
-			trans = null;
-
-			postfix = new HarmonyMethod(typeof(PatchExposeData), nameof(PatchExposeData.Postfix));
-			harmony.Patch(PatchExposeData.Target(), prefix: prefix, postfix: postfix);
-			prefix = null;
-			postfix = null;
-			trans = null;
-
-			postfix = new HarmonyMethod(typeof(Bill_ProductionConstructor_Patch), nameof(Bill_ProductionConstructor_Patch.Postfix));
-			harmony.Patch(Bill_ProductionConstructor_Patch.Target(), prefix: prefix, postfix: postfix);
-			prefix = null;
-			postfix = null;
-			trans = null;
-
-			prefix = new HarmonyMethod(typeof(IntEntry_Patch), nameof(IntEntry_Patch.Prefix));
-			harmony.Patch(IntEntry_Patch.Target(), prefix: prefix, postfix: postfix);
-			prefix = null;
-			postfix = null;
-			trans = null;
+		private static void AddPatch(Harmony harmony, Type type) {
+			var prefix = type.GetMethod("Prefix") != null ? new HarmonyMethod(type, "Prefix") : null;
+			var postfix = type.GetMethod("Postfix") != null ? new HarmonyMethod(type, "Postfix") : null;
+			var trans = type.GetMethod("Transpiler") != null ? new HarmonyMethod(type, "Transpiler") : null;
+			harmony.Patch((MethodBase)type.GetMethod("Target").Invoke(null, null), prefix: prefix, postfix: postfix, transpiler: trans);
 		}
 
 		public static void ClearCacheMaps() {

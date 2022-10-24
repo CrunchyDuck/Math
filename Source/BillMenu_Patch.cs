@@ -39,6 +39,33 @@ namespace CrunchyDuck.Math {
 		public static bool RenderingTarget { get { return bc.isDoUntilX && !didTargetCountThisFrame; } }
 		public static bool RenderingUnpause { get { return bc.isDoUntilX && didTargetCountThisFrame; } }
 		public static bool RenderingRepeat { get { return bc.isDoXTimes; } }
+
+		public static void AssignCurrentlyRenderingField(string value) {
+			if (BillMenuData.RenderingRepeat) {
+				BillMenuData.bc.doXTimesLastValid = value;
+				BillMenuData.bc.doXTimesBuffer = value;
+			}
+			else if (BillMenuData.RenderingTarget) {
+				BillMenuData.bc.doUntilXLastValid = value;
+				BillMenuData.bc.doUntilXBuffer = value;
+			}
+			else {
+				BillMenuData.bc.unpauseLastValid = value;
+				BillMenuData.bc.unpauseBuffer = value;
+			}
+		}
+
+		public static string GetCurrentlyRenderingFieldValid() {
+			if (BillMenuData.RenderingRepeat) {
+				return bc.doXTimesLastValid;
+			}
+			else if (BillMenuData.RenderingTarget) {
+				return bc.doUntilXLastValid;
+			}
+			else {
+				return bc.unpauseLastValid;
+			}
+		}
 	}
 
 	// This patch is used to check when NumericTextField is being invoked, and to pass a reference to the calling Dialogue_BillConfig.
@@ -171,45 +198,30 @@ namespace CrunchyDuck.Math {
 			if (Widgets.ButtonText(new Rect(rect.xMin, rect.yMin, width, rect.height), (-10 * multiplier).ToStringCached())) {
 				value -= 10 * multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
 				SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
 			}
 			if (Widgets.ButtonText(new Rect(rect.xMin + width, rect.yMin, width, rect.height), (-1 * multiplier).ToStringCached())) {
 				value -= multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
 				SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
 			}
 			if (Widgets.ButtonText(new Rect(rect.xMax - width, rect.yMin, width, rect.height), "+" + (10 * multiplier).ToStringCached())) {
 				value += 10 * multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
 				SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 			}
 			if (Widgets.ButtonText(new Rect(rect.xMax - width * 2, rect.yMin, width, rect.height), "+" + multiplier.ToStringCached())) {
 				value += multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
 				SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 			}
 			Widgets.TextFieldNumeric<int>(new Rect(rect.xMin + width * 2, rect.yMin, rect.width - width * 4, rect.height), ref value, ref editBuffer);
 
 			return false;
-		}
-
-		public static void AssignCurrentlyRenderingField(string value) {
-			if (BillMenuData.RenderingRepeat) {
-				BillMenuData.bc.doXTimesLastValid = value;
-				BillMenuData.bc.doXTimesBuffer = value;
-			}
-			else if (BillMenuData.RenderingTarget) {
-				BillMenuData.bc.doUntilXLastValid = value;
-				BillMenuData.bc.doUntilXBuffer = value;
-			}
-			else {
-				BillMenuData.bc.unpauseLastValid = value;
-				BillMenuData.bc.unpauseBuffer = value;
-			}
 		}
 	}
 
@@ -305,5 +317,76 @@ namespace CrunchyDuck.Math {
 			GUI.color = base_color;
 			return str;
 		}
+	}
+
+	class DoConfigInterface_Patch {
+		public static BillComponent bc;
+		public static MethodInfo Target() {
+			return AccessTools.Method(typeof(Bill_Production), "DoConfigInterface");
+		}
+
+		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
+			var codes = new List<CodeInstruction>(instructions);
+			MethodInfo button_icon_method = AccessTools.Method(typeof(WidgetRow), "ButtonIcon");
+			int call_count = 0;
+			return codes.AsEnumerable();
+
+			for (var i = 0; i < codes.Count; i++) {
+				CodeInstruction code = codes[i];
+				if (code.Calls(button_icon_method)) {
+					MethodInfo m;
+					Label? branch_target = null;
+					// TODO: This doesn't work. I suspect I'm leaving something on the stack or something?
+					switch (call_count) {
+						case 0:
+							codes[i + 1].Branches(out branch_target);
+							m = AccessTools.Method(typeof(DoConfigInterface_Patch), "Increment");
+							codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, m));
+							codes.Insert(i + 3, new CodeInstruction(OpCodes.Br, branch_target));
+							break;
+							// TODO: This
+						case 1:
+							codes[i + 1].Branches(out branch_target);
+							m = AccessTools.Method(typeof(DoConfigInterface_Patch), "Decrement");
+							codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, m));
+							codes.Insert(i + 3, new CodeInstruction(OpCodes.Br, branch_target));
+							break;
+					}
+					if (branch_target == null)
+						Log.Message("oops");
+					call_count++;
+					if (call_count > 1)
+						break;
+				}
+			}
+
+			return codes.AsEnumerable();
+		}
+
+		public static void Prefix(Bill_Production __instance, Rect baseRect, Color baseColor) {
+			bc = BillManager.AddGetBillComponent(__instance);
+		}
+
+		public static void Postfix() {
+			bc = null;
+		}
+
+		// lazy
+		private static void Decrement() {
+			var eq = BillMenuData.GetCurrentlyRenderingFieldValid();
+			int number = 0;
+			Math.DoMath(eq, ref number, bc);
+			number -= bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();
+			BillMenuData.AssignCurrentlyRenderingField(number.ToString());
+		}
+
+		private static void Increment() {
+			var eq = BillMenuData.GetCurrentlyRenderingFieldValid();
+			int number = 0;
+			Math.DoMath(eq, ref number, bc);
+			number += bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();
+			BillMenuData.AssignCurrentlyRenderingField(number.ToString());
+		}
+
 	}
 }
