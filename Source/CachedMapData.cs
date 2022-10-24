@@ -79,16 +79,33 @@ namespace CrunchyDuck.Math {
 		}
 
 		// TODO: Do multiple passes of DoMath, where the first tallies up all resources they want to search, and the second searches for all of them at once.
+		// TODO: If the player (un)forbids something and then types it in, it isn't reflected until the next hour passes. This might lead people to thinking it's broken.
 		public bool SearchForResource(string parameter_name, out int count) {
 			count = 0;
 			if (parameter_name.NullOrEmpty())
 				return false;
-			if (!Math.searchabeThings.ContainsKey(parameter_name))
-				return false;
 
+			// Search thing
+			if (Math.searchableThings.ContainsKey(parameter_name)) {
+				count = GetResourceCount(parameter_name);
+				return true;
+			}
+			// Search category
+			else if (Math.searchabeCategories.ContainsKey(parameter_name)) {
+				ThingCategoryDef cat = Math.searchabeCategories[parameter_name];
+				foreach (ThingDef thingdef in cat.childThingDefs) {
+					count += GetResourceCount(thingdef.label.ToParameter());
+				}
+				return true;
+			}
+
+			return false;
+		}
+
+		public int GetResourceCount(string parameter_name) {
+			int count = 0;
 			if (!resources.ContainsKey(parameter_name)) {
-				List<Thing> things = map.listerThings.ThingsOfDef(Math.searchabeThings[parameter_name]);
-				count = 0;
+				List<Thing> things = map.listerThings.ThingsOfDef(Math.searchableThings[parameter_name]);
 				foreach (Thing thing in things) {
 					if (thing.IsForbidden(Faction.OfPlayer))
 						continue;
@@ -97,7 +114,7 @@ namespace CrunchyDuck.Math {
 				resources[parameter_name] = count;
 			}
 			count = resources[parameter_name];
-			return true;
+			return count;
 		}
 	}
 }

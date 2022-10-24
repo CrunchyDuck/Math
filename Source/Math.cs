@@ -20,7 +20,8 @@ namespace CrunchyDuck.Math {
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
 		private static Regex parameterNames = new Regex(@"(\w+)", RegexOptions.Compiled);
-		public static Dictionary<string, ThingDef> searchabeThings = new Dictionary<string, ThingDef>();
+		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
+		public static Dictionary<string, ThingCategoryDef> searchabeCategories = new Dictionary<string, ThingCategoryDef>();
 		public static Texture2D infoButtonImage = ContentFinder<Texture2D>.Get("yin_yang_kobold");
 
 		static Math() {
@@ -34,7 +35,16 @@ namespace CrunchyDuck.Math {
 					continue;
 				}
 				string param_name = thingDef.label.ToParameter();
-				searchabeThings[param_name] = thingDef;
+				searchableThings[param_name] = thingDef;
+			}
+
+			var thing_list2 = DefDatabase<ThingCategoryDef>.AllDefs;
+			foreach (ThingCategoryDef thingDef in thing_list2) {
+				if (thingDef.label == null) {
+					continue;
+				}
+				string param_name = thingDef.label.ToParameter();
+				searchabeCategories[param_name] = thingDef;
 			}
 		}
 
@@ -155,6 +165,7 @@ namespace CrunchyDuck.Math {
 			e.Parameters["bab_in"] = e.Parameters["babies_intake"] = cache.babiesIntake;
 #endif
 
+			// TODO: Add more searching modifiers, such as the nutritional value of foods.
 			foreach (string parameter in parameter_list) {
 				int count;
 				if (cache.SearchForResource(parameter, out count)) {
