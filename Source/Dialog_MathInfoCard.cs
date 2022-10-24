@@ -97,11 +97,13 @@ Medicine x5 -> medicine
 Go-juice -> [u]go_juice[/u]
 Uranium mace (legendary) -> mace", 2999));
 			stats.Add(new StatDrawEntry(cat, "Searching categories", "", 
-@"You can search any category of things in game, such as raw_food, textiles, meals, etc. Categories can be seen in any stockpile or bill menu.
+@"You can search any category of things in game, such as c_raw_food, c_textiles, c_meals, etc. Categories can be seen in any stockpile or bill menu.
 
-Just like ThingDefs, you need to convert the category name into a parameter name. Here are some examples:
-Mortar shells -> mortar_shells
-Humanlike corpses -> humanlike_corpses", 2998));
+Just like ThingDefs, you need to convert the category name into a parameter name, but for categories you also need to prepend the name with c_
+Here are some examples:
+Meals -> c_meals
+Mortar shells -> c_mortar_shells
+Humanlike corpses -> c_humanlike_corpses", 2998));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
@@ -112,7 +114,7 @@ Humanlike corpses -> humanlike_corpses", 2998));
 			stats.Add(new StatDrawEntry(cat, "​pawns_intake * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​col * 2", "", "Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.", 3000));
 			stats.Add(new StatDrawEntry(cat, "​if(slate_blocks > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2999));
-			stats.Add(new StatDrawEntry(cat, "​if(meals < 50, 50, 0)", "", "Produce this thing only if we have less than 50 different 'meals' - simple, packaged, fine, etc.\nVery useful for producing simple meals instead of fine meals if the resources aren't available.", 2998));
+			stats.Add(new StatDrawEntry(cat, "​if(c_meals < 50, 50, 0)", "", "Produce this thing only if we have less than 50 different 'meals' - simple, packaged, fine, etc.\nVery useful for producing simple meals instead of fine meals if the resources aren't available.", 2998));
 
 			//cat = catFunctions;
 			//stats.Add(new StatDrawEntry(cat, "if statements", "", "Example:\nif(fine_meal > 10, 10, 0)\n\n", 2999));
