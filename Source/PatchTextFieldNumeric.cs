@@ -43,33 +43,28 @@ namespace CrunchyDuck.Math {
 			else if (is_unpause)
 				buffer = bc.unpause_buffer;
 
-			// This checks if the user pressed the + or - buttons.
-			string equation = is_unpause ? bc.unpause_last_valid : field;
-			int test_val = val;
-			Math.DoMath(equation, ref test_val, bc);
-			// User pressed one of the buttons, and we should clear the field and accept the number.
-			if (test_val != val) {
-				field = val.ToString();
-				buffer = field;
-				if (is_unpause)
-					bc.unpause_buffer = val.ToString();
-				return false;
-			}
+			// This checks if the user pressed the + or - buttons. This will only work if paused for now.
+			// TODO: Update this to use a transpiler on the + - in the preview menu.
+			//string equation = is_unpause ? bc.unpause_last_valid : field;
+			//int test_val = val;
+			//if (Find.TickManager.CurTimeSpeed == TimeSpeed.Paused) {
+			//	Math.DoMath(equation, ref test_val, bc);
+			//	// User pressed one of the buttons, and we should clear the field and accept the number.
+			//	if (test_val != val) {
+			//		field = val.ToString();
+			//		buffer = field;
+			//		if (is_unpause)
+			//			bc.unpause_buffer = val.ToString();
 
-
-			string name = "TextField" + rect.y.ToString("F0") + rect.x.ToString("F0");
-			GUI.SetNextControlName(name);
-			var base_color = GUI.color;
+			//		RenderTextField(rect, buffer, bc);
+			//		return false;
+			//	}
+			//}
 
 			// Check if equation last was valid, tint red if not.
 			// We can't tint this on the same frame because the act of rendering the text field is also the act of polling.
 			// Therefore we can't poll and check the new value, then retroactively change the colour.
-			test_val = 0;
-			if (!Math.DoMath(buffer, ref test_val, bc))
-				GUI.color = new Color(1, 0, 0, 0.8f);
-
-			string str = Widgets.TextField(rect, buffer);
-			GUI.color = base_color;
+			var str = RenderTextField(rect, buffer, bc);
 			if (buffer != str) {
 				buffer = str;
 				if (is_unpause)
@@ -82,6 +77,19 @@ namespace CrunchyDuck.Math {
 				}
 			}
 			return false;
+		}
+
+		public static string RenderTextField(Rect rect, string buffer, BillComponent bc) {
+			string name = "TextField" + rect.y.ToString("F0") + rect.x.ToString("F0");
+			GUI.SetNextControlName(name);
+			var base_color = GUI.color;
+			int test_val = 0;
+			if (!Math.DoMath(buffer, ref test_val, bc))
+				GUI.color = new Color(1, 0, 0, 0.8f);
+
+			string str = Widgets.TextField(rect, buffer);
+			GUI.color = base_color;
+			return str;
 		}
 	}
 
