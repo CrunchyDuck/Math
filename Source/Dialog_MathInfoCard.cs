@@ -11,7 +11,7 @@ namespace CrunchyDuck.Math {
 	// the interface is so simple, yet for some reason instead of abstracting it down,
 	// they have a shit load of different modes for different types of defs
 	// it is some of the most poorly thought out code i've seen in a while
-	class Dialog_MathCard : Window {
+	class Dialog_MathInfoCard : Window {
 		public List<StatDrawEntry> statEntries;
 		public BillComponent attachedBill;
 		public StatCategoryDef catBasics = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDBasics");
@@ -31,7 +31,7 @@ namespace CrunchyDuck.Math {
 		// TODO: Add this in.
 		//public override QuickSearchWidget CommonSearchWidget => this.tab != Dialog_InfoCard.InfoCardTab.Stats ? (QuickSearchWidget)null : StatsReportUtility.QuickSearchWidget;
 
-		public Dialog_MathCard(BillComponent bill) {
+		public Dialog_MathInfoCard(BillComponent bill) {
 			attachedBill = bill;
 			statEntries = GetStatEntries();
 			// If these values aren't reset you get some corruption nonsense because the system is jank.
@@ -81,6 +81,24 @@ namespace CrunchyDuck.Math {
 				"This menu provides a big reference for the Math mod, its functions and variables, and some examples of what you can do with them.\n\nThe left column is the variable name, the right column is the current value.\n\nClick on a row to get an explanation.",
 				10000);
 			stats.Add(stat);
+			stats.Add(new StatDrawEntry(cat, "Searching ThingDefs", "",
+@"You can search any ThingDef in the game such as slate_blocks, ostriches, compacted_steel, etc.
+To do so you need to convert the in-game name into a valid parameter name. This is simple enough to do though!
+
+First, if it's a crafted/built item, ignore the material/quality of the item. For stacks, ignore the quantity.
+Then, make it all lowercase.
+Finally, replace spaces with underscores.
+
+Let's look at some examples:
+Compacted steel -> compacted_steel
+Medicine x5 -> medicine
+Uranium mace (legendary) -> mace", 2999));
+			stats.Add(new StatDrawEntry(cat, "Searching categories", "", 
+@"You can search any category of things in game, such as raw_food, textiles, meals, etc. Categories can be seen in any stockpile or bill menu.
+
+Just like ThingDefs, you need to convert the category name into a parameter name. Here are some examples:
+Mortar shells -> mortar_shells
+Humanlike corpses -> humanlike_corpses", 2998));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
@@ -91,7 +109,7 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​pawns_intake * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​col * 2", "", "Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.", 3000));
 			stats.Add(new StatDrawEntry(cat, "​if(slate_blocks > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2999));
-			// stats.Add(new StatDrawEntry(cat, "​if(meat > 200, 50, 0)", "", "Kibble production", 2998));
+			stats.Add(new StatDrawEntry(cat, "​if(meals < 50, 50, 0)", "", "Produce this thing only if we have less than 50 different 'meals' - simple, packaged, fine, etc.\nVery useful for producing simple meals instead of fine meals if the resources aren't available.", 2998));
 
 			//cat = catFunctions;
 			//stats.Add(new StatDrawEntry(cat, "if statements", "", "Example:\nif(fine_meal > 10, 10, 0)\n\n", 2999));

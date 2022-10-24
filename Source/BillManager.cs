@@ -33,6 +33,8 @@ namespace CrunchyDuck.Math {
 			// Make sure bills are up to date.
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
 				foreach (BillComponent item in billTable.Values) {
+					// I think I put this here to fix something sometime.
+					// But testing, the problem it fixed isn't a problem, and it actually breaks other things.
 					// Number changed, likely because they pressed + or -.
 					//if (item.targetBill.targetCount != item.target_count_last_result) {
 					//	item.target_count_last_result = item.targetBill.targetCount;

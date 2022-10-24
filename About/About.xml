@@ -48,6 +48,13 @@ Compacted steel -> [u]compacted_steel[/u]
 Medicine x5 -> [u]medicine[/u]
 Plasteel flak helmet (excellent) -> [u]flak_helmet[/u]
 
+[b]Category searching[/b]
+You can search categories of items the same way you'd search ThingDefs. Some examples include:
+Meals -> meals
+Mortar shells -> mortar_shells
+Humanlike corpses -> humanlike_corpses
+
+
 [h2]Compatibility[/h2]
 Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
 

@@ -125,7 +125,7 @@ namespace CrunchyDuck.Math {
 			Rect rect = new Rect(rect1.x + 24 + 4, rect3.y, 24, 24);
 			
 			if (Widgets.ButtonImage(rect, Math.infoButtonImage, GUI.color)) {
-				Find.WindowStack.Add(new Dialog_MathCard(bc));
+				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
 		}
 
