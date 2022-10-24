@@ -11,10 +11,10 @@ using System.Text.RegularExpressions;
 
 namespace CrunchyDuck.Math {
 	// TODO: Show decimal values in Currently Have, Repeat and Unpause At, but round the ultimate value.
-	// TODO: Change default bill type to "do until you have x"
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
 	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
+	// TODO: Clothing restriction category.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

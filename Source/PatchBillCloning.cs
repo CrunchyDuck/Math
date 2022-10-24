@@ -15,9 +15,9 @@ namespace CrunchyDuck.Math {
 			BillComponent bc = BillManager.AddGetBillComponent(__instance);
 			Verse.Log.Message(__result.GetType().ToString());
 			BillComponent new_bc = BillManager.AddGetBillComponent((Bill_Production)__result);
-			new_bc.repeat_count_last_valid = bc.repeat_count_last_valid;
-			new_bc.target_count_last_valid = bc.target_count_last_valid;
-			new_bc.unpause_last_valid = bc.unpause_last_valid;
+			new_bc.doXTimesLastValid = bc.doXTimesLastValid;
+			new_bc.doUntilXLastValid = bc.doUntilXLastValid;
+			new_bc.unpauseLastValid = bc.unpauseLastValid;
 		}
 
 		public static MethodInfo Target2() {

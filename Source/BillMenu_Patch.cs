@@ -121,8 +121,8 @@ namespace CrunchyDuck.Math {
 		public static void Postfix(Rect inRect) {
 			// This overrides the logic for unpausing recipes. It breaks how my stuff works, and it's dumb anyway.
 			BillComponent bc = BillMenuData.bc;
-			Math.DoMath(bc.unpause_last_valid, ref bc.targetBill.unpauseWhenYouHave, bc);
-			AccessTools.Field(typeof(Dialog_BillConfig), "unpauseCountEditBuffer").SetValue(BillMenuData.bill_dialogue, bc.unpause_buffer);
+			Math.DoMath(bc.unpauseLastValid, ref bc.targetBill.unpauseWhenYouHave, bc);
+			AccessTools.Field(typeof(Dialog_BillConfig), "unpauseCountEditBuffer").SetValue(BillMenuData.bill_dialogue, bc.unpauseBuffer);
 
 			// Render help button.
 			// Touch lazy to copy this from the method, but oh well.
@@ -198,12 +198,18 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static void AssignCurrentlyRenderingField(string value) {
-			if (BillMenuData.RenderingRepeat)
-				BillMenuData.bc.repeat_count_last_valid = value;
-			else if (BillMenuData.RenderingTarget)
-				BillMenuData.bc.target_count_last_valid = value;
-			else
-				BillMenuData.bc.unpause_last_valid = value;
+			if (BillMenuData.RenderingRepeat) {
+				BillMenuData.bc.doXTimesLastValid = value;
+				BillMenuData.bc.doXTimesBuffer = value;
+			}
+			else if (BillMenuData.RenderingTarget) {
+				BillMenuData.bc.doUntilXLastValid = value;
+				BillMenuData.bc.doUntilXBuffer = value;
+			}
+			else {
+				BillMenuData.bc.unpauseLastValid = value;
+				BillMenuData.bc.unpauseBuffer = value;
+			}
 		}
 	}
 
@@ -246,19 +252,20 @@ namespace CrunchyDuck.Math {
 				BillComponent bc = BillMenuData.bc;
 
 				if (BillMenuData.RenderingRepeat)
-					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.repeat_count_last_valid);
+					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.doXTimesLastValid, ref bc.doXTimesBuffer);
 				else if (BillMenuData.RenderingTarget) {
+					PrefixExtended(rect, ref val, ref buffer, bc, ref bc.doUntilXLastValid, ref bc.doUntilXBuffer);
 					BillMenuData.didTargetCountThisFrame = true;
-					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.target_count_last_valid);
+					return false;
 				}
 				else if (BillMenuData.RenderingUnpause)
-					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.unpause_last_valid);
+					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.unpauseLastValid, ref bc.unpauseBuffer);
 			}
 			return true;
 		}
 
 		/// This is its own function so that I can use ref string field to clean up my code. C# has stupid rules about local refs.
-		public static bool PrefixExtended(Rect rect, ref int val, ref string buffer, BillComponent bc, ref string field) {
+		public static bool PrefixExtended(Rect rect, ref int val, ref string display_buffer, BillComponent bc, ref string field, ref string buffer) {
 			// I don't think this happens.
 			if (bc.targetBill.repeatMode == BillRepeatModeDefOf.Forever)
 				return false;
@@ -266,9 +273,6 @@ namespace CrunchyDuck.Math {
 			// Fill buffer for first time.
 			if (buffer == null)
 				buffer = field;
-			// Rimworld has some fucky logic for the unpause field. This overrides that logic.
-			else if (BillMenuData.RenderingUnpause)
-				buffer = bc.unpause_buffer;
 
 			// Check if equation last was valid, tint red if not.
 			// We can't tint this on the same frame because the act of rendering the text field is also the act of polling.
@@ -277,7 +281,7 @@ namespace CrunchyDuck.Math {
 			if (buffer != str) {
 				buffer = str;
 				if (BillMenuData.RenderingUnpause)
-					bc.unpause_buffer = buffer;
+					bc.unpauseBuffer = buffer;
 
 				// Try to evaluate equation
 				if (Math.DoMath(buffer, ref val, bc)) {
@@ -285,6 +289,7 @@ namespace CrunchyDuck.Math {
 					field = buffer;
 				}
 			}
+			display_buffer = buffer;
 			return false;
 		}
 
