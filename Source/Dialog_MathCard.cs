@@ -24,8 +24,9 @@ namespace CrunchyDuck.Math {
 		public static MethodInfo StatsWorker = AccessTools.Method(typeof(StatsReportUtility), "DrawStatsWorker");
 		public static MethodInfo StatsFinalize = AccessTools.Method(typeof(StatsReportUtility), "FinalizeCachedDrawEntries");
 		public static FieldInfo statsCache = AccessTools.Field(typeof(StatsReportUtility), "cachedDrawEntries");
+#if v1_4
 		public static FieldInfo statsCacheValues = AccessTools.Field(typeof(StatsReportUtility), "cachedEntryValues");
-
+#endif
 		public override Vector2 InitialSize => new Vector2(950f, 760f);
 		protected override float Margin => 0.0f;
 		// TODO: Add this in.
@@ -35,7 +36,9 @@ namespace CrunchyDuck.Math {
 			attachedBill = bill;
 			statEntries = GetStatEntries();
 			// If these values aren't reset you get some corruption nonsense because the system is jank.
+#if v1_4
 			statsCacheValues.SetValue(null, new List<string>());
+#endif
 		}
 
 		public override void Close(bool doCloseSound = true) {
@@ -72,22 +75,9 @@ namespace CrunchyDuck.Math {
 
 		private List<StatDrawEntry> GetStatEntries() {
 			var stats = new List<StatDrawEntry>();
-
-			//e.Parameters["pwn"] = e.Parameters["pawns"] = cache.pawns.Count();
-			//e.Parameters["col"] = e.Parameters["colonists"] = cache.colonists.Count();
-			//e.Parameters["slv"] = e.Parameters["slaves"] = cache.slaves.Count();
-			//e.Parameters["pri"] = e.Parameters["prisoners"] = cache.prisoners.Count();
-			//e.Parameters["anim"] = e.Parameters["animals"] = cache.ownedAnimals.Count();
-
-			//e.Parameters["pwn_in"] = e.Parameters["pawns_intake"] = cache.pawnsIntake;
-			//e.Parameters["col_in"] = e.Parameters["colonists_intake"] = cache.colonistsIntake;
-			//e.Parameters["slv_in"] = e.Parameters["slaves_intake"] = cache.slavesIntake;
-			//e.Parameters["pri_in"] = e.Parameters["prisoners_intake"] = cache.prisonersIntake;
-			//e.Parameters["anim_in"] = e.Parameters["animals_intake"] = cache.ownedAnimalsIntake;
-
 			StatDrawEntry stat;
-			var cat = catBasics;
 
+			var cat = catBasics;
 			stat = new StatDrawEntry(cat, "description", "",
 				"This menu provides a big reference for the Math mod, its functions and variables, and some examples of what you can do with them.\n\nThe left column is the variable name, the right column is the current value.\n\nClick on a row to get an explanation.",
 				10000);
@@ -107,7 +97,6 @@ namespace CrunchyDuck.Math {
 			//cat = catFunctions;
 			//stats.Add(new StatDrawEntry(cat, "if statements", "", "Example:\nif(fine_meal > 10, 10, 0)\n\n", 2999));
 
-
 			cat = catPawns;
 			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map. Does not include prisoners or slaves.", 3000));
@@ -121,7 +110,6 @@ namespace CrunchyDuck.Math {
 
 			cat = catModifiers;
 			stats.Add(new StatDrawEntry(cat, "​pawns_intake", attachedBill.Cache.pawnsIntake.ToString(), "Alias: pwn_in\nThe _in modifier can be used on any group of pawns like slv_in, pri_in, etc. It returns the amount of nutrition a pawn requires per day after all modifiers have been applied.\n\nThis number can also be seen in a pawn's info card under \"Food consumption\".", 2995));
-
 
 			return stats;
 		}

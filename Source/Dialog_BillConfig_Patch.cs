@@ -82,7 +82,8 @@ namespace CrunchyDuck.Math {
 			var codes = new List<CodeInstruction>(instructions);
 			int num_codes_found = 0;
 			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
-			float panel_allocation = textInputAreaBonus / 3;
+			// TODO: This scales weirdly. Figure out why.
+			float panel_allocation = Settings.textInputAreaBonus / 3;
 
 			for (var i = 0; i < codes.Count; i++) {
 				// Increase size of panel

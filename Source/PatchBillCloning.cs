@@ -6,8 +6,6 @@ namespace CrunchyDuck.Math {
 	// This patch handles the cloning of bills.
 	// TODO: I couldn't get this working elegantly. Making it work for copying breaks adding bills normally.
 	class PatchBillCloning {
-		public static BillComponent copied_bc;
-
 		public static MethodInfo Target1() {
 			return AccessTools.Method(typeof(Bill_Production), "Clone");
 		}
