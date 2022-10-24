@@ -8,6 +8,26 @@ namespace CrunchyDuck.Math {
             Scribe_Values.Look(ref textInputAreaBonus, "CDtextInputAreaBonus", 200f);
             base.ExposeData();
         }
+
+        // Pete's slider code.
+        // https://github.com/PeteTimesSix/ResearchReinvented/blob/main/ResearchReinvented/Source/Utilities/ListingExtensions.cs
+        //public static void SliderLabeled(this Listing_Standard instance, string label, ref float value, float min, float max, float roundTo = -1, float displayMult = 1, int decimalPlaces = 0, string valueSuffix = "", string tooltip = null, Action onChange = null) {
+        //    if (!string.IsNullOrEmpty(label))
+        //        instance.Label($"{label}: {(value * displayMult).ToString($"F{decimalPlaces}")}{valueSuffix}", tooltip: tooltip);
+        //    var valueBefore = value;
+        //    value = instance.FullSlider(value, min, max, roundTo: roundTo);
+        //    if (value != valueBefore) {
+        //        onChange?.Invoke();
+        //    }
+        //}
+        //public static float FullSlider(this Listing_Standard instance, float val, float min, float max, float roundTo = -1f, bool middleAlignment = false, string label = null, string leftAlignedLabel = null, string rightAlignedLabel = null) {
+        //    float newVal = Widgets.HorizontalSlider(instance.GetRect(22f), val, min, max, middleAlignment, label, leftAlignedLabel, rightAlignedLabel, roundTo);
+        //    if (newVal != val) {
+        //        SoundDefOf.DragSlider.PlayOneShotOnCamera(null);
+        //    }
+        //    instance.Gap(instance.verticalSpacing);
+        //    return newVal;
+        //}
     }
 
     // I couldn't find a page on how Mod works, so I'm definitely using it poorly here. Suspect I could replace Math with this.

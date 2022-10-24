@@ -38,14 +38,17 @@ etc.
 
 [b]ThingDef searching[/b]
 You can search for the count of [u]any[/u] ThingDef (items, ostriches, doors, rocks...) on the map. Anything that is forbidden will not be counted.
+This also take into account your bill's options. Set it to "normal and above" quality only? You won't be seeing any low tier [i]trash[/i] in your count! "Tainted" and "hitpoints" also work.
+
 You'll need to convert the name of that thing into a valid parameter, which is simple to do!
 First, if it's a crafted/built item, ignore the material/quality of the item. For stacks, ignore the quantity.
 Then, make it all lowercase.
-Finally, replace spaces with underscores.
+Finally, replace spaces and special characters like - or ' with underscores.
 
 Let's look at some examples:
 Compacted steel -> [u]compacted_steel[/u]
 Medicine x5 -> [u]medicine[/u]
+Go-juice -> [u]go_juice[/u]
 Plasteel flak helmet (excellent) -> [u]flak_helmet[/u]
 
 [b]Category searching[/b]

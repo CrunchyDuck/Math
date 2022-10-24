@@ -83,15 +83,18 @@ namespace CrunchyDuck.Math {
 			stats.Add(stat);
 			stats.Add(new StatDrawEntry(cat, "Searching ThingDefs", "",
 @"You can search any ThingDef in the game such as slate_blocks, ostriches, compacted_steel, etc.
-To do so you need to convert the in-game name into a valid parameter name. This is simple enough to do though!
+The count you get back will not include forbidden items, and will take into account the recipe's settings. E.G. if an item has 40% hitpoints but recipe requires 50%, it won't be counted.
+
+To search a ThingDef you need to convert the in-game name into a valid parameter name. This is simple enough to do though!
 
 First, if it's a crafted/built item, ignore the material/quality of the item. For stacks, ignore the quantity.
 Then, make it all lowercase.
-Finally, replace spaces with underscores.
+Finally, replace spaces and special characters like - or ' with underscores.
 
 Let's look at some examples:
 Compacted steel -> compacted_steel
 Medicine x5 -> medicine
+Go-juice -> [u]go_juice[/u]
 Uranium mace (legendary) -> mace", 2999));
 			stats.Add(new StatDrawEntry(cat, "Searching categories", "", 
 @"You can search any category of things in game, such as raw_food, textiles, meals, etc. Categories can be seen in any stockpile or bill menu.

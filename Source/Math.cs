@@ -168,7 +168,7 @@ namespace CrunchyDuck.Math {
 			// TODO: Add more searching modifiers, such as the nutritional value of foods.
 			foreach (string parameter in parameter_list) {
 				int count;
-				if (cache.SearchForResource(parameter, out count)) {
+				if (cache.SearchForResource(parameter, bc, out count)) {
 					e.Parameters[parameter] = count;
 				}
 			}

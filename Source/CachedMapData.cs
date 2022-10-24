@@ -23,7 +23,7 @@ namespace CrunchyDuck.Math {
 		public float prisonersIntake = 0;
 		public float slavesIntake = 0;
 		public float ownedAnimalsIntake = 0;
-		public Dictionary<string, int> resources = new Dictionary<string, int>();
+		public Dictionary<string, List<Thing>> resources = new Dictionary<string, List<Thing>>();
 
 		public CachedMapData(Map map) {
 			this.map = map;
@@ -80,21 +80,21 @@ namespace CrunchyDuck.Math {
 
 		// TODO: Do multiple passes of DoMath, where the first tallies up all resources they want to search, and the second searches for all of them at once.
 		// TODO: If the player (un)forbids something and then types it in, it isn't reflected until the next hour passes. This might lead people to thinking it's broken.
-		public bool SearchForResource(string parameter_name, out int count) {
+		public bool SearchForResource(string parameter_name, BillComponent bc, out int count) {
 			count = 0;
 			if (parameter_name.NullOrEmpty())
 				return false;
 
 			// Search thing
 			if (Math.searchableThings.ContainsKey(parameter_name)) {
-				count = GetResourceCount(parameter_name);
+				count = GetResourceCount(parameter_name, bc);
 				return true;
 			}
 			// Search category
 			else if (Math.searchabeCategories.ContainsKey(parameter_name)) {
 				ThingCategoryDef cat = Math.searchabeCategories[parameter_name];
 				foreach (ThingDef thingdef in cat.childThingDefs) {
-					count += GetResourceCount(thingdef.label.ToParameter());
+					count += GetResourceCount(thingdef.label.ToParameter(), bc);
 				}
 				return true;
 			}
@@ -102,18 +102,30 @@ namespace CrunchyDuck.Math {
 			return false;
 		}
 
-		public int GetResourceCount(string parameter_name) {
+		public int GetResourceCount(string parameter_name, BillComponent bc) {
 			int count = 0;
 			if (!resources.ContainsKey(parameter_name)) {
-				List<Thing> things = map.listerThings.ThingsOfDef(Math.searchableThings[parameter_name]);
-				foreach (Thing thing in things) {
-					if (thing.IsForbidden(Faction.OfPlayer))
-						continue;
-					count += thing.stackCount;
-				}
-				resources[parameter_name] = count;
+				resources[parameter_name] = map.listerThings.ThingsOfDef(Math.searchableThings[parameter_name]);
 			}
-			count = resources[parameter_name];
+
+			foreach (Thing thing in resources[parameter_name]) {
+				if (thing.IsForbidden(Faction.OfPlayer))
+					continue;
+				// Doesn't have enough hitpoints
+				if (!bc.targetBill.hpRange.IncludesEpsilon(thing.HitPoints / thing.MaxHitPoints))
+					continue;
+				// Has quality and is not good enough.
+				QualityCategory q;
+				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
+					continue;
+				// Tainted when should not be.
+				Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
+				if (a != null && !bc.targetBill.includeTainted && a.WornByCorpse)
+					continue;
+				//TODO: Add equipped +store mode.
+
+			  count += thing.stackCount;
+			}
 			return count;
 		}
 	}
