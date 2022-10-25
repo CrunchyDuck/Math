@@ -24,8 +24,11 @@ namespace CrunchyDuck.Math {
 		public void ExposeData() {
 			// I wanna change these but that'd break peoples' saves lmao
 			Scribe_Values.Look(ref doXTimes.lastValid, "repeat_count_last_valid");
+			doXTimes.buffer = doXTimes.lastValid;
 			Scribe_Values.Look(ref doUntilX.lastValid, "target_count_last_valid");
+			doUntilX.buffer = doUntilX.lastValid;
 			Scribe_Values.Look(ref unpause.lastValid, "unpause_last_valid");
+			unpause.buffer = unpause.lastValid;
 
 			Scribe_Values.Look(ref targetBill.targetCount, "target_count_last_result");
 			Scribe_Values.Look(ref targetBill.repeatCount, "doXTimesLastResult");
