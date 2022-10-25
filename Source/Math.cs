@@ -15,7 +15,6 @@ namespace CrunchyDuck.Math {
 	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
 	// TODO: Clothing restriction category.
-	// TODO: Fix outer + and - buttons.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

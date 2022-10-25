@@ -331,7 +331,6 @@ namespace CrunchyDuck.Math {
 				if (code.Calls(button_icon_method)) {
 					MethodInfo m;
 					Label? branch_target = null;
-					// TODO: This doesn't work. I suspect I'm leaving something on the stack or something?
 					switch (call_count) {
 						case 0:
 							codes[i + 1].Branches(out branch_target);
@@ -351,7 +350,6 @@ namespace CrunchyDuck.Math {
 						break;
 				}
 			}
-
 			return codes.AsEnumerable();
 		}
 #endif
