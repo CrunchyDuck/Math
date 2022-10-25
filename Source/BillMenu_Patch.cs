@@ -11,59 +11,56 @@ using Verse.Sound;
 // This file handles making the bill menu work nicer.
 namespace CrunchyDuck.Math {
 	static class BillMenuData {
-		public static Dialog_BillConfig bill_dialogue = null;
+		public static BillComponent bc = null;
+		public static Dialog_BillConfig billDialog = null;
+		public static Bill_Production billProduction = null;
 		public static bool didTargetCountThisFrame = false;
 		public static Rect rect;
-
-		public static Bill_Production BillRef {
-			get {
-				if (bill_dialogue == null)
-					return null;
-				return (Bill_Production)AccessTools.Field(typeof(Dialog_BillConfig), "bill").GetValue(bill_dialogue);
-			}
-		}
-		public static BillComponent bc {
-			get {
-				return BillManager.AddGetBillComponent(BillRef);
-			}
-		}
-		public static int BillID {
-			get {
-				var b = BillRef;
-				if (b == null)
-					return -1;
-				return (int)AccessTools.Field(typeof(Bill), "loadID").GetValue(b);
-			}
-		}
 	
 		public static bool RenderingTarget { get { return bc.isDoUntilX && !didTargetCountThisFrame; } }
 		public static bool RenderingUnpause { get { return bc.isDoUntilX && didTargetCountThisFrame; } }
 		public static bool RenderingRepeat { get { return bc.isDoXTimes; } }
 
-		public static void AssignCurrentlyRenderingField(string value) {
-			if (BillMenuData.RenderingRepeat) {
-				BillMenuData.bc.doXTimesLastValid = value;
-				BillMenuData.bc.doXTimesBuffer = value;
+		public static void AssignTo(BillComponent bc) {
+			didTargetCountThisFrame = false;
+			BillMenuData.bc = bc;
+		}
+
+		public static void AssignTo(Dialog_BillConfig bill_dialogue, Rect rect) {
+			didTargetCountThisFrame = false;
+			billDialog = bill_dialogue;
+			BillMenuData.rect = rect;
+			billProduction = (Bill_Production)AccessTools.Field(typeof(Dialog_BillConfig), "bill").GetValue(bill_dialogue);
+			bc = BillManager.AddGetBillComponent(billProduction);
+		}
+
+		public static void Unassign() {
+			billDialog = null;
+			billProduction = null;
+			bc = null;
+		}
+
+		public static void AssignCurrentlyRenderingField(int value) {
+			if (RenderingRepeat) {
+				bc.doXTimes.SetAll(value);
 			}
-			else if (BillMenuData.RenderingTarget) {
-				BillMenuData.bc.doUntilXLastValid = value;
-				BillMenuData.bc.doUntilXBuffer = value;
+			else if (RenderingTarget) {
+				bc.doUntilX.SetAll(value);
 			}
 			else {
-				BillMenuData.bc.unpauseLastValid = value;
-				BillMenuData.bc.unpauseBuffer = value;
+				bc.unpause.SetAll(value);
 			}
 		}
 
-		public static string GetCurrentlyRenderingFieldValid() {
-			if (BillMenuData.RenderingRepeat) {
-				return bc.doXTimesLastValid;
+		public static InputField GetCurrentlyRenderingField() {
+			if (RenderingRepeat) {
+				return bc.doXTimes;
 			}
-			else if (BillMenuData.RenderingTarget) {
-				return bc.doUntilXLastValid;
+			else if (RenderingTarget) {
+				return bc.doUntilX;
 			}
 			else {
-				return bc.unpauseLastValid;
+				return bc.unpause;
 			}
 		}
 	}
@@ -138,18 +135,17 @@ namespace CrunchyDuck.Math {
 
 		// Started render
 		public static bool Prefix(Dialog_BillConfig __instance, Rect inRect) {
-			BillMenuData.didTargetCountThisFrame = false;
-			BillMenuData.bill_dialogue = __instance;
-			BillMenuData.rect = inRect;
+			BillMenuData.AssignTo(__instance, inRect);
             return true;
 		}
 
 		// Finished render
 		public static void Postfix(Rect inRect) {
 			// This overrides the logic for unpausing recipes. It breaks how my stuff works, and it's dumb anyway.
+			// TODO: This might be able to be removed?
 			BillComponent bc = BillMenuData.bc;
-			Math.DoMath(bc.unpauseLastValid, ref bc.targetBill.unpauseWhenYouHave, bc);
-			AccessTools.Field(typeof(Dialog_BillConfig), "unpauseCountEditBuffer").SetValue(BillMenuData.bill_dialogue, bc.unpauseBuffer);
+			Math.DoMath(bc.unpause.lastValid, ref bc.targetBill.unpauseWhenYouHave, bc);
+			AccessTools.Field(typeof(Dialog_BillConfig), "unpauseCountEditBuffer").SetValue(BillMenuData.billDialog, bc.unpause.buffer);
 
 			// Render help button.
 			// Touch lazy to copy this from the method, but oh well.
@@ -162,7 +158,7 @@ namespace CrunchyDuck.Math {
 			if (Widgets.ButtonImage(rect, Math.infoButtonImage, GUI.color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
-			BillMenuData.bill_dialogue = null;
+			BillMenuData.Unassign();
 		}
 	}
 
@@ -198,25 +194,25 @@ namespace CrunchyDuck.Math {
 			if (Widgets.ButtonText(new Rect(rect.xMin, rect.yMin, width, rect.height), (-10 * multiplier).ToStringCached())) {
 				value -= 10 * multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(value);
 				SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
 			}
 			if (Widgets.ButtonText(new Rect(rect.xMin + width, rect.yMin, width, rect.height), (-1 * multiplier).ToStringCached())) {
 				value -= multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(value);
 				SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
 			}
 			if (Widgets.ButtonText(new Rect(rect.xMax - width, rect.yMin, width, rect.height), "+" + (10 * multiplier).ToStringCached())) {
 				value += 10 * multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(value);
 				SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 			}
 			if (Widgets.ButtonText(new Rect(rect.xMax - width * 2, rect.yMin, width, rect.height), "+" + multiplier.ToStringCached())) {
 				value += multiplier * GenUI.CurrentAdjustmentMultiplier();
 				editBuffer = value.ToStringCached();
-				BillMenuData.AssignCurrentlyRenderingField(editBuffer);
+				BillMenuData.AssignCurrentlyRenderingField(value);
 				SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 			}
 			Widgets.TextFieldNumeric<int>(new Rect(rect.xMin + width * 2, rect.yMin, rect.width - width * 4, rect.height), ref value, ref editBuffer);
@@ -260,48 +256,48 @@ namespace CrunchyDuck.Math {
 		//}
 
 		public static bool Prefix(Rect rect, ref int val, ref string buffer, float min = 0.0f, float max = 1E+09f) {
-			if (BillMenuData.bill_dialogue != null) {
+			if (BillMenuData.billDialog != null) {
 				BillComponent bc = BillMenuData.bc;
 
 				if (BillMenuData.RenderingRepeat)
-					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.doXTimesLastValid, ref bc.doXTimesBuffer);
+					return PrefixExtended(rect, ref val, ref buffer, bc, bc.doXTimes);
 				else if (BillMenuData.RenderingTarget) {
-					PrefixExtended(rect, ref val, ref buffer, bc, ref bc.doUntilXLastValid, ref bc.doUntilXBuffer);
+					PrefixExtended(rect, ref val, ref buffer, bc, bc.doUntilX);
 					BillMenuData.didTargetCountThisFrame = true;
 					return false;
 				}
 				else if (BillMenuData.RenderingUnpause)
-					return PrefixExtended(rect, ref val, ref buffer, bc, ref bc.unpauseLastValid, ref bc.unpauseBuffer);
+					return PrefixExtended(rect, ref val, ref buffer, bc, bc.unpause);
 			}
 			return true;
 		}
 
 		/// This is its own function so that I can use ref string field to clean up my code. C# has stupid rules about local refs.
-		public static bool PrefixExtended(Rect rect, ref int val, ref string display_buffer, BillComponent bc, ref string field, ref string buffer) {
+		public static bool PrefixExtended(Rect rect, ref int val, ref string display_buffer, BillComponent bc, InputField field) {
 			// I don't think this happens.
 			if (bc.targetBill.repeatMode == BillRepeatModeDefOf.Forever)
 				return false;
 
 			// Fill buffer for first time.
-			if (buffer == null)
-				buffer = field;
+			if (field.buffer == null)
+				field.buffer = field.lastValid;
 
 			// Check if equation last was valid, tint red if not.
 			// We can't tint this on the same frame because the act of rendering the text field is also the act of polling.
 			// Therefore we can't poll and check the new value, then retroactively change the colour.
-			var str = RenderTextField(rect, buffer, bc);
-			if (buffer != str) {
-				buffer = str;
+			var str = RenderTextField(rect, field.buffer, bc);
+			if (field.buffer != str) {
+				field.buffer = str;
 				if (BillMenuData.RenderingUnpause)
-					bc.unpauseBuffer = buffer;
+					bc.unpause.buffer = field.buffer;
 
 				// Try to evaluate equation
-				if (Math.DoMath(buffer, ref val, bc)) {
+				if (Math.DoMath(field.buffer, ref val, bc)) {
 					// Update last valid.
-					field = buffer;
+					field.lastValid = field.buffer;
 				}
 			}
-			display_buffer = buffer;
+			display_buffer = field.buffer;
 			return false;
 		}
 
@@ -320,7 +316,6 @@ namespace CrunchyDuck.Math {
 	}
 
 	class DoConfigInterface_Patch {
-		public static BillComponent bc;
 		public static MethodInfo Target() {
 			return AccessTools.Method(typeof(Bill_Production), "DoConfigInterface");
 		}
@@ -329,7 +324,6 @@ namespace CrunchyDuck.Math {
 			var codes = new List<CodeInstruction>(instructions);
 			MethodInfo button_icon_method = AccessTools.Method(typeof(WidgetRow), "ButtonIcon");
 			int call_count = 0;
-			return codes.AsEnumerable();
 
 			for (var i = 0; i < codes.Count; i++) {
 				CodeInstruction code = codes[i];
@@ -344,7 +338,6 @@ namespace CrunchyDuck.Math {
 							codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, m));
 							codes.Insert(i + 3, new CodeInstruction(OpCodes.Br, branch_target));
 							break;
-							// TODO: This
 						case 1:
 							codes[i + 1].Branches(out branch_target);
 							m = AccessTools.Method(typeof(DoConfigInterface_Patch), "Decrement");
@@ -352,8 +345,6 @@ namespace CrunchyDuck.Math {
 							codes.Insert(i + 3, new CodeInstruction(OpCodes.Br, branch_target));
 							break;
 					}
-					if (branch_target == null)
-						Log.Message("oops");
 					call_count++;
 					if (call_count > 1)
 						break;
@@ -364,29 +355,37 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static void Prefix(Bill_Production __instance, Rect baseRect, Color baseColor) {
-			bc = BillManager.AddGetBillComponent(__instance);
+			var bc = BillManager.AddGetBillComponent(__instance);
+			BillMenuData.AssignTo(bc);
 		}
 
 		public static void Postfix() {
-			bc = null;
+			BillMenuData.Unassign();
 		}
 
 		// lazy
-		private static void Decrement() {
-			var eq = BillMenuData.GetCurrentlyRenderingFieldValid();
-			int number = 0;
-			Math.DoMath(eq, ref number, bc);
-			number -= bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();
-			BillMenuData.AssignCurrentlyRenderingField(number.ToString());
+		public static void Decrement() {
+			DoEq(false);
 		}
 
-		private static void Increment() {
-			var eq = BillMenuData.GetCurrentlyRenderingFieldValid();
-			int number = 0;
-			Math.DoMath(eq, ref number, bc);
-			number += bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();
-			BillMenuData.AssignCurrentlyRenderingField(number.ToString());
+		public static void Increment() {
+			DoEq(true);
 		}
 
+		public static void DoEq(bool increment) {
+			var bc = BillMenuData.bc;
+			InputField f = BillMenuData.GetCurrentlyRenderingField();
+			Log.Message(f.field.ToString());
+			int number = 0;
+			Math.DoMath(f.lastValid, ref number, bc);
+			var val = bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();
+			if (increment)
+				number += val;
+			else
+				number -= val;
+			BillMenuData.AssignCurrentlyRenderingField(number);
+			SoundDefOf.DragSlider.PlayOneShotOnCamera();
+			SoundDefOf.DragSlider.PlayOneShotOnCamera();
+		}
 	}
 }

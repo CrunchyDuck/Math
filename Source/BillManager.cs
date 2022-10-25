@@ -41,9 +41,9 @@ namespace CrunchyDuck.Math {
 					//	item.target_count_last_valid = item.targetBill.targetCount.ToString();
 					//}
 					//else
-					Math.DoMath(item.doUntilXLastValid, ref item.targetBill.targetCount, item);
+					Math.DoMath(item.doUntilX.lastValid, ref item.targetBill.targetCount, item);
 					//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
-					Math.DoMath(item.unpauseLastValid, ref item.targetBill.unpauseWhenYouHave, item);
+					Math.DoMath(item.unpause.lastValid, ref item.targetBill.unpauseWhenYouHave, item);
 				}
 
 				Math.ClearCacheMaps();
