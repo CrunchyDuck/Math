@@ -15,6 +15,7 @@ namespace CrunchyDuck.Math {
 	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
 	// TODO: Clothing restriction category.
+	// TODO: Add support for other lanuages/redefine how variables are segmented.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -109,6 +110,9 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static CachedMapData GetCachedMap(Map map) {
+			// I was able to get a null error by abandoning a base. This handles that.
+			if (map == null)
+				return null;
 			if (!cachedMaps.ContainsKey(map)) {
 				// Generate cache.
 				cachedMaps[map] = new CachedMapData(map);
@@ -123,6 +127,10 @@ namespace CrunchyDuck.Math {
 			// "Spawned" means that the thing isn't held in a container/held. Non spawned things are in a container.
 			// TODO: Maybe redo this with a loop on pawns so there's only 1 call.
 			CachedMapData cache = bc.Cache;
+			if (cache == null) {
+				BillManager.RemoveBillComponent(bc);
+				return;
+			}
 
 			e.Parameters["pwn"] = e.Parameters["pawns"] = cache.pawns.Count();
 			e.Parameters["col"] = e.Parameters["colonists"] = cache.colonists.Count();

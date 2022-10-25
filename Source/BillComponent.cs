@@ -4,7 +4,11 @@ using Verse;
 namespace CrunchyDuck.Math {
 	class BillComponent {
 		public Bill_Production targetBill;
-		public CachedMapData Cache { get { return Math.GetCachedMap(targetBill.Map); } }
+		public CachedMapData Cache {
+			get {
+				return Math.GetCachedMap(targetBill.Map);
+			}
+		}
 		public int loadID { get { return BillManager.GetBillID(targetBill); } }
 		// I have to maintain my own buffers so I can modify them at will, e.g. when a + or - button is pressed.
 		public InputField doXTimes;

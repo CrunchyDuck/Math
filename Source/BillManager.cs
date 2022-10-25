@@ -32,7 +32,7 @@ namespace CrunchyDuck.Math {
 			base.GameComponentTick();
 			// Make sure bills are up to date.
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
-				foreach (BillComponent item in billTable.Values) {
+				foreach (BillComponent item in billTable.Values.ToList()) {
 					// I think I put this here to fix something sometime.
 					// But testing, the problem it fixed isn't a problem, and it actually breaks other things.
 					// Number changed, likely because they pressed + or -.
@@ -48,6 +48,11 @@ namespace CrunchyDuck.Math {
 
 				Math.ClearCacheMaps();
 			}
+		}
+
+		public static void RemoveBillComponent(BillComponent bc) {
+			var i = billTable.FirstIndexOf(kvp => kvp.Value == bc);
+			billTable.Remove(i);
 		}
 
 		public static int GetBillID(Bill_Production bill_production) {
