@@ -14,9 +14,10 @@ namespace CrunchyDuck.Math {
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
 	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
-	// TODO: Clothing restriction category.
+	// TODO: Clothing rules/restriction variable.
 	// TODO: Add support for other lanuages/redefine how variables are segmented.
 	// TODO: unpause doesn't update properly.
+	// TODO: Add pop up window for inputting larger bills.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -89,7 +90,6 @@ namespace CrunchyDuck.Math {
 			if (str.NullOrEmpty())
 				return false;
 
-			// BIG TODO: Spport for old parameters.
 			if (DoMath_new(str, ref val, bc)) {
 				return true;
 			}
@@ -141,7 +141,6 @@ namespace CrunchyDuck.Math {
 				// Matched single word.
 				if (match.Groups[4].Success) {
 					parameter_list.Add(match.Groups[4].Value);
-					Log.Message(match.Groups[4].Value);
 					continue;
 				}
 
@@ -159,6 +158,7 @@ namespace CrunchyDuck.Math {
 			}
 			Expression e = new Expression(str);
 			AddParameters(e, bc, parameter_list);
+			// KNOWN BUG: `if` equations don't properly update. This is an ncalc issue - it evaluates the current path and ignores the other.
 			if (e.HasErrors())
 				return false;
 			object result;
@@ -264,7 +264,6 @@ namespace CrunchyDuck.Math {
 #endif
 
 			// TODO: Add more searching modifiers, such as the nutritional value of foods.
-			// TODO: Add category searching in new system.
 			foreach (string parameter in parameter_list) {
 				int count;
 				if (cache.SearchForResource(parameter, bc, out count)) {

@@ -98,7 +98,6 @@
     <Compile Include="Bill_ProductionConstructor_Patch.cs" />
     <Compile Include="BillMenu_Patch.cs" />
     <Compile Include="PatchExposeData.cs" />
-    <Compile Include="TextFieldNumeric_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

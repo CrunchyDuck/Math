@@ -155,29 +155,76 @@ namespace CrunchyDuck.Math {
 		public int GetResourceCount(string parameter_name, BillComponent bc) {
 			int count = 0;
 			if (!resources.ContainsKey(parameter_name)) {
-				resources[parameter_name] = map.listerThings.ThingsOfDef(Math.searchableThings[parameter_name]);
+				ThingDef td = Math.searchableThings[parameter_name];
+				resources[parameter_name] = map.listerThings.ThingsOfDef(td).ListFullCopy();
+				// Count equipped/inventory/hands.
+				foreach (Pawn pawn in map.mapPawns.FreeColonistsAndPrisonersSpawned) {
+					List<Thing> things = GetThingInPawn(pawn, td);
+					foreach (var thing in things) {
+						resources[parameter_name].Add(thing);
+					}
+				}
 			}
 
+			// TODO: Index things that are on corpses. 
 			foreach (Thing thing in resources[parameter_name]) {
+				// Forbidden
 				if (thing.IsForbidden(Faction.OfPlayer))
 					continue;
-				// Doesn't have enough hitpoints
-				if (!bc.targetBill.hpRange.IncludesEpsilon(thing.HitPoints / thing.MaxHitPoints))
+
+				// Hitpoints
+				if (!bc.targetBill.hpRange.Includes(thing.HitPoints / thing.MaxHitPoints)) {
+					//Log.Message(bc.targetBill.hpRange.ToString());
 					continue;
-				// Has quality and is not good enough.
+				}
+
+				// Quality
 				QualityCategory q;
 				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
 					continue;
-				// Tainted when should not be.
-				// TODO: This doesn't work right now. Check stash for solution.
-				Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
-				if (a != null && !bc.targetBill.includeTainted && a.WornByCorpse)
-					continue;
-				//TODO: Add equipped +store mode.
+
+				var producted_thing = bc.targetBill.recipe.ProducedThingDef;
+				if (producted_thing != null) {
+					// Tainted
+					bool can_choose_tainted = producted_thing.IsApparel && producted_thing.apparel.careIfWornByCorpse;
+					Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
+					if (can_choose_tainted && !bc.targetBill.includeTainted && a.WornByCorpse)
+						continue;
+
+					// Equipped.
+					bool can_choose_equipped = producted_thing.IsWeapon || producted_thing.IsApparel;
+					if (can_choose_equipped && !bc.targetBill.includeEquipped && thing.IsHeldByPawn()) {
+						continue;
+					}
+				}
+				//TODO: Add store mode.
 
 			  count += thing.stackCount;
 			}
 			return count;
+		}
+
+		// Code taken from RecipeWorkerCounter.CountProducts
+		public static List<Thing> GetThingInPawn(Pawn pawn, ThingDef def) {
+			List<Thing> things = new List<Thing>();
+			foreach (ThingWithComps equipment in pawn.equipment.AllEquipmentListForReading) {
+				if (equipment.def.Equals(def)) {
+					things.Add((Thing)equipment);
+				}
+			}
+			foreach (var apparel in pawn.apparel.WornApparel) {
+				if (apparel.def.Equals(def)) {
+					things.Add((Thing)apparel);
+				}
+			}
+			// TODO: Check this in the future. It doesn't work as of now in spite of multiple tests, and I believe it's a core game problem.
+			foreach (Thing heldThing in pawn.inventory.GetDirectlyHeldThings()) {
+				if (heldThing.def.Equals(def)) {
+					things.Add((Thing)heldThing);
+				}
+			}
+
+			return things;
 		}
 	}
 }

@@ -10,11 +10,11 @@
 	<description>[b]Math![/b] Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
 
 [h2]Why would I use [b]Math![/b]?[/h2]
-A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "col in" * 5". We want "colonists" number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
+A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "colonists intake" * 5. We want "colonists" number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
 
 [h2]How do I use [b]Math![/b]?[/h2]
 Type it in!!
-[img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/tesco_meal_deal2.png[/img]
+[img]https://steamuserimages-a.akamaihd.net/ugc/1853820727236000569/A63D104F2ED5666712E69A8E472CC76434919605/?imw=637&#038;imh=358&#038;ima=fit[/img]
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
 The text field has also been expanded to make room for large calculations!
 

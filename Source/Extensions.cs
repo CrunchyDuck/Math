@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RimWorld;
+using Verse;
 
 namespace CrunchyDuck.Math {
 	public static class Extensions {
@@ -30,6 +27,17 @@ namespace CrunchyDuck.Math {
 		public static bool HasMethod(this object objectToCheck, string methodName) {
 			var type = objectToCheck.GetType();
 			return type.GetMethod(methodName) != null;
+		}
+
+		public static bool IsHeldByPawn(this Thing thing) {
+			var owner = thing.holdingOwner.Owner;
+			if (owner is Pawn_InventoryTracker) {
+				return true;
+			}
+			if (owner is Pawn_ApparelTracker) {
+				return true;
+			}
+			return false;
 		}
 	}
 }

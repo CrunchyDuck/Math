@@ -107,7 +107,7 @@ namespace CrunchyDuck.Math {
 			var codes = new List<CodeInstruction>(instructions);
 			int num_codes_found = 0;
 			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
-			// TODO: This scales weirdly. Figure out why.
+			// TODO: This scales weirdly because it's only updated at the start. Make it a call.
 			float panel_allocation = Settings.textInputAreaBonus / 3;
 
 			for (var i = 0; i < codes.Count; i++) {
@@ -134,9 +134,17 @@ namespace CrunchyDuck.Math {
 #endif
 
 		// Started render
-		public static bool Prefix(Dialog_BillConfig __instance, Rect inRect) {
+		public static void Prefix(Dialog_BillConfig __instance, Rect inRect) {
 			BillMenuData.AssignTo(__instance, inRect);
-            return true;
+			// Clear the cache and regenerate it.
+			// Since the game is paused, it won't cause lag.
+			if (RealTime.frameCount % 60 == 0) {
+				Math.ClearCacheMaps();
+				InputField f = BillMenuData.GetCurrentlyRenderingField();
+				int val = 0;
+				Math.DoMath(f.lastValid, ref val, BillMenuData.bc);
+				f.CurrentValue = val;
+			}
 		}
 
 		// Finished render
@@ -222,6 +230,7 @@ namespace CrunchyDuck.Math {
 	}
 
 	// This handles input into the text field.
+	// TODO: For some reason you can't put in no string for this. I suspect this is due to a NullOrEmpty check somewhere.
 	class TextFieldNumeric_Patch {
 		public static MethodInfo Target() {
 			return AccessTools.Method(typeof(Widgets), "TextFieldNumeric", generics: new System.Type[] { typeof(int) });

@@ -1,6 +1,7 @@
 ﻿using Verse;
 
 namespace CrunchyDuck.Math {
+    // TODO: Add settings for input area size.
 	class Settings : ModSettings {
         public static float textInputAreaBonus = 200f;
 

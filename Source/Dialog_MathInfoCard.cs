@@ -76,7 +76,6 @@ namespace CrunchyDuck.Math {
 			var stats = new List<StatDrawEntry>();
 			StatDrawEntry stat;
 
-			// TODO: Line that explains migrating to new parameter system + why it was done.
 			var cat = catBasics;
 			stat = new StatDrawEntry(cat, "Description", "",
 				@"This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
