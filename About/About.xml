@@ -60,7 +60,7 @@ Eggs (unfert.) -> "cat eggs (unfert.)"
 
 [h2]Compatibility[/h2]
 Things from other mods like new foods or weapons will work with this mod.
-Besides that, I'm pretty sure Better Workshop Management doesn't work. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
+Besides that, I'm pretty sure Better Workbench Management doesn't work. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
 
 [b]Links:[/b]
 Github: https://github.com/CrunchyDuck/Math
@@ -80,4 +80,7 @@ donate: I will keep doing what I do regardless of income. https://ko-fi.com/crun
 		<li>Ludeon.RimWorld</li>
 		<li>brrainz.harmony</li>
 	</loadAfter>
+	<incompatibleWith>
+	  <li>falconne.BWM</li>
+	</incompatibleWith>
 </ModMetaData>
