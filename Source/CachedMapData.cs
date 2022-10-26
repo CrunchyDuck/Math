@@ -173,8 +173,7 @@ namespace CrunchyDuck.Math {
 					continue;
 
 				// Hitpoints
-				if (!bc.targetBill.hpRange.Includes(thing.HitPoints / thing.MaxHitPoints)) {
-					//Log.Message(bc.targetBill.hpRange.min + "-" + bc.targetBill.hpRange.max);
+				if (!bc.targetBill.hpRange.Includes((float)thing.HitPoints / (float)thing.MaxHitPoints)) {
 					continue;
 				}
 
