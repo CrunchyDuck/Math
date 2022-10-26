@@ -188,7 +188,7 @@ namespace CrunchyDuck.Math {
 
 		public static CachedMapData GetCachedMap(Map map) {
 			// I was able to get a null error by abandoning a base. This handles that.
-			if (map != null)
+			if (map == null)
 				return null;
 			if (!cachedMaps.ContainsKey(map)) {
 				// Generate cache.
