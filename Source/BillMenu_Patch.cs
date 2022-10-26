@@ -308,6 +308,10 @@ namespace CrunchyDuck.Math {
 			int test_val = 0;
 			if (!Math.DoMath(buffer, ref test_val, bc))
 				GUI.color = new Color(1, 0, 0, 0.8f);
+			// TODO: Some kind of tooltip here.
+			if (Math.usedOldVariableNames) {
+				GUI.color = new Color(0.8f, 0.2f, 0.8f, 0.8f);
+			}
 
 			string str = Widgets.TextField(rect, buffer);
 			GUI.color = base_color;

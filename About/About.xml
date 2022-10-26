@@ -10,7 +10,7 @@
 	<description>[b]Math![/b] Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
 
 [h2]Why would I use [b]Math![/b]?[/h2]
-A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be [u]col_in * 5[/u]. We want [u]colonists[/u] number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
+A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "col in" * 5". We want "colonists" number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
 
 [h2]How do I use [b]Math![/b]?[/h2]
 Type it in!!
@@ -21,46 +21,45 @@ The text field has also been expanded to make room for large calculations!
 [h2]Variables[/h2]
 I've defined a few variables you'll want to use, and they can all be seen from the handy-dandy in-bill info card.
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/infocard.png[/img]
-All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, [u]col[/u] will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes. Forbidden items also aren't counted.
+All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, "col" will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes. Forbidden items also aren't counted.
 Some of the most useful variables are...
 
-[u]pawns[/u] or [u]pwn[/u] - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
-[u]colonists[/u] or [u]col[/u] - How many colonists (Not slaves or prisoners)
-[u]prisoners[/u] or [u]pri[/u] - How many prisoners
-[u]slaves[/u] or [u]slv[/u] - How many slaves
-[u]animals[/u] or [u]anim[/u] - How many animals.
-[u]babies[/u] or [u]bab[/u] - How many babies.
+"pawns" or "pwn" - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
+"colonists" or "col" - How many colonists (Not slaves or prisoners)
+"prisoners" or "pri" - How many prisoners
+"slaves" or "slv" - How many slaves
+"animals" or "anim" - How many animals.
+"babies" or "bab" - How many babies.
 
 Each of the above also have an intake variable, that allows you to calculate based on their cumulative food consumed per day:
-[u]anim_in[/u] or [u]animals_intake[/u] - Total intake of all animals per day.
-[u]pwn_in[/u] or [u]pawns_intake[/u] - Total intake of all pawns per day.
+"anim in" or "animals intake" - Total intake of all animals per day.
+"pwn in" or "pawns intake" - Total intake of all pawns per day.
 etc.
 
-[b]ThingDef searching[/b]
+[b]Thing searching[/b]
 You can search for the count of [u]any[/u] ThingDef (items, ostriches, doors, rocks...) on the map. Anything that is forbidden will not be counted.
-This also take into account your bill's options. Set it to "normal and above" quality only? You won't be seeing any low tier [i]trash[/i] in your count! "Tainted" and "hitpoints" also work.
+This also take into account your bill's options. Set it to "normal and above" quality only? You won't be seeing any low tier [i]trash[/i] in your count! "hitpoints" also works, "tainted" and stockpile are being worked on.
 
-You'll need to convert the name of that thing into a valid parameter, which is simple to do!
-First, if it's a crafted/built item, ignore the material/quality of the item. For stacks, ignore the quantity.
-Then, make it all lowercase.
-Finally, replace spaces and special characters like - or ' with underscores.
+To search a ThingDef you need to convert the in-game name, make it lowercase, and wrap it in speech marks.
+Item quality, material and stack count should also be omitted from the name.
+If it has speech marks in its name, replace them with an underscore: _
+Singular words like ostrich don't always need speechmarks - it's up to you.
 
 Let's look at some examples:
-Compacted steel -> [u]compacted_steel[/u]
-Medicine x5 -> [u]medicine[/u]
-Go-juice -> [u]go_juice[/u]
-Plasteel flak helmet (excellent) -> [u]flak_helmet[/u]
+Compacted steel -> "compacted steel"
+Medicine x5 -> "medicine"
+Go-juice -> "go-juice"
+Uranium mace (legendary) -> mace
 
 [b]Category searching[/b]
-You can search categories of items the same way you'd search ThingDefs, except you pretend the category with c_
-Some examples include:
-Meals -> c_meals
-Mortar shells -> c_mortar_shells
-Humanlike corpses -> c_humanlike_corpses
-
+You can search categories of items the same way you'd search ThingDefs, except you pretend the category with "c ", "cat " or "category "
+Here are some examples:
+Humanlike corpses -> "category humanlike corpses"
+Meals -> "c meals"
+Eggs (unfert.) -> "cat eggs (unfert.)"
 
 [h2]Compatibility[/h2]
-Goodness I don't know. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
+Goodness I don't know. I'm pretty sure Better Workshop Management doesn't work. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
 
 [b]Links:[/b]
 Github: https://github.com/CrunchyDuck/Math

@@ -8,6 +8,7 @@ namespace CrunchyDuck.Math {
 	class CachedMapData {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
+		private static Regex getCategory = new Regex(@"(c|cat|category) (.+)", RegexOptions.Compiled);
 
 		public List<Pawn> pawns = new List<Pawn>();
 		public List<Pawn> colonists = new List<Pawn>();
@@ -79,7 +80,28 @@ namespace CrunchyDuck.Math {
 		}
 
 		// TODO: Do multiple passes of DoMath, where the first tallies up all resources they want to search, and the second searches for all of them at once.
-		// TODO: If the player (un)forbids something and then types it in, it isn't reflected until the next hour passes. This might lead people to thinking it's broken.
+		public bool SearchForResource_old(string parameter_name, BillComponent bc, out int count) {
+			count = 0;
+			if (parameter_name.NullOrEmpty())
+				return false;
+
+			// Search thing
+			if (Math.old_searchableThings.ContainsKey(parameter_name)) {
+				count = GetResourceCount_old(parameter_name, bc);
+				return true;
+			}
+			// Search category
+			else if (Math.old_searchabeCategories.ContainsKey(parameter_name)) {
+				ThingCategoryDef cat = Math.old_searchabeCategories[parameter_name];
+				foreach (ThingDef thingdef in cat.childThingDefs) {
+					count += GetResourceCount_old(thingdef.label.ToParameter_old(), bc);
+				}
+				return true;
+			}
+
+			return false;
+		}
+
 		public bool SearchForResource(string parameter_name, BillComponent bc, out int count) {
 			count = 0;
 			if (parameter_name.NullOrEmpty())
@@ -91,8 +113,9 @@ namespace CrunchyDuck.Math {
 				return true;
 			}
 			// Search category
-			else if (Math.searchabeCategories.ContainsKey(parameter_name)) {
-				ThingCategoryDef cat = Math.searchabeCategories[parameter_name];
+			Match category_split = getCategory.Match(parameter_name);
+			ThingCategoryDef cat;
+			if (category_split.Success && Math.searchabeCategories.TryGetValue(category_split.Groups[2].Value.ToParameter(), out cat)) {
 				foreach (ThingDef thingdef in cat.childThingDefs) {
 					count += GetResourceCount(thingdef.label.ToParameter(), bc);
 				}
@@ -100,6 +123,33 @@ namespace CrunchyDuck.Math {
 			}
 
 			return false;
+		}
+
+		public int GetResourceCount_old(string parameter_name, BillComponent bc) {
+			int count = 0;
+			if (!resources.ContainsKey(parameter_name)) {
+				resources[parameter_name] = map.listerThings.ThingsOfDef(Math.old_searchableThings[parameter_name]);
+			}
+
+			foreach (Thing thing in resources[parameter_name]) {
+				if (thing.IsForbidden(Faction.OfPlayer))
+					continue;
+				// Doesn't have enough hitpoints
+				if (!bc.targetBill.hpRange.IncludesEpsilon(thing.HitPoints / thing.MaxHitPoints))
+					continue;
+				// Has quality and is not good enough.
+				QualityCategory q;
+				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
+					continue;
+				// Tainted when should not be.
+				Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
+				if (a != null && !bc.targetBill.includeTainted && a.WornByCorpse)
+					continue;
+				//TODO: Add equipped +store mode.
+
+			  count += thing.stackCount;
+			}
+			return count;
 		}
 
 		public int GetResourceCount(string parameter_name, BillComponent bc) {
@@ -119,6 +169,7 @@ namespace CrunchyDuck.Math {
 				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
 					continue;
 				// Tainted when should not be.
+				// TODO: This doesn't work right now. Check stash for solution.
 				Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
 				if (a != null && !bc.targetBill.includeTainted && a.WornByCorpse)
 					continue;

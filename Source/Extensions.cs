@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CrunchyDuck.Math {
 	public static class Extensions {
-		public static string ToParameter(this string str) {
+		public static string ToParameter_old(this string str) {
 			str = str.Replace(" ", "_");
 			str = str.Replace("-", "_");
 			str = str.Replace("'", "_");
@@ -17,8 +17,14 @@ namespace CrunchyDuck.Math {
 			return str;
 		}
 
-		public static string ToCategory(this string str) {
-			return "c_" + str.ToParameter();
+		public static string ToCategory_old(this string str) {
+			return "c_" + str.ToParameter_old();
+		}
+
+		public static string ToParameter(this string str) {
+			str = str.Replace("\"", "_");
+			str = str.ToLower();
+			return str;
 		}
 
 		public static bool HasMethod(this object objectToCheck, string methodName) {
