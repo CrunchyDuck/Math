@@ -25,11 +25,14 @@ All variables are [b]based on the map that the bill is contained in[/b]. So, if 
 Some of the most useful variables are...
 
 "pawns" or "pwn" - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
+"mechanitors" or "mech" - Number of mechanitors. Does not include slave or prisoner mechanitors.
 "colonists" or "col" - How many colonists (Not slaves or prisoners)
 "prisoners" or "pri" - How many prisoners
 "slaves" or "slv" - How many slaves
 "animals" or "anim" - How many animals.
 "babies" or "bab" - How many babies.
+
+"mechanitors bandwidth" or "mech ban" - Amount of free mechanitor bandwidth.
 
 Each of the above also have an intake variable, that allows you to calculate based on their cumulative food consumed per day:
 "anim in" or "animals intake" - Total intake of all animals per day.
@@ -38,7 +41,7 @@ etc.
 
 [b]Thing searching[/b]
 You can search for the count of [u]any[/u] ThingDef (items, ostriches, doors, rocks...) on the map. Anything that is forbidden will not be counted.
-This also take into account your bill's options. Set it to "normal and above" quality only? You won't be seeing any low tier [i]trash[/i] in your count! "hitpoints" also works, "tainted" and stockpile are being worked on.
+This also take into account your bill's options. Set it to "normal and above" quality only? You won't be seeing any low tier [i]trash[/i] in your count! "hitpoints" and "tainted" work, and stockpile are being worked on.
 
 To search a ThingDef you need to convert the in-game name, make it lowercase, and wrap it in speech marks.
 Item quality, material and stack count should also be omitted from the name.
@@ -63,6 +66,7 @@ Things from other mods like new foods or weapons will work with this mod.
 Besides that, I'm pretty sure Better Workbench Management doesn't work. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
 
 [b]Links:[/b]
+Discord with me and my budderoos: https://discord.gg/hUnEs9ZhwA
 Github: https://github.com/CrunchyDuck/Math
 NCalc: https://github.com/ncalc/ncalc
 donate: I will keep doing what I do regardless of income. https://ko-fi.com/crunchyduck

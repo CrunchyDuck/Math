@@ -257,6 +257,9 @@ namespace CrunchyDuck.Math {
 			e.Parameters["anim in"] = e.Parameters["animals intake"] = cache.ownedAnimalsIntake;
 
 #if v1_4
+			e.Parameters["mech"] = e.Parameters["mechanitors"] = cache.mechanitors.Count();
+			e.Parameters["mech in"] = e.Parameters["mechanitors intake"] = cache.mechanitorsIntake;
+			e.Parameters["mech ban"] = e.Parameters["mechanitors bandwidth"] = cache.mechanitorsAvailableBandwidth;
 			e.Parameters["bab"] = e.Parameters["babies"] = cache.babies.Count();
 			e.Parameters["kid"] = e.Parameters["kids"] = cache.kids.Count();
 			e.Parameters["kid in"] = e.Parameters["kids intake"] = cache.kidsIntake;

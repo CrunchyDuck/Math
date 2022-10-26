@@ -12,7 +12,8 @@ namespace CrunchyDuck.Math {
 		public const int updateRegularity = 2500;  // 1 in game hour.
 		public static Dictionary<string, ThingDef> searchabeThings = new Dictionary<string, ThingDef>();
 
-		public BillManager(Game game) {}
+		public BillManager(Game game) {
+		}
 
 		// Create it if it doesn't exist and return it.
 		public static BillComponent AddGetBillComponent(Bill_Production bill) {
@@ -32,7 +33,7 @@ namespace CrunchyDuck.Math {
 			base.GameComponentTick();
 			// Make sure bills are up to date.
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
-				foreach (BillComponent item in billTable.Values.ToList()) {
+				foreach (BillComponent item in billTable.Values) {
 					// I think I put this here to fix something sometime.
 					// But testing, the problem it fixed isn't a problem, and it actually breaks other things.
 					// Number changed, likely because they pressed + or -.

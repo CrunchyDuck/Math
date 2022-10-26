@@ -11,6 +11,8 @@ namespace CrunchyDuck.Math {
 		private static Regex getCategory = new Regex(@"(c|cat|category) (.+)", RegexOptions.Compiled);
 
 		public List<Pawn> pawns = new List<Pawn>();
+		public List<Pawn> mechanitors = new List<Pawn>();
+		public int mechanitorsAvailableBandwidth = 0;
 		public List<Pawn> colonists = new List<Pawn>();
 		public List<Pawn> kids = new List<Pawn>();
 		public List<Pawn> babies = new List<Pawn>();
@@ -19,6 +21,7 @@ namespace CrunchyDuck.Math {
 		public List<Pawn> ownedAnimals = new List<Pawn>();
 		public float pawnsIntake = 0;
 		public float colonistsIntake = 0;
+		public float mechanitorsIntake = 0;
 		public float kidsIntake = 0;
 		public float babiesIntake = 0;
 		public float prisonersIntake = 0;
@@ -32,23 +35,29 @@ namespace CrunchyDuck.Math {
 			pawns = map.mapPawns.FreeColonistsAndPrisoners;
 			slaves = map.mapPawns.SlavesOfColonySpawned;
 			colonists = map.mapPawns.FreeColonists.Except(slaves).ToList();
-#if v1_4
-			kids = colonists.Where(p => p.DevelopmentalStage == DevelopmentalStage.Child).ToList();
-			babies = colonists.Where(p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn).ToList();
-#endif
 			prisoners = map.mapPawns.PrisonersOfColony;
 			// stolen from MainTabWindow_Animals.Pawns :)
 			ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).ToList();
 
 			pawnsIntake = CountIntake(pawns);
 			colonistsIntake = CountIntake(colonists);
-#if v1_4
-			kidsIntake = CountIntake(kids);
-			babiesIntake = CountIntake(babies);
-#endif
 			slavesIntake = CountIntake(slaves);
 			prisonersIntake = CountIntake(prisoners);
 			ownedAnimalsIntake = CountIntake(ownedAnimals);
+
+#if v1_4
+			mechanitors = colonists.Where(p => p.mechanitor != null).ToList();
+			mechanitorsIntake = CountIntake(mechanitors);
+			mechanitorsAvailableBandwidth = 0;
+			foreach(Pawn p in mechanitors) {
+				mechanitorsAvailableBandwidth += p.mechanitor.TotalBandwidth - p.mechanitor.UsedBandwidth;
+			}
+
+			kids = colonists.Where(p => p.DevelopmentalStage == DevelopmentalStage.Child).ToList();
+			babies = colonists.Where(p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn).ToList();
+			kidsIntake = CountIntake(kids);
+			babiesIntake = CountIntake(babies);
+#endif
 		}
 
 		private static float CountIntake(List<Pawn> pawns) {
