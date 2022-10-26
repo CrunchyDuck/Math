@@ -154,7 +154,6 @@ namespace CrunchyDuck.Math {
 				Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
 				if (a != null && !bc.targetBill.includeTainted && a.WornByCorpse)
 					continue;
-				//TODO: Add equipped +store mode.
 
 			  count += thing.stackCount;
 			}

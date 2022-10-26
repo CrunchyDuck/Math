@@ -388,7 +388,6 @@ namespace CrunchyDuck.Math {
 		public static void DoEq(bool increment) {
 			var bc = BillMenuData.bc;
 			InputField f = BillMenuData.GetCurrentlyRenderingField();
-			Log.Message(f.field.ToString());
 			int number = 0;
 			Math.DoMath(f.lastValid, ref number, bc);
 			var val = bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();

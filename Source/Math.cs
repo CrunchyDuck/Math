@@ -12,11 +12,10 @@ using System.Text.RegularExpressions;
 namespace CrunchyDuck.Math {
 	// TODO: Show decimal values in Currently Have, Repeat and Unpause At, but round the ultimate value.
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
-	// TODO: comment: variable for how much bandwidth your mechanitors have? so as they scale in bandwidth your mechanoid production could automatically scale
 	// TODO: Add math variable name to the i menu of all objects.
 	// TODO: Clothing rules/restriction variable.
 	// TODO: Add support for other lanuages/redefine how variables are segmented.
-	// TODO: unpause doesn't update properly.
+	// TODO: unpause doesn't update properly. Confirm this?
 	// TODO: Add pop up window for inputting larger bills.
 	[StaticConstructorOnStartup]
 	class Math {
