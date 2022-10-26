@@ -174,7 +174,7 @@ namespace CrunchyDuck.Math {
 
 				// Hitpoints
 				if (!bc.targetBill.hpRange.Includes(thing.HitPoints / thing.MaxHitPoints)) {
-					//Log.Message(bc.targetBill.hpRange.ToString());
+					//Log.Message(bc.targetBill.hpRange.min + "-" + bc.targetBill.hpRange.max);
 					continue;
 				}
 
@@ -188,7 +188,7 @@ namespace CrunchyDuck.Math {
 					// Tainted
 					bool can_choose_tainted = producted_thing.IsApparel && producted_thing.apparel.careIfWornByCorpse;
 					Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
-					if (can_choose_tainted && !bc.targetBill.includeTainted && a.WornByCorpse)
+					if (can_choose_tainted && !bc.targetBill.includeTainted && a?.WornByCorpse == true)
 						continue;
 
 					// Equipped.
