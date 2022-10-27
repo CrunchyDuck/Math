@@ -70,13 +70,14 @@ namespace CrunchyDuck.Math {
 
 		private static void PerformPatches() {
 			var harmony = new Harmony("CrunchyDuck.Math");
+			AddPatch(harmony, typeof(PatchExposeData));
 			AddPatch(harmony, typeof(DoConfigInterface_Patch));
 			AddPatch(harmony, typeof(IntEntry_Patch));
 			AddPatch(harmony, typeof(Bill_ProductionConstructor_Patch));
-			AddPatch(harmony, typeof(PatchExposeData));
 			AddPatch(harmony, typeof(SetInitialSizeAndPosition_Patch));
 			AddPatch(harmony, typeof(Dialog_BillConfig_Patch));
 			AddPatch(harmony, typeof(TextFieldNumeric_Patch));
+			AddPatch(harmony, typeof(BillDialoguePopup_Patch));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {

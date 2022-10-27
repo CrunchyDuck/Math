@@ -23,7 +23,7 @@ namespace CrunchyDuck.Math {
         [TweakValue("Interface", 0.0f, 400f)]
         private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
-        public override Vector2 InitialSize => new Vector2(Settings.textInputAreaBonus, 634f);
+        public override Vector2 InitialSize => new Vector2(800f + Settings.textInputAreaBonus, 634f);
 
 
         private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
@@ -51,6 +51,15 @@ namespace CrunchyDuck.Math {
 			doCloseButton = true;
 			absorbInputAroundWindow = true;
 			closeOnClickedOutside = true;
+		}
+
+		protected override void LateWindowOnGUI(Rect inRect) {
+			Rect rect = new Rect(inRect.x, inRect.y, 34f, 34f);
+			ThingStyleDef thingStyleDef = null;
+			if (ModsConfig.IdeologyActive && bill.recipe.ProducedThingDef != null) {
+				thingStyleDef = (!bill.globalStyle) ? bill.style : Faction.OfPlayer.ideos.PrimaryIdeo.style.StyleForThingDef(bill.recipe.ProducedThingDef)?.styleDef;
+			}
+			Widgets.DefIcon(rect, bill.recipe, null, 1f, thingStyleDef, drawPlaceholder: true, null, null, bill.graphicIndexOverride);
 		}
 
 		public override void DoWindowContents(Rect inRect) {
@@ -88,6 +97,7 @@ namespace CrunchyDuck.Math {
 			else {
 				rect5.yMin = 50f;
 			}
+			// Ingredient search slider.
 			Listing_Standard listing_Standard5 = new Listing_Standard();
 			listing_Standard5.Begin(rect5);
 			string text3 = "IngredientSearchRadius".Translate().Truncate(rect5.width * 0.6f);
@@ -98,6 +108,8 @@ namespace CrunchyDuck.Math {
 				bill.ingredientSearchRadius = 999f;
 			}
 			listing_Standard5.End();
+
+			// Suspended button.
 			Listing_Standard listing_Standard6 = new Listing_Standard();
 			listing_Standard6.Begin(rect_left);
 			if (bill.suspended) {
@@ -110,6 +122,8 @@ namespace CrunchyDuck.Math {
 				bill.suspended = true;
 				SoundDefOf.Click.PlayOneShotOnCamera();
 			}
+
+			// Description + work amount.
 			StringBuilder stringBuilder = new StringBuilder();
 			if (bill.recipe.description != null) {
 				stringBuilder.AppendLine(bill.recipe.description);
