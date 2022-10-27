@@ -16,7 +16,7 @@ namespace CrunchyDuck.Math {
         private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
         protected const float RecipeIconSize = 34f;
         [TweakValue("Interface", 0.0f, 400f)]
-        private static int RepeatModeSubdialogHeight = 324;
+        private static int RepeatModeSubdialogHeight = 324 + 100;
         [TweakValue("Interface", 0.0f, 400f)]
         private static int StoreModeSubdialogHeight = 30;
         [TweakValue("Interface", 0.0f, 400f)]
@@ -24,7 +24,7 @@ namespace CrunchyDuck.Math {
         [TweakValue("Interface", 0.0f, 400f)]
         private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
-        public override Vector2 InitialSize => new Vector2(800f + Settings.textInputAreaBonus, 634f);
+        public override Vector2 InitialSize => new Vector2(800f + Settings.textInputAreaBonus, 634f + 100f);
 		private float extraPanelAllocation = Settings.textInputAreaBonus / 3;
 
 
@@ -67,14 +67,12 @@ namespace CrunchyDuck.Math {
 
 		public override void DoWindowContents(Rect inRect) {
 			BillMenuData.AssignTo(this, inRect);
-			// Clear the cache and regenerate it.
-			// Since the game is paused, it won't cause lag.
+
+			// This ensures that the map cache is updated.
+			// Since the game is paused, this won't cause lag.
 			if (RealTime.frameCount % 60 == 0) {
 				Math.ClearCacheMaps();
-				InputField f = BillMenuData.GetCurrentlyRenderingField();
-				int val = 0;
-				Math.DoMath(f.lastValid, ref val, f);
-				f.CurrentValue = val;
+				BillManager.UpdateBill(bc);
 			}
 
 			Text.Font = GameFont.Medium;
@@ -135,9 +133,9 @@ namespace CrunchyDuck.Math {
 
 			// Target count
 			else if (bill.repeatMode == BillRepeatModeDefOf.TargetCount) {
-				// TODO: Make bill container taller.
 				// TODO: Add custom "counted items" field.
 
+				// Currently have label
 				string currently_have = "CurrentlyHave".Translate() + ": " + bill.recipe.WorkerCounter.CountProducts(bill) + " / ";
 				string out_of;
 				if (bill.targetCount >= 999999) {
@@ -148,13 +146,23 @@ namespace CrunchyDuck.Math {
 				else
 					out_of = bill.targetCount.ToString();
 				string label = currently_have + out_of;
-
-				// Target count input
 				string str3 = bill.recipe.WorkerCounter.ProductsDescription(bill);
 				if (!str3.NullOrEmpty())
 					label = label + ("\n" + "CountingProducts".Translate() + ": " + str3.CapitalizeFirst());
 				listing.Label(label);
-				int targetCount = bill.targetCount;
+
+				// Counted items checkbox/field.
+				listing.CheckboxLabeled("Custom item count", ref bc.customItemsToCount);
+				if (bc.customItemsToCount) {
+					//listing.Label("Custom counter: " + bc.itemsToCount.CurrentValue);
+					Rect rect = listing.GetRect(24f);
+					//int num = Mathf.Min(40, (int)rect.width / 5);
+					//Rect input_rect = new Rect(rect.xMin + num * 2, rect.yMin, rect.width - num * 4, rect.height);
+					MathTextField(bc.itemsToCount, rect);
+				}
+				listing.Gap();
+
+				listing.Label("Target value: " + bc.doUntilX.CurrentValue);
 				MathBillEntry(bc.doUntilX, listing, bill.recipe.targetCountAdjustment);
 
 				ThingDef producedThingDef = bill.recipe.ProducedThingDef;
@@ -357,7 +365,9 @@ namespace CrunchyDuck.Math {
 
 		private static void MathBillEntry(InputField field, Listing_Standard ls, int multiplier = 1) {
 			Rect rect = ls.GetRect(24f);
+			// TODO: Not sure what this if check does.
 			if (!ls.BoundingRectCached.HasValue || rect.Overlaps(ls.BoundingRectCached.Value)) {
+				// Buttons
 				int num = Mathf.Min(40, (int)rect.width / 5);
 				if (Widgets.ButtonText(new Rect(rect.xMin, rect.yMin, num, rect.height), (-10 * multiplier).ToStringCached())) {
 					field.SetAll(field.CurrentValue - 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
@@ -375,29 +385,28 @@ namespace CrunchyDuck.Math {
 					field.SetAll(field.CurrentValue + multiplier * GenUI.CurrentAdjustmentMultiplier());
 					SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 				}
-
-				// TODO: Fix this to allow user input to be null, when backspacing.
-				//if (field.buffer.NullOrEmpty())
-				//	field.buffer = field.lastValid;
-
-				// Was input invalid?
-				Color original_col = GUI.color;
-				int test_val = 0;
-				if (!Math.DoMath(field.buffer, ref test_val, field))
-					GUI.color = new Color(1, 0, 0, 0.8f);
-				else {
-					field.SetAll(field.buffer, test_val);
-				}
-				// TODO: Some kind of tooltip here.
-				if (Math.usedOldVariableNames) {
-					GUI.color = new Color(0.8f, 0.2f, 0.8f, 0.8f);
-				}
+				// Text field
 				Rect input_rect = new Rect(rect.xMin + num * 2, rect.yMin, rect.width - num * 4, rect.height);
-				field.buffer = Widgets.TextField(input_rect, field.buffer);
-				GUI.color = original_col;
+				MathTextField(field, input_rect);
 			}
 
 			ls.Gap(ls.verticalSpacing);
+		}
+
+		private static void MathTextField(InputField field, Rect area) {
+			// Was input invalid?
+			Color original_col = GUI.color;
+			int test_val = 0;
+			if (!Math.DoMath(field.buffer, ref test_val, field))
+				GUI.color = new Color(1, 0, 0, 0.8f);
+			else {
+				field.SetAll(field.buffer, test_val);
+			}
+			if (Math.usedOldVariableNames) {
+				GUI.color = new Color(0.8f, 0.2f, 0.8f, 0.8f);
+			}
+			field.buffer = Widgets.TextField(area, field.buffer);
+			GUI.color = original_col;
 		}
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.

@@ -17,16 +17,20 @@ namespace CrunchyDuck.Math {
 		public InputField doXTimes;
 		public InputField doUntilX;
 		public InputField unpause;
+		public bool customItemsToCount = false;
 		public bool isDoXTimes { get { return targetBill.repeatMode == BillRepeatModeDefOf.RepeatCount; } }
 		public bool isDoUntilX { get { return targetBill.repeatMode == BillRepeatModeDefOf.TargetCount; } }
 
 
 		public BillComponent(Bill_Production bill) {
 			targetBill = bill;
-			itemsToCount = new InputField(bill, InputField.Field.itemsToCount, this);
 			doXTimes = new InputField(bill, InputField.Field.DoXTimes, this);
 			doUntilX = new InputField(bill, InputField.Field.DoUntilX, this);
 			unpause = new InputField(bill, InputField.Field.Unpause, this, 5);
+
+			itemsToCount = new InputField(bill, InputField.Field.itemsToCount, this);
+			// TODO: Test how this works on many types of recipes.
+			itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
 		}
 
 		// BIG TODO: Save itemsToCount
@@ -100,6 +104,14 @@ namespace CrunchyDuck.Math {
 			buffer = str;
 			lastValid = str;
 			CurrentValue = value;
+		}
+
+		public void SetAll(string str) {
+			buffer = str;
+			lastValid = str;
+			//int i = 0;
+			//Math.DoMath(str, ref i, this);
+			//CurrentValue = i;
 		}
 
 		public enum Field {

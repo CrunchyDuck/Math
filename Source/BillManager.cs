@@ -8,11 +8,14 @@ using System;
 namespace CrunchyDuck.Math {
 	// TODO: Handle copy/pasting.
 	class BillManager : GameComponent {
+		public static BillManager instance;
+
 		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
 		public const int updateRegularity = 2500;  // 1 in game hour.
 		public static Dictionary<string, ThingDef> searchabeThings = new Dictionary<string, ThingDef>();
 
 		public BillManager(Game game) {
+			instance = this;
 		}
 
 		// Create it if it doesn't exist and return it.
@@ -39,13 +42,20 @@ namespace CrunchyDuck.Math {
 				// But I use Math.DoMath in a lot of places outside of here that I don't want erroring.
 				Dictionary<int, BillComponent> bt_copy = billTable.ToDictionary(entry => entry.Key, entry => entry.Value);
 				foreach (BillComponent item in bt_copy.Values) {
-					Math.DoMath(item.doUntilX.lastValid, ref item.targetBill.targetCount, item.doUntilX);
-					//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
-					Math.DoMath(item.unpause.lastValid, ref item.targetBill.unpauseWhenYouHave, item.unpause);
+					UpdateBill(item);
 				}
 
 				Math.ClearCacheMaps();
 			}
+		}
+
+		public static void UpdateBill(BillComponent bc) {
+			Math.DoMath(bc.doUntilX.lastValid, ref bc.targetBill.targetCount, bc.doUntilX);
+			//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
+			Math.DoMath(bc.unpause.lastValid, ref bc.targetBill.unpauseWhenYouHave, bc.unpause);
+
+			int i = 0;
+			Math.DoMath(bc.itemsToCount.lastValid, ref i, bc.itemsToCount);
 		}
 
 		public static void RemoveBillComponent(BillComponent bc) {
