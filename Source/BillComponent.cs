@@ -26,7 +26,7 @@ namespace CrunchyDuck.Math {
 			itemsToCount = new InputField(bill, InputField.Field.itemsToCount, this);
 			doXTimes = new InputField(bill, InputField.Field.DoXTimes, this);
 			doUntilX = new InputField(bill, InputField.Field.DoUntilX, this);
-			unpause = new InputField(bill, InputField.Field.Unpause, this);
+			unpause = new InputField(bill, InputField.Field.Unpause, this, 5);
 		}
 
 		// BIG TODO: Save itemsToCount
