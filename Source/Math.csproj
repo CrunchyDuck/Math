@@ -95,7 +95,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="BillDialoguePopup_Patch.cs" />
+    <Compile Include="BillDetails_Patch.cs" />
     <Compile Include="Bill_ProductionConstructor_Patch.cs" />
     <Compile Include="BillMenu_Patch.cs" />
     <Compile Include="PatchExposeData.cs" />

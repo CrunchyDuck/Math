@@ -48,6 +48,7 @@ namespace CrunchyDuck.Math {
 			this.billGiverPos = billGiverPos;
 			this.bill = bill;
 			bc = BillManager.AddGetBillComponent(bill);
+
 			forcePause = true;
 			doCloseX = true;
 			doCloseButton = true;
@@ -72,7 +73,7 @@ namespace CrunchyDuck.Math {
 				Math.ClearCacheMaps();
 				InputField f = BillMenuData.GetCurrentlyRenderingField();
 				int val = 0;
-				Math.DoMath(f.lastValid, ref val, BillMenuData.bc);
+				Math.DoMath(f.lastValid, ref val, f);
 				f.CurrentValue = val;
 			}
 
@@ -128,40 +129,44 @@ namespace CrunchyDuck.Math {
 			TaggedString taggedString1;
 			// Repeat count
 			if (bill.repeatMode == BillRepeatModeDefOf.RepeatCount) {
-				listing.Label("RepeatCount".Translate(bill.repeatCount));
-				// TODO: Test this instead of intentry.
-				//listing1.TextEntry
-				listing.IntEntry(ref bill.repeatCount, ref bc.doXTimes.buffer);
+				listing.Label("RepeatCount".Translate(bill.repeatCount) + " " + bc.doXTimes.CurrentValue);
+				MathBillEntry(bc.doXTimes, listing);
 			}
 
 			// Target count
 			else if (bill.repeatMode == BillRepeatModeDefOf.TargetCount) {
-				string str1 = "CurrentlyHave".Translate() + ": " + bill.recipe.WorkerCounter.CountProducts(bill) + " / ";
-				string str2;
+				// TODO: Make bill container taller.
+				// TODO: Add custom "counted items" field.
+
+				string currently_have = "CurrentlyHave".Translate() + ": " + bill.recipe.WorkerCounter.CountProducts(bill) + " / ";
+				string out_of;
 				if (bill.targetCount >= 999999) {
 					taggedString1 = "Infinite".Translate();
 					taggedString1 = taggedString1.ToLower();
-					str2 = taggedString1.ToString();
+					out_of = taggedString1.ToString();
 				}
 				else
-					str2 = bill.targetCount.ToString();
-				string label = str1 + str2;
+					out_of = bill.targetCount.ToString();
+				string label = currently_have + out_of;
+
+				// Target count input
 				string str3 = bill.recipe.WorkerCounter.ProductsDescription(bill);
 				if (!str3.NullOrEmpty())
 					label = label + ("\n" + "CountingProducts".Translate() + ": " + str3.CapitalizeFirst());
 				listing.Label(label);
 				int targetCount = bill.targetCount;
-				listing.IntEntry(ref bill.targetCount, ref bc.doXTimes.buffer, bill.recipe.targetCountAdjustment);
-				bill.unpauseWhenYouHave = Mathf.Max(0, bill.unpauseWhenYouHave + (bill.targetCount - targetCount));
+				MathBillEntry(bc.doUntilX, listing, bill.recipe.targetCountAdjustment);
+
 				ThingDef producedThingDef = bill.recipe.ProducedThingDef;
 				if (producedThingDef != null) {
+					// Equipped check-box
 					if (producedThingDef.IsWeapon || producedThingDef.IsApparel)
 						listing.CheckboxLabeled("IncludeEquipped".Translate(), ref bill.includeEquipped);
+					// Tainted check-box
 					if (producedThingDef.IsApparel && producedThingDef.apparel.careIfWornByCorpse)
 						listing.CheckboxLabeled("IncludeTainted".Translate(), ref bill.includeTainted);
 
 					// Drop down menu for where to search.
-					// TODO: Test this.
 					var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Zone_Stockpile>>>)(b => GenerateStockpileInclusion());
 					string button_label = bill.includeFromZone == null ? "IncludeFromAll".Translate() : "IncludeSpecific".Translate(bill.includeFromZone.label);
 					Widgets.Dropdown(listing.GetRect(30f), bill, b => b.includeFromZone, f, button_label);
@@ -187,7 +192,8 @@ namespace CrunchyDuck.Math {
 				listing.CheckboxLabeled("PauseWhenSatisfied".Translate(), ref bill.pauseWhenSatisfied);
 				if (bill.pauseWhenSatisfied) {
 					listing.Label("UnpauseWhenYouHave".Translate() + ": " + bc.unpause.CurrentValue.ToString("F0"));
-					listing.IntEntry(ref bill.unpauseWhenYouHave, ref bc.unpause.buffer, bill.recipe.targetCountAdjustment);
+					MathBillEntry(bc.unpause, listing, bill.recipe.targetCountAdjustment);
+					//listing.IntEntry(ref bill.unpauseWhenYouHave, ref bc.unpause.buffer, bill.recipe.targetCountAdjustment);
 					//if (bill.unpauseWhenYouHave >= bill.targetCount) {
 					//	bill.unpauseWhenYouHave = bill.targetCount - 1;
 					//	this.unpauseCountEditBuffer = bill.unpauseWhenYouHave.ToStringCached();
@@ -276,7 +282,7 @@ namespace CrunchyDuck.Math {
 				}
 			}
 			if (!flag) {
-				rect5.yMin = rect5.yMax - (float)IngredientRadiusSubdialogHeight;
+				rect5.yMin = rect5.yMax - IngredientRadiusSubdialogHeight;
 				rect_right.yMax = rect5.yMin - 17f;
 				bool num = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
 				ThingFilterUI.DoThingFilterConfigWindow(rect_right, thingFilterState, bill.ingredientFilter, bill.recipe.fixedIngredientFilter, 4, null, HiddenSpecialThingFilters.ConcatIfNotNull(bill.recipe.forceHiddenSpecialFilters), forceHideHitPointsConfig: false, bill.recipe.GetPremultipliedSmallIngredients(), bill.Map);
@@ -347,6 +353,51 @@ namespace CrunchyDuck.Math {
 			listing_Standard6.Label(text6);
 			Text.Font = GameFont.Small;
 			listing_Standard6.End();
+		}
+
+		private static void MathBillEntry(InputField field, Listing_Standard ls, int multiplier = 1) {
+			Rect rect = ls.GetRect(24f);
+			if (!ls.BoundingRectCached.HasValue || rect.Overlaps(ls.BoundingRectCached.Value)) {
+				int num = Mathf.Min(40, (int)rect.width / 5);
+				if (Widgets.ButtonText(new Rect(rect.xMin, rect.yMin, num, rect.height), (-10 * multiplier).ToStringCached())) {
+					field.SetAll(field.CurrentValue - 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
+					SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
+				}
+				if (Widgets.ButtonText(new Rect(rect.xMin + num, rect.yMin, num, rect.height), (-1 * multiplier).ToStringCached())) {
+					field.SetAll(field.CurrentValue - multiplier * GenUI.CurrentAdjustmentMultiplier());
+					SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
+				}
+				if (Widgets.ButtonText(new Rect(rect.xMax - num, rect.yMin, num, rect.height), "+" + (10 * multiplier).ToStringCached())) {
+					field.SetAll(field.CurrentValue + 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
+					SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
+				}
+				if (Widgets.ButtonText(new Rect(rect.xMax - num * 2, rect.yMin, num, rect.height), "+" + multiplier.ToStringCached())) {
+					field.SetAll(field.CurrentValue + multiplier * GenUI.CurrentAdjustmentMultiplier());
+					SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
+				}
+
+				// TODO: Fix this to allow user input to be null, when backspacing.
+				//if (field.buffer.NullOrEmpty())
+				//	field.buffer = field.lastValid;
+
+				// Was input invalid?
+				Color original_col = GUI.color;
+				int test_val = 0;
+				if (!Math.DoMath(field.buffer, ref test_val, field))
+					GUI.color = new Color(1, 0, 0, 0.8f);
+				else {
+					field.SetAll(field.buffer, test_val);
+				}
+				// TODO: Some kind of tooltip here.
+				if (Math.usedOldVariableNames) {
+					GUI.color = new Color(0.8f, 0.2f, 0.8f, 0.8f);
+				}
+				Rect input_rect = new Rect(rect.xMin + num * 2, rect.yMin, rect.width - num * 4, rect.height);
+				field.buffer = Widgets.TextField(input_rect, field.buffer);
+				GUI.color = original_col;
+			}
+
+			ls.Gap(ls.verticalSpacing);
 		}
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.

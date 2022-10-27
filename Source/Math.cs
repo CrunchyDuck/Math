@@ -24,6 +24,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Stop bills from pausing the game?
 	// TODO: Uninstalling a workbench causes an enumeration error.
 	// TODO: Field for what is included in count, as well as what is cap.
+	// TODO: Set bill default somewhere, maybe mod option.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -72,11 +73,8 @@ namespace CrunchyDuck.Math {
 			var harmony = new Harmony("CrunchyDuck.Math");
 			AddPatch(harmony, typeof(PatchExposeData));
 			AddPatch(harmony, typeof(DoConfigInterface_Patch));
-			AddPatch(harmony, typeof(IntEntry_Patch));
 			AddPatch(harmony, typeof(Bill_ProductionConstructor_Patch));
-			AddPatch(harmony, typeof(SetInitialSizeAndPosition_Patch));
-			AddPatch(harmony, typeof(TextFieldNumeric_Patch));
-			AddPatch(harmony, typeof(BillDialoguePopup_Patch));
+			AddPatch(harmony, typeof(BillDetails_Patch));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {
@@ -90,16 +88,18 @@ namespace CrunchyDuck.Math {
 			cachedMaps = new Dictionary<Map, CachedMapData>();
 		}
 
+		// TODO: remove str from variable here.
+		// TODO: Remove val too?
 		/// <returns>True if sequence is valid.</returns>
-		public static bool DoMath(string str, ref int val, BillComponent bc) {
+		public static bool DoMath(string str, ref int val, InputField field) {
 			usedOldVariableNames = false;
 			if (str.NullOrEmpty())
 				return false;
 
-			if (DoMath_new(str, ref val, bc)) {
+			if (DoMath_new(str, ref val, field)) {
 				return true;
 			}
-			else if (DoMath_old(str, ref val, bc)) {
+			else if (DoMath_old(str, ref val, field.bc)) {
 				usedOldVariableNames = true;
 				return true;
 			}
@@ -141,7 +141,7 @@ namespace CrunchyDuck.Math {
 			return true;
 		}
 		
-		public static bool DoMath_new(string str, ref int val, BillComponent bc) {
+		public static bool DoMath_new(string str, ref int val, InputField field) {
 			List<string> parameter_list = new List<string>();
 			foreach (Match match in parameterNames.Matches(str)) {
 				// Matched single word.
@@ -163,7 +163,7 @@ namespace CrunchyDuck.Math {
 				parameter_list.Add(str2);
 			}
 			Expression e = new Expression(str);
-			AddParameters(e, bc, parameter_list);
+			AddParameters(e, field, parameter_list);
 			// KNOWN BUG: `if` equations don't properly update. This is an ncalc issue - it evaluates the current path and ignores the other.
 			if (e.HasErrors())
 				return false;
@@ -243,10 +243,10 @@ namespace CrunchyDuck.Math {
 			}
 		}
 	
-		public static void AddParameters(Expression e, BillComponent bc, List<string> parameter_list) {
-			CachedMapData cache = bc.Cache;
+		public static void AddParameters(Expression e, InputField field, List<string> parameter_list) {
+			CachedMapData cache = field.bc.Cache;
 			if (cache == null) {
-				BillManager.RemoveBillComponent(bc);
+				BillManager.RemoveBillComponent(field.bc);
 				return;
 			}
 
@@ -275,7 +275,7 @@ namespace CrunchyDuck.Math {
 			// TODO: Add more searching modifiers, such as the nutritional value of foods.
 			foreach (string parameter in parameter_list) {
 				int count;
-				if (cache.SearchForResource(parameter, bc, out count)) {
+				if (cache.SearchForResource(parameter, field.bc, out count)) {
 					e.Parameters[parameter] = count;
 				}
 			}

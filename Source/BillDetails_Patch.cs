@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CrunchyDuck.Math {
-	// This patch handles the cloning of bills.
-	// TODO: I couldn't get this working elegantly. Making it work for copying breaks adding bills normally.
-	class BillDialoguePopup_Patch {
+	// This patch overrides the bill details popup to be my own.
+	// TODO: Can I consolidate this into DoConfigInterface_Patch?
+	class BillDetails_Patch {
 		private static Bill_Production currentBp;
-		private static MethodInfo spawnBill = AccessTools.Method("BillDialoguePopup_Patch:SpawnBillDialog");
+		private static MethodInfo spawnBill = AccessTools.Method("BillDetails_Patch:SpawnBillDialog");
 		private static MethodInfo targetCall = AccessTools.Method("WidgetRow:ButtonText");
 
 		public static MethodInfo Target() {
