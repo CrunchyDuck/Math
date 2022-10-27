@@ -181,13 +181,13 @@ namespace CrunchyDuck.Math {
 					continue;
 
 				// Hitpoints
-				bool thing_uses_hitpoints = thing.HitPoints != -1;
-				if (thing_uses_hitpoints && !bc.targetBill.hpRange.Includes((float)thing.HitPoints / (float)thing.MaxHitPoints)) {
+				if (thing.def.useHitPoints && !bc.targetBill.hpRange.Includes((float)thing.HitPoints / (float)thing.MaxHitPoints)) {
 					continue;
 				}
 
 				// Quality
 				QualityCategory q;
+				// thing.def.HasComp(typeof(CompQuality))
 				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
 					continue;
 

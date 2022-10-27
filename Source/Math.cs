@@ -23,6 +23,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Expanded view with the ability to make variables.
 	// TODO: Stop bills from pausing the game?
 	// TODO: Uninstalling a workbench causes an enumeration error.
+	// TODO: Field for what is included in count, as well as what is cap.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
