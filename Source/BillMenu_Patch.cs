@@ -397,7 +397,6 @@ namespace CrunchyDuck.Math {
 				number -= val;
 			BillMenuData.AssignCurrentlyRenderingField(number);
 			SoundDefOf.DragSlider.PlayOneShotOnCamera();
-			SoundDefOf.DragSlider.PlayOneShotOnCamera();
 		}
 	}
 }

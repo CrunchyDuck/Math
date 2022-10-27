@@ -17,6 +17,12 @@ namespace CrunchyDuck.Math {
 	// TODO: Add support for other lanuages/redefine how variables are segmented.
 	// TODO: unpause doesn't update properly. Confirm this?
 	// TODO: Add pop up window for inputting larger bills.
+	// TODO: Update "look everywhere" to ACTUALLY look everywhere, not just in stockpiles.
+	// TODO: Market value slider.
+	// TODO: Values for item properties, like armour.
+	// TODO: Expanded view with the ability to make variables.
+	// TODO: Stop bills from pausing the game?
+	// TODO: Uninstalling a workbench causes an enumeration error.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

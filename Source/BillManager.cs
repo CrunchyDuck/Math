@@ -32,16 +32,13 @@ namespace CrunchyDuck.Math {
 		public override void GameComponentTick() {
 			base.GameComponentTick();
 			// Make sure bills are up to date.
+
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
-				foreach (BillComponent item in billTable.Values) {
-					// I think I put this here to fix something sometime.
-					// But testing, the problem it fixed isn't a problem, and it actually breaks other things.
-					// Number changed, likely because they pressed + or -.
-					//if (item.targetBill.targetCount != item.target_count_last_result) {
-					//	item.target_count_last_result = item.targetBill.targetCount;
-					//	item.target_count_last_valid = item.targetBill.targetCount.ToString();
-					//}
-					//else
+				// We create a copy as billTable can be modified during iteration by having null bills removed.
+				// It would be more elegant to throw and catch an error to make this object handle the billTable,
+				// But I use Math.DoMath in a lot of places outside of here that I don't want erroring.
+				Dictionary<int, BillComponent> bt_copy = billTable.ToDictionary(entry => entry.Key, entry => entry.Value);
+				foreach (BillComponent item in bt_copy.Values) {
 					Math.DoMath(item.doUntilX.lastValid, ref item.targetBill.targetCount, item);
 					//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
 					Math.DoMath(item.unpause.lastValid, ref item.targetBill.unpauseWhenYouHave, item);

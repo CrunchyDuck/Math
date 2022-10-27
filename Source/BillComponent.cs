@@ -65,7 +65,7 @@ namespace CrunchyDuck.Math {
 						bill.repeatCount = value;
 						break;
 					default:
-						bill.repeatCount = value;
+						bill.unpauseWhenYouHave = value;
 						break;
 				}
 			}
