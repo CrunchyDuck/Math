@@ -10,8 +10,9 @@ using Verse.Sound;
 namespace CrunchyDuck.Math {
 	// After so much patching, I've decided to just completely reimplement the window.
 	class Dialog_MathBillConfig : Window {
-        private IntVec3 billGiverPos;
-        protected Bill_Production bill;
+		// This is only for drawing the ingredient search radius for now. Not implemented.
+		IntVec3 billGiverPos;
+		public Bill_Production bill;
         private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
         protected const float RecipeIconSize = 34f;
         [TweakValue("Interface", 0.0f, 400f)]
@@ -24,9 +25,10 @@ namespace CrunchyDuck.Math {
         private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
         public override Vector2 InitialSize => new Vector2(800f + Settings.textInputAreaBonus, 634f);
+		private float extraPanelAllocation = Settings.textInputAreaBonus / 3;
 
 
-        private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
+		private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
 		private static IEnumerable<SpecialThingFilterDef> HiddenSpecialThingFilters {
 			get {
 				if (cachedHiddenSpecialThingFilters == null) {
@@ -63,101 +65,47 @@ namespace CrunchyDuck.Math {
 		}
 
 		public override void DoWindowContents(Rect inRect) {
+			BillMenuData.AssignTo(this, inRect);
+			// Clear the cache and regenerate it.
+			// Since the game is paused, it won't cause lag.
+			if (RealTime.frameCount % 60 == 0) {
+				Math.ClearCacheMaps();
+				InputField f = BillMenuData.GetCurrentlyRenderingField();
+				int val = 0;
+				Math.DoMath(f.lastValid, ref val, BillMenuData.bc);
+				f.CurrentValue = val;
+			}
+
 			Text.Font = GameFont.Medium;
 			Widgets.Label(new Rect(40f, 0.0f, 400f, 34f), this.bill.LabelCap);
 			float width = (int)((inRect.width - 34.0) / 3.0);
-			Rect rect_left = new Rect(0.0f, 80f, width, inRect.height - 80f);
-			Rect rect_middle = new Rect(rect_left.xMax + 17f, 50f, width, inRect.height - 50f - CloseButSize.y);
+			Rect rect_left = new Rect(0.0f, 80f, width - extraPanelAllocation, inRect.height - 80f);
+			Rect rect_middle = new Rect(rect_left.xMax + 17f, 50f, width + (extraPanelAllocation * 2), inRect.height - 50f - CloseButSize.y);
 			Rect rect_right = new Rect(rect_middle.xMax + 17f, 50f, 0.0f, inRect.height - 50f - CloseButSize.y);
 			rect_right.xMax = inRect.xMax;
 			Text.Font = GameFont.Small;
 
-			// Middle panel
+			// Middle panel.
 			RenderMiddlePanel(rect_middle);
 
 			// Ingredient panel.
-			Rect rect5 = rect_right;
-			bool flag = true;
-			for (int j = 0; j < bill.recipe.ingredients.Count; j++) {
-				if (!bill.recipe.ingredients[j].IsFixedIngredient) {
-					flag = false;
-					break;
-				}
-			}
-			if (!flag) {
-				rect5.yMin = rect5.yMax - (float)IngredientRadiusSubdialogHeight;
-				rect_right.yMax = rect5.yMin - 17f;
-				bool num = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
-				ThingFilterUI.DoThingFilterConfigWindow(rect_right, thingFilterState, bill.ingredientFilter, bill.recipe.fixedIngredientFilter, 4, null, HiddenSpecialThingFilters.ConcatIfNotNull(bill.recipe.forceHiddenSpecialFilters), forceHideHitPointsConfig: false, bill.recipe.GetPremultipliedSmallIngredients(), bill.Map);
-				bool flag2 = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
-				if (num && !flag2) {
-					Messages.Message("MessageBillValidationStoreZoneInsufficient".Translate(bill.LabelCap, bill.billStack.billGiver.LabelShort.CapitalizeFirst(), bill.GetStoreZone().label), bill.billStack.billGiver as Thing, MessageTypeDefOf.RejectInput, historical: false);
-				}
-			}
-			else {
-				rect5.yMin = 50f;
-			}
-			// Ingredient search slider.
-			Listing_Standard listing_Standard5 = new Listing_Standard();
-			listing_Standard5.Begin(rect5);
-			string text3 = "IngredientSearchRadius".Translate().Truncate(rect5.width * 0.6f);
-			string text4 = ((bill.ingredientSearchRadius == 999f) ? "Unlimited".TranslateSimple().Truncate(rect5.width * 0.3f) : bill.ingredientSearchRadius.ToString("F0"));
-			listing_Standard5.Label(text3 + ": " + text4);
-			bill.ingredientSearchRadius = listing_Standard5.Slider((bill.ingredientSearchRadius > 100f) ? 100f : bill.ingredientSearchRadius, 3f, 100f);
-			if (bill.ingredientSearchRadius >= 100f) {
-				bill.ingredientSearchRadius = 999f;
-			}
-			listing_Standard5.End();
+			RenderIngredients(rect_right);
 
-			// Suspended button.
-			Listing_Standard listing_Standard6 = new Listing_Standard();
-			listing_Standard6.Begin(rect_left);
-			if (bill.suspended) {
-				if (listing_Standard6.ButtonText("Suspended".Translate())) {
-					bill.suspended = false;
-					SoundDefOf.Click.PlayOneShotOnCamera();
-				}
-			}
-			else if (listing_Standard6.ButtonText("NotSuspended".Translate())) {
-				bill.suspended = true;
-				SoundDefOf.Click.PlayOneShotOnCamera();
-			}
+			// Bill info panel.
+			RenderBillInfo(rect_left);
 
-			// Description + work amount.
-			StringBuilder stringBuilder = new StringBuilder();
-			if (bill.recipe.description != null) {
-				stringBuilder.AppendLine(bill.recipe.description);
-				stringBuilder.AppendLine();
-			}
-			stringBuilder.AppendLine("WorkAmount".Translate() + ": " + bill.recipe.WorkAmountTotal(null).ToStringWorkAmount());
-			for (int k = 0; k < bill.recipe.ingredients.Count; k++) {
-				IngredientCount ingredientCount = bill.recipe.ingredients[k];
-				if (!ingredientCount.filter.Summary.NullOrEmpty()) {
-					stringBuilder.AppendLine(bill.recipe.IngredientValueGetter.BillRequirementsDescription(bill.recipe, ingredientCount));
-				}
-			}
-			stringBuilder.AppendLine();
-			string text5 = bill.recipe.IngredientValueGetter.ExtraDescriptionLine(bill.recipe);
-			if (text5 != null) {
-				stringBuilder.AppendLine(text5);
-				stringBuilder.AppendLine();
-			}
-			if (!bill.recipe.skillRequirements.NullOrEmpty()) {
-				stringBuilder.AppendLine("MinimumSkills".Translate());
-				stringBuilder.AppendLine(bill.recipe.MinSkillString);
-			}
-			Text.Font = GameFont.Small;
-			string text6 = stringBuilder.ToString();
-			if (Text.CalcHeight(text6, rect_left.width) > rect_left.height) {
-				Text.Font = GameFont.Tiny;
-			}
-			listing_Standard6.Label(text6);
-			Text.Font = GameFont.Small;
-			listing_Standard6.End();
+			// infocard button.
 			if (bill.recipe.products.Count == 1) {
 				ThingDef thingDef = bill.recipe.products[0].thingDef;
 				Widgets.InfoCardButton(rect_left.x, rect_right.y, thingDef, GenStuff.DefaultStuffFor(thingDef));
 			}
+
+			// math info button.
+			Rect rect_math_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
+			if (Widgets.ButtonImage(rect_math_button, Math.infoButtonImage, GUI.color)) {
+				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
+			}
+			BillMenuData.Unassign();
 		}
 
 		private void RenderMiddlePanel(Rect rect) {
@@ -316,6 +264,89 @@ namespace CrunchyDuck.Math {
 				listing.IntRange(ref bill.allowedSkillRange, 0, 20);
 			}
 			listing_standard.EndSection(listing);
+		}
+
+		private void RenderIngredients(Rect rect_right) {
+			Rect rect5 = rect_right;
+			bool flag = true;
+			for (int j = 0; j < bill.recipe.ingredients.Count; j++) {
+				if (!bill.recipe.ingredients[j].IsFixedIngredient) {
+					flag = false;
+					break;
+				}
+			}
+			if (!flag) {
+				rect5.yMin = rect5.yMax - (float)IngredientRadiusSubdialogHeight;
+				rect_right.yMax = rect5.yMin - 17f;
+				bool num = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
+				ThingFilterUI.DoThingFilterConfigWindow(rect_right, thingFilterState, bill.ingredientFilter, bill.recipe.fixedIngredientFilter, 4, null, HiddenSpecialThingFilters.ConcatIfNotNull(bill.recipe.forceHiddenSpecialFilters), forceHideHitPointsConfig: false, bill.recipe.GetPremultipliedSmallIngredients(), bill.Map);
+				bool flag2 = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
+				if (num && !flag2) {
+					Messages.Message("MessageBillValidationStoreZoneInsufficient".Translate(bill.LabelCap, bill.billStack.billGiver.LabelShort.CapitalizeFirst(), bill.GetStoreZone().label), bill.billStack.billGiver as Thing, MessageTypeDefOf.RejectInput, historical: false);
+				}
+			}
+			else {
+				rect5.yMin = 50f;
+			}
+			// Ingredient search slider.
+			Listing_Standard listing_Standard5 = new Listing_Standard();
+			listing_Standard5.Begin(rect5);
+			string text3 = "IngredientSearchRadius".Translate().Truncate(rect5.width * 0.6f);
+			string text4 = ((bill.ingredientSearchRadius == 999f) ? "Unlimited".TranslateSimple().Truncate(rect5.width * 0.3f) : bill.ingredientSearchRadius.ToString("F0"));
+			listing_Standard5.Label(text3 + ": " + text4);
+			bill.ingredientSearchRadius = listing_Standard5.Slider((bill.ingredientSearchRadius > 100f) ? 100f : bill.ingredientSearchRadius, 3f, 100f);
+			if (bill.ingredientSearchRadius >= 100f) {
+				bill.ingredientSearchRadius = 999f;
+			}
+			listing_Standard5.End();
+		}
+
+		private void RenderBillInfo(Rect rect_left) {
+			// Suspended button.
+			Listing_Standard listing_Standard6 = new Listing_Standard();
+			listing_Standard6.Begin(rect_left);
+			if (bill.suspended) {
+				if (listing_Standard6.ButtonText("Suspended".Translate())) {
+					bill.suspended = false;
+					SoundDefOf.Click.PlayOneShotOnCamera();
+				}
+			}
+			else if (listing_Standard6.ButtonText("NotSuspended".Translate())) {
+				bill.suspended = true;
+				SoundDefOf.Click.PlayOneShotOnCamera();
+			}
+
+			// Description + work amount.
+			StringBuilder stringBuilder = new StringBuilder();
+			if (bill.recipe.description != null) {
+				stringBuilder.AppendLine(bill.recipe.description);
+				stringBuilder.AppendLine();
+			}
+			stringBuilder.AppendLine("WorkAmount".Translate() + ": " + bill.recipe.WorkAmountTotal(null).ToStringWorkAmount());
+			for (int k = 0; k < bill.recipe.ingredients.Count; k++) {
+				IngredientCount ingredientCount = bill.recipe.ingredients[k];
+				if (!ingredientCount.filter.Summary.NullOrEmpty()) {
+					stringBuilder.AppendLine(bill.recipe.IngredientValueGetter.BillRequirementsDescription(bill.recipe, ingredientCount));
+				}
+			}
+			stringBuilder.AppendLine();
+			string text5 = bill.recipe.IngredientValueGetter.ExtraDescriptionLine(bill.recipe);
+			if (text5 != null) {
+				stringBuilder.AppendLine(text5);
+				stringBuilder.AppendLine();
+			}
+			if (!bill.recipe.skillRequirements.NullOrEmpty()) {
+				stringBuilder.AppendLine("MinimumSkills".Translate());
+				stringBuilder.AppendLine(bill.recipe.MinSkillString);
+			}
+			Text.Font = GameFont.Small;
+			string text6 = stringBuilder.ToString();
+			if (Text.CalcHeight(text6, rect_left.width) > rect_left.height) {
+				Text.Font = GameFont.Tiny;
+			}
+			listing_Standard6.Label(text6);
+			Text.Font = GameFont.Small;
+			listing_Standard6.End();
 		}
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.

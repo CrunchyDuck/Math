@@ -12,7 +12,7 @@ using Verse.Sound;
 namespace CrunchyDuck.Math {
 	static class BillMenuData {
 		public static BillComponent bc = null;
-		public static Dialog_BillConfig billDialog = null;
+		public static Dialog_MathBillConfig billDialog = null;
 		public static Bill_Production billProduction = null;
 		public static bool didTargetCountThisFrame = false;
 		public static Rect rect;
@@ -26,11 +26,11 @@ namespace CrunchyDuck.Math {
 			BillMenuData.bc = bc;
 		}
 
-		public static void AssignTo(Dialog_BillConfig bill_dialogue, Rect rect) {
+		public static void AssignTo(Dialog_MathBillConfig bill_dialogue, Rect rect) {
 			didTargetCountThisFrame = false;
 			billDialog = bill_dialogue;
 			BillMenuData.rect = rect;
-			billProduction = (Bill_Production)AccessTools.Field(typeof(Dialog_BillConfig), "bill").GetValue(bill_dialogue);
+			billProduction = bill_dialogue.bill;
 			bc = BillManager.AddGetBillComponent(billProduction);
 		}
 
@@ -62,111 +62,6 @@ namespace CrunchyDuck.Math {
 			else {
 				return bc.unpause;
 			}
-		}
-	}
-
-	// This patch is used to check when NumericTextField is being invoked, and to pass a reference to the calling Dialogue_BillConfig.
-	class Dialog_BillConfig_Patch {
-		public static MethodInfo Target() {
-			return AccessTools.Method(typeof(Dialog_BillConfig), "DoWindowContents");
-		}
-
-		// This transpiler expands the size of the panel.
-#if v1_4
-		// oh jeez oh gosh how do i use this
-		public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions) {
-			var codes = new List<CodeInstruction>(instructions);
-			int num_codes_found = 0;
-			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
-			float panel_allocation = Settings.textInputAreaBonus / 3;
-
-			for (var i = 0; i < codes.Count; i++) {
-				// Increase size of panel
-				if (codes[i].opcode == OpCodes.Ldloc_0) {
-					switch (num_codes_found) {
-						// Shrink the panel to the left
-						case 0:
-							codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldc_R4, panel_allocation));
-							codes.Insert(i + 2, new CodeInstruction(OpCodes.Sub));
-							break;
-						// Expand the panel to the right.
-						case 1:
-							codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldc_R4, panel_allocation * 2));
-							codes.Insert(i + 2, new CodeInstruction(OpCodes.Add));
-							break;
-					}
-					num_codes_found++;
-				}
-			}
-
-			return codes.AsEnumerable();
-		}
-#elif v1_3
-		// oh jeez oh gosh how do i use this
-		public static IEnumerable<CodeInstruction> Transpiler1(IEnumerable<CodeInstruction> instructions) {
-			var codes = new List<CodeInstruction>(instructions);
-			int num_codes_found = 0;
-			// This needs to be done because when scaling up the width of the element in Prefix2, that width is evenly distributed.
-			// TODO: This scales weirdly because it's only updated at the start. Make it a call.
-			float panel_allocation = Settings.textInputAreaBonus / 3;
-
-			for (var i = 0; i < codes.Count; i++) {
-				// Increase size of panel
-				if (codes[i].opcode == OpCodes.Ldloc_1) {
-					switch (num_codes_found) {
-						// Shrink the panel to the left
-						case 0:
-							codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldc_R4, panel_allocation));
-							codes.Insert(i + 2, new CodeInstruction(OpCodes.Sub));
-							break;
-						// Expand the panel to the right.
-						case 1:
-							codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldc_R4, panel_allocation * 2));
-							codes.Insert(i + 2, new CodeInstruction(OpCodes.Add));
-							break;
-					}
-					num_codes_found++;
-				}
-			}
-
-			return codes.AsEnumerable();
-		}
-#endif
-
-		// Started render
-		public static void Prefix(Dialog_BillConfig __instance, Rect inRect) {
-			BillMenuData.AssignTo(__instance, inRect);
-			// Clear the cache and regenerate it.
-			// Since the game is paused, it won't cause lag.
-			if (RealTime.frameCount % 60 == 0) {
-				Math.ClearCacheMaps();
-				InputField f = BillMenuData.GetCurrentlyRenderingField();
-				int val = 0;
-				Math.DoMath(f.lastValid, ref val, BillMenuData.bc);
-				f.CurrentValue = val;
-			}
-		}
-
-		// Finished render
-		public static void Postfix(Rect inRect) {
-			// This overrides the logic for unpausing recipes. It breaks how my stuff works, and it's dumb anyway.
-			// TODO: This might be able to be removed?
-			BillComponent bc = BillMenuData.bc;
-			Math.DoMath(bc.unpause.lastValid, ref bc.targetBill.unpauseWhenYouHave, bc);
-			AccessTools.Field(typeof(Dialog_BillConfig), "unpauseCountEditBuffer").SetValue(BillMenuData.billDialog, bc.unpause.buffer);
-
-			// Render help button.
-			// Touch lazy to copy this from the method, but oh well.
-			float width = (int)((inRect.width - 34.0) / 3.0);
-			Rect rect1 = new Rect(0.0f, 80f, width, inRect.height - 80f);
-			Rect rect2 = new Rect(rect1.xMax + 17f, 50f, width, inRect.height - 50f - Window.CloseButSize.y);
-			Rect rect3 = new Rect(rect2.xMax + 17f, 50f, 0.0f, inRect.height - 50f - Window.CloseButSize.y);
-			Rect rect = new Rect(rect1.x + 24 + 4, rect3.y, 24, 24);
-			
-			if (Widgets.ButtonImage(rect, Math.infoButtonImage, GUI.color)) {
-				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
-			}
-			BillMenuData.Unassign();
 		}
 	}
 
@@ -376,7 +271,6 @@ namespace CrunchyDuck.Math {
 			BillMenuData.Unassign();
 		}
 
-		// lazy
 		public static void Decrement() {
 			DoEq(false);
 		}

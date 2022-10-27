@@ -75,7 +75,6 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(IntEntry_Patch));
 			AddPatch(harmony, typeof(Bill_ProductionConstructor_Patch));
 			AddPatch(harmony, typeof(SetInitialSizeAndPosition_Patch));
-			AddPatch(harmony, typeof(Dialog_BillConfig_Patch));
 			AddPatch(harmony, typeof(TextFieldNumeric_Patch));
 			AddPatch(harmony, typeof(BillDialoguePopup_Patch));
 		}

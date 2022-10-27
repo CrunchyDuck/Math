@@ -115,14 +115,12 @@ Eggs (unfert.) -> ""cat eggs (unfert.)""", 2998));
 			// This is done to force the variables to be lowercase in menus.
 			// nice thinking oken
 			// BEWARE THE HIDDEN HORRORS.
+			// TODO: Fill these in with their current values.
 			cat = catExamples;
 			stats.Add(new StatDrawEntry(cat, "​\"pawns intake\" * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​col * 2", "", "Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.", 3000));
 			stats.Add(new StatDrawEntry(cat, "​if(\"slate blocks\" > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2999));
 			stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"anim in\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"anim in\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
-
-			//cat = catFunctions;
-			//stats.Add(new StatDrawEntry(cat, "if statements", "", "Example:\nif(fine_meal > 10, 10, 0)\n\n", 2999));
 
 			cat = catPawns;
 			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map the bill is contained in.", 3001));

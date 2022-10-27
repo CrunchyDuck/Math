@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace CrunchyDuck.Math {
+	// TODO: Add male/female searching for pawns.
+	// TODO: Guests from quests. They also ask for "from mods" but I don't know how I can do that if they're different.
 	class CachedMapData {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
