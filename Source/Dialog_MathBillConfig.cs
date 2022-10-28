@@ -450,8 +450,20 @@ namespace CrunchyDuck.Math {
 				i = num;
 			}
 		}
-
-		private IEnumerable<Widgets.DropdownMenuElement<Pawn>> GeneratePawnRestrictionOptions() {
+		protected virtual IEnumerable<Widgets.DropdownMenuElement<Pawn>> GeneratePawnRestrictionOptions() {
+			if (ModsConfig.BiotechActive && bill.recipe.mechanitorOnlyRecipe) {
+				yield return new Widgets.DropdownMenuElement<Pawn> {
+					option = new FloatMenuOption("AnyMechanitor".Translate(), delegate
+					{
+						bill.SetAnyPawnRestriction();
+					}),
+					payload = null
+				};
+				foreach (Widgets.DropdownMenuElement<Pawn> item in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill, (Pawn p) => MechanitorUtility.IsMechanitor(p))) {
+					yield return item;
+				}
+				yield break;
+			}
 			yield return new Widgets.DropdownMenuElement<Pawn> {
 				option = new FloatMenuOption("AnyWorker".Translate(), delegate
 				{
@@ -468,62 +480,17 @@ namespace CrunchyDuck.Math {
 					payload = null
 				};
 			}
-			SkillDef workSkill = bill.recipe.workSkill;
-			IEnumerable<Pawn> allMaps_FreeColonists = PawnsFinder.AllMaps_FreeColonists;
-			allMaps_FreeColonists = allMaps_FreeColonists.OrderBy((Pawn pawn) => pawn.LabelShortCap);
-			if (workSkill != null) {
-				allMaps_FreeColonists = allMaps_FreeColonists.OrderByDescending((Pawn pawn) => pawn.skills.GetSkill(bill.recipe.workSkill).Level);
+			if (ModsConfig.BiotechActive && MechWorkUtility.AnyWorkMechCouldDo(bill.recipe)) {
+				yield return new Widgets.DropdownMenuElement<Pawn> {
+					option = new FloatMenuOption("AnyMech".Translate(), delegate
+					{
+						bill.SetAnyMechRestriction();
+					}),
+					payload = null
+				};
 			}
-			WorkGiverDef workGiver = bill.billStack.billGiver.GetWorkgiver();
-			if (workGiver == null) {
-				Log.ErrorOnce("Generating pawn restrictions for a BillGiver without a Workgiver", 96455148);
-				yield break;
-			}
-			allMaps_FreeColonists = allMaps_FreeColonists.OrderByDescending((Pawn pawn) => pawn.workSettings.WorkIsActive(workGiver.workType));
-			allMaps_FreeColonists = allMaps_FreeColonists.OrderBy((Pawn pawn) => pawn.WorkTypeIsDisabled(workGiver.workType));
-			foreach (Pawn pawn2 in allMaps_FreeColonists) {
-				if (pawn2.WorkTypeIsDisabled(workGiver.workType)) {
-					yield return new Widgets.DropdownMenuElement<Pawn> {
-						option = new FloatMenuOption(string.Format("{0} ({1})", pawn2.LabelShortCap, "WillNever".Translate(workGiver.verb)), null),
-						payload = pawn2
-					};
-				}
-				else if (bill.recipe.workSkill != null && !pawn2.workSettings.WorkIsActive(workGiver.workType)) {
-					yield return new Widgets.DropdownMenuElement<Pawn> {
-						option = new FloatMenuOption(string.Format("{0} ({1} {2}, {3})", pawn2.LabelShortCap, pawn2.skills.GetSkill(bill.recipe.workSkill).Level, bill.recipe.workSkill.label, "NotAssigned".Translate()), delegate
-						{
-							bill.SetPawnRestriction(pawn2);
-						}),
-						payload = pawn2
-					};
-				}
-				else if (!pawn2.workSettings.WorkIsActive(workGiver.workType)) {
-					yield return new Widgets.DropdownMenuElement<Pawn> {
-						option = new FloatMenuOption(string.Format("{0} ({1})", pawn2.LabelShortCap, "NotAssigned".Translate()), delegate
-						{
-							bill.SetPawnRestriction(pawn2);
-						}),
-						payload = pawn2
-					};
-				}
-				else if (bill.recipe.workSkill != null) {
-					yield return new Widgets.DropdownMenuElement<Pawn> {
-						option = new FloatMenuOption($"{pawn2.LabelShortCap} ({pawn2.skills.GetSkill(bill.recipe.workSkill).Level} {bill.recipe.workSkill.label})", delegate
-						{
-							bill.SetPawnRestriction(pawn2);
-						}),
-						payload = pawn2
-					};
-				}
-				else {
-					yield return new Widgets.DropdownMenuElement<Pawn> {
-						option = new FloatMenuOption($"{pawn2.LabelShortCap}", delegate
-						{
-							bill.SetPawnRestriction(pawn2);
-						}),
-						payload = pawn2
-					};
-				}
+			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {
+				yield return item2;
 			}
 		}
 	}
