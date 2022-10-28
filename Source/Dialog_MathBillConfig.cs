@@ -151,23 +151,23 @@ namespace CrunchyDuck.Math {
 
 				// Counted items checkbox/field
 				// TODO: Do the same column thing here for "equipped"/"tainted"
-				Rect item_count_rect = listing.GetRect(24f);
-				Listing_Standard item_count_listing = new Listing_Standard();
-				item_count_listing.Begin(item_count_rect);
-				item_count_listing.ColumnWidth /= 2;
-				item_count_listing.ColumnWidth -= 10;
-				item_count_listing.CheckboxLabeled("Custom item count", ref bc.customItemsToCount);
-				item_count_listing.NewColumn();
-				if (bc.customItemsToCount) {
-					//listing.Label("Custom counter: " + bc.itemsToCount.CurrentValue);
-					//int num = Mathf.Min(40, (int)rect.width / 5);
-					//Rect input_rect = new Rect(rect.xMin + num * 2, rect.yMin, rect.width - num * 4, rect.height);
-					Rect rect = item_count_listing.GetRect(24f);
-					MathTextField(bc.itemsToCount, rect);
-				}
-				item_count_listing.End();
+				//Rect item_count_rect = listing.GetRect(24f);
+				//Listing_Standard item_count_listing = new Listing_Standard();
+				//item_count_listing.Begin(item_count_rect);
+				//item_count_listing.ColumnWidth /= 2;
+				//item_count_listing.ColumnWidth -= 10;
+				//item_count_listing.CheckboxLabeled("Custom item count", ref bc.customItemsToCount);
+				//item_count_listing.NewColumn();
+				//if (bc.customItemsToCount) {
+				//	//listing.Label("Custom counter: " + bc.itemsToCount.CurrentValue);
+				//	//int num = Mathf.Min(40, (int)rect.width / 5);
+				//	//Rect input_rect = new Rect(rect.xMin + num * 2, rect.yMin, rect.width - num * 4, rect.height);
+				//	Rect rect = item_count_listing.GetRect(24f);
+				//	MathTextField(bc.itemsToCount, rect);
+				//}
+				//item_count_listing.End();
 
-				listing.Label("Target value: " + bc.doUntilX.CurrentValue);
+				//listing.Label("Target value: " + bc.doUntilX.CurrentValue);
 				MathBillEntry(bc.doUntilX, listing, bill.recipe.targetCountAdjustment);
 
 				ThingDef producedThingDef = bill.recipe.ProducedThingDef;
