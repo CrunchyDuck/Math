@@ -178,7 +178,15 @@ namespace CrunchyDuck.Math {
 			}
 
 			// TODO: Index things that are on corpses. 
-			foreach (Thing thing in resources[parameter_name]) {
+			foreach (Thing _thing in resources[parameter_name]) {
+				Thing thing = _thing.GetInnerIfMinified();
+				// Check if in stockpile.
+				// TODO: Make default only check stockpiles, with an option to make it check everywhere.
+				var zone = bc.targetBill.includeFromZone;
+				if (zone != null && !zone.ContainsCell(thing.InteractionCell)) {
+					continue;
+				}
+
 				// Forbidden
 				if (thing.IsForbidden(Faction.OfPlayer))
 					continue;

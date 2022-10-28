@@ -29,8 +29,7 @@ namespace CrunchyDuck.Math {
 			unpause = new InputField(bill, InputField.Field.Unpause, this, 5);
 
 			itemsToCount = new InputField(bill, InputField.Field.itemsToCount, this);
-			// TODO: Test how this works on many types of recipes.
-			if (bill.recipe.ProducedThingDef != null){
+			if (bill.recipe.ProducedThingDef != null) {
 				itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
 			}
 		}

@@ -75,9 +75,11 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(DoConfigInterface_Patch));
 			AddPatch(harmony, typeof(Bill_ProductionConstructor_Patch));
 			AddPatch(harmony, typeof(BillDetails_Patch));
+			AddPatch(harmony, typeof(CountProducts_Patch));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {
+			// TODO: Sometime make a patch interface.
 			var prefix = type.GetMethod("Prefix") != null ? new HarmonyMethod(type, "Prefix") : null;
 			var postfix = type.GetMethod("Postfix") != null ? new HarmonyMethod(type, "Postfix") : null;
 			var trans = type.GetMethod("Transpiler") != null ? new HarmonyMethod(type, "Transpiler") : null;
