@@ -216,7 +216,6 @@ namespace CrunchyDuck.Math {
 						continue;
 					}
 				}
-				//TODO: Add store mode.
 
 			  count += thing.stackCount;
 			}

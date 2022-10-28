@@ -18,7 +18,7 @@ namespace CrunchyDuck.Math {
 				return true;
 
 			// TODO: Last valid result.
-			Math.DoMath(bc.itemsToCount.buffer, ref __result, bc.itemsToCount);
+			Math.DoMath(bc.itemsToCount.lastValid, ref __result, bc.itemsToCount);
 			return false;
 		}
 	}

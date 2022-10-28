@@ -43,7 +43,6 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
-		// BIG TODO: Save itemsToCount
 		public void ExposeData() {
 			// I wanna change these but that'd break peoples' saves lmao
 			Scribe_Values.Look(ref doXTimes.lastValid, "repeat_count_last_valid");
@@ -76,7 +75,6 @@ namespace CrunchyDuck.Math {
 						return bill.repeatCount;
 					case Field.Unpause:
 						return bill.unpauseWhenYouHave;
-					// BIG TODO: What do I put here?
 					default:
 						return 0;
 				}
@@ -93,7 +91,7 @@ namespace CrunchyDuck.Math {
 						bill.unpauseWhenYouHave = value;
 						break;
 					default:
-						//bill.unpauseWhenYouHave = value;
+						// itemsToCount works differently, see CountProducts_Patch
 						break;
 				}
 			}

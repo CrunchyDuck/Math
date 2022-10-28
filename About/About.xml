@@ -10,13 +10,12 @@
 	<description>[b]Math![/b] Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
 
 [h2]Why would I use [b]Math![/b]?[/h2]
-A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "colonists intake" * 5. We want "colonists" number of t-shirts and hats and bionic hearts. [b]Math![/b] gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
+A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "colonists intake" * 5. Or maybe you don't want to count [i]just[/i] simple meals, but all meals. [b]Math![/b] improves the user interface for bills, and gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
 
 [h2]How do I use [b]Math![/b]?[/h2]
 Type it in!!
 [img]https://steamuserimages-a.akamaihd.net/ugc/1853820727236000569/A63D104F2ED5666712E69A8E472CC76434919605/?imw=637&#038;imh=358&#038;ima=fit[/img]
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
-The text field has also been expanded to make room for large calculations!
 
 [h2]Variables[/h2]
 I've defined a few variables you'll want to use, and they can all be seen from the handy-dandy in-bill info card.
@@ -61,9 +60,17 @@ Humanlike corpses -> "category humanlike corpses"
 Meals -> "c meals"
 Eggs (unfert.) -> "cat eggs (unfert.)"
 
+[h2]Future updates[/h2]
+[b]Math![/b] is far from done, and I have many QOL updates planned. Some of the most interesting are:
+UI improvements from Better Workbench Management. As BWM has been left for over a year, I'm going to be taking over what it started by combining its improves with my own. In the future I might rename this mod to better reflect that.
+Custom user variables, letting you simplify equations or store results.
+Expandable text field to allow as much room as you'll need.
+Searching any attribute of a thing, such as its market value, weight, if it's male or female, etc.
+
 [h2]Compatibility[/h2]
+You can add this to a new save, and you can also remove it from a save. You will get an error the first time you do so, but it shouldn't break your game.
 Things from other mods like new foods or weapons will work with this mod.
-Besides that, I'm pretty sure Better Workbench Management doesn't work. I haven't tested it with any mods that I don't use, and I don't use any UI mods. If it doesn't work with a mod you like, let me know and I'll look into it.
+If a mod changes the UI of the bill menu, it likely won't work with this mod. BWM is the only example I know of.
 
 [b]Links:[/b]
 Discord with me and my budderoos: https://discord.gg/hUnEs9ZhwA

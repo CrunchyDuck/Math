@@ -87,6 +87,13 @@ Click on a row to get an explanation.",
 			stats.Add(stat);
 			stats.Add(new StatDrawEntry(cat, "Old variable system", "", "Variables used to be input like \"col_in\", \"c_meals\", \"c_eggs__unfert__\". But this system was\n1. ugly\n2. Puts the burden on the user and\n3. kept breaking.\n\nInstead, I've switched to using \"variable\", which is much easier to parse, prettier, and also supports multiple langauges.\n\nEquations using the old method will appear purple to notify that it should be changed to the new version, as it will eventually be removed.", 3000));
 
+			stats.Add(new StatDrawEntry(cat, @"Using ""item count"" and ""target value""", "",
+@"You'll notice that there's a new checkbox on ""Do until you have X"" bills called ""Custom item count"".
+Turning this on, you can customize what the recipe counts to check how much of something it has.
+For example, if you type in ""category meals"", it will count ""simple meal"", ""fine meal"", ""packaged survival meal"", etc.
+
+Leaving ""Custom item count"" off will use the default counting logic.", 2990));
+
 			stats.Add(new StatDrawEntry(cat, "Searching Things", "",
 @"You can search any Thing in the game such as ""slate blocks"", ostriches, ""compacted steel"", etc.
 The count you get back will not include forbidden items, and will take into account the recipe's settings. E.G. if an item has 40% hitpoints but recipe requires 50%, it won't be counted.
@@ -100,7 +107,7 @@ Let's look at some examples:
 Compacted steel -> ""compacted steel""
 Medicine x5 -> ""medicine""
 Go-juice -> ""go-juice""
-Uranium mace (legendary) -> mace", 2999));
+Uranium mace (legendary) -> mace", 2980));
 			stats.Add(new StatDrawEntry(cat, "Searching categories", "",
 @"You can search any category of things in game, such as ""category raw food"", ""cat textiles"", ""c meals"", etc. Categories can be seen in any stockpile or bill menu.
 
@@ -108,7 +115,7 @@ Categories are written just like Things, except you start the variable with the 
 Here are some examples:
 Humanlike corpses -> ""category humanlike corpses""
 Meals -> ""c meals""
-Eggs (unfert.) -> ""cat eggs (unfert.)""", 2998));
+Eggs (unfert.) -> ""cat eggs (unfert.)""", 2970));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
