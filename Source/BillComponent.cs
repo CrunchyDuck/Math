@@ -24,7 +24,7 @@ namespace CrunchyDuck.Math {
 
 		public BillComponent(Bill_Production bill) {
 			targetBill = bill;
-			doXTimes = new InputField(bill, InputField.Field.DoXTimes, this);
+			doXTimes = new InputField(bill, InputField.Field.DoXTimes, this, 1);
 			doUntilX = new InputField(bill, InputField.Field.DoUntilX, this);
 			unpause = new InputField(bill, InputField.Field.Unpause, this, 5);
 
