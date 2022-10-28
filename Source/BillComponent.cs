@@ -30,7 +30,9 @@ namespace CrunchyDuck.Math {
 
 			itemsToCount = new InputField(bill, InputField.Field.itemsToCount, this);
 			// TODO: Test how this works on many types of recipes.
-			itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
+			if (bill.recipe.ProducedThingDef != null){
+				itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
+			}
 		}
 
 		// BIG TODO: Save itemsToCount

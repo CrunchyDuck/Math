@@ -151,17 +151,12 @@ namespace CrunchyDuck.Math {
 
 				// Counted items checkbox/field
 				// TODO: Do the same column thing here for "equipped"/"tainted"
-				//Rect item_count_rect = listing.GetRect(24f);
 				//Listing_Standard item_count_listing = new Listing_Standard();
-				//item_count_listing.Begin(item_count_rect);
-				//item_count_listing.ColumnWidth /= 2;
-				//item_count_listing.ColumnWidth -= 10;
+				//item_count_listing.Begin(listing.GetRect(24f));
+				//item_count_listing.ColumnWidth = item_count_listing.ColumnWidth / 2 - 10;
 				//item_count_listing.CheckboxLabeled("Custom item count", ref bc.customItemsToCount);
 				//item_count_listing.NewColumn();
 				//if (bc.customItemsToCount) {
-				//	//listing.Label("Custom counter: " + bc.itemsToCount.CurrentValue);
-				//	//int num = Mathf.Min(40, (int)rect.width / 5);
-				//	//Rect input_rect = new Rect(rect.xMin + num * 2, rect.yMin, rect.width - num * 4, rect.height);
 				//	Rect rect = item_count_listing.GetRect(24f);
 				//	MathTextField(bc.itemsToCount, rect);
 				//}
@@ -172,12 +167,18 @@ namespace CrunchyDuck.Math {
 
 				ThingDef producedThingDef = bill.recipe.ProducedThingDef;
 				if (producedThingDef != null) {
+					Listing_Standard equipped_tainted_listing = new Listing_Standard();
+					equipped_tainted_listing.Begin(listing.GetRect(24f));
+					equipped_tainted_listing.ColumnWidth = equipped_tainted_listing.ColumnWidth / 2 - 10;
 					// Equipped check-box
 					if (producedThingDef.IsWeapon || producedThingDef.IsApparel)
-						listing.CheckboxLabeled("IncludeEquipped".Translate(), ref bill.includeEquipped);
+						equipped_tainted_listing.CheckboxLabeled("IncludeEquipped".Translate(), ref bill.includeEquipped);
+
 					// Tainted check-box
+					equipped_tainted_listing.NewColumn();
 					if (producedThingDef.IsApparel && producedThingDef.apparel.careIfWornByCorpse)
-						listing.CheckboxLabeled("IncludeTainted".Translate(), ref bill.includeTainted);
+						equipped_tainted_listing.CheckboxLabeled("IncludeTainted".Translate(), ref bill.includeTainted);
+					equipped_tainted_listing.End();
 
 					// Drop down menu for where to search.
 					var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Zone_Stockpile>>>)(b => GenerateStockpileInclusion());

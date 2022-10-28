@@ -163,6 +163,7 @@ namespace CrunchyDuck.Math {
 		}
 
 		public int GetResourceCount(string parameter_name, BillComponent bc) {
+			// TODO: Might be able to use RecipeWorkerCounter.GetCount instead?
 			int count = 0;
 			if (!resources.ContainsKey(parameter_name)) {
 				ThingDef td = Math.searchableThings[parameter_name];
