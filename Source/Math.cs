@@ -25,6 +25,9 @@ namespace CrunchyDuck.Math {
 	// TODO: Uninstalling a workbench causes an enumeration error.
 	// TODO: Field for what is included in count, as well as what is cap.
 	// TODO: Set bill default somewhere, maybe mod option.
+	// TODO: Copy and link bills together (BWM)
+	// TODO: Drag to rearrange bills (BWM)
+	// TODO: Button to switch between "dropped" and "stockpile" (BWM)
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

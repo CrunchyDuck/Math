@@ -7,7 +7,7 @@
 		<li>1.4</li>
 	</supportedVersions>
 	<packageId>CrunchyDuck.Math</packageId>
-	<description>[b]Math![/b] Allows you to perform math in input fields for crafting bills, and use handy variables related to your colony.
+	<description>[b]Math![/b] improves the bill UI, allows you to perform math in input fields, and use handy variables related to your colony.
 
 [h2]Why would I use [b]Math![/b]?[/h2]
 A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "colonists intake" * 5. Or maybe you don't want to count [i]just[/i] simple meals, but all meals. [b]Math![/b] improves the user interface for bills, and gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.

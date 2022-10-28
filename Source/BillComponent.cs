@@ -32,12 +32,15 @@ namespace CrunchyDuck.Math {
 			if (bill.recipe.ProducedThingDef != null) {
 				itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
 			}
-			else {
-				// Check if butchery
-				foreach (var spt in bill.recipe.specialProducts) {
-					if (spt == SpecialProductType.Butchery) {
-						itemsToCount.SetAll("\"category meat\"");
-						break;
+			else if (bill.recipe != null) {
+				var spts = bill.recipe.specialProducts;
+				if (spts != null) {
+					// Check if butchery
+					foreach (var spt in bill.recipe.specialProducts) {
+						if (spt == SpecialProductType.Butchery) {
+							itemsToCount.SetAll("\"category meat\"");
+							break;
+						}
 					}
 				}
 			}
