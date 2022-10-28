@@ -32,6 +32,15 @@ namespace CrunchyDuck.Math {
 			if (bill.recipe.ProducedThingDef != null) {
 				itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
 			}
+			else {
+				// Check if butchery
+				foreach (var spt in bill.recipe.specialProducts) {
+					if (spt == SpecialProductType.Butchery) {
+						itemsToCount.SetAll("\"category meat\"");
+						break;
+					}
+				}
+			}
 		}
 
 		// BIG TODO: Save itemsToCount
@@ -43,6 +52,8 @@ namespace CrunchyDuck.Math {
 			doUntilX.buffer = doUntilX.lastValid;
 			Scribe_Values.Look(ref unpause.lastValid, "unpause_last_valid");
 			unpause.buffer = unpause.lastValid;
+			Scribe_Values.Look(ref itemsToCount.lastValid, "itemsToCountLastValid");
+			itemsToCount.buffer = itemsToCount.lastValid;
 
 			Scribe_Values.Look(ref targetBill.targetCount, "target_count_last_result");
 			Scribe_Values.Look(ref targetBill.repeatCount, "doXTimesLastResult");

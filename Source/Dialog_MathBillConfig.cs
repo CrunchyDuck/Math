@@ -124,7 +124,6 @@ namespace CrunchyDuck.Math {
 				BillRepeatModeUtility.MakeConfigFloatMenu(bill);
 			listing.Gap();
 
-			TaggedString taggedString1;
 			// Repeat count
 			if (bill.repeatMode == BillRepeatModeDefOf.RepeatCount) {
 				listing.Label("RepeatCount".Translate(bill.repeatCount) + " " + bc.doXTimes.CurrentValue);
@@ -137,6 +136,7 @@ namespace CrunchyDuck.Math {
 				string currently_have = "CurrentlyHave".Translate() + ": " + bill.recipe.WorkerCounter.CountProducts(bill) + " / ";
 				string out_of;
 				if (bill.targetCount >= 999999) {
+					TaggedString taggedString1;
 					taggedString1 = "Infinite".Translate();
 					taggedString1 = taggedString1.ToLower();
 					out_of = taggedString1.ToString();
@@ -144,13 +144,12 @@ namespace CrunchyDuck.Math {
 				else
 					out_of = bill.targetCount.ToString();
 				string label = currently_have + out_of;
-				string str3 = bill.recipe.WorkerCounter.ProductsDescription(bill);
-				if (!str3.NullOrEmpty())
-					label = label + ("\n" + "CountingProducts".Translate() + ": " + str3.CapitalizeFirst());
+				//string str3 = bill.recipe.WorkerCounter.ProductsDescription(bill);
+				//if (!str3.NullOrEmpty())
+				//	label = label + ("\n" + "CountingProducts".Translate() + ": " + str3.CapitalizeFirst());
 				listing.Label(label);
 
 				// Counted items checkbox/field
-				// TODO: Do the same column thing here for "equipped"/"tainted"
 				Listing_Standard item_count_listing = new Listing_Standard();
 				item_count_listing.Begin(listing.GetRect(24f));
 				item_count_listing.ColumnWidth = item_count_listing.ColumnWidth / 2 - 10;
