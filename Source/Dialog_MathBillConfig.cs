@@ -416,6 +416,9 @@ namespace CrunchyDuck.Math {
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.
 		private IEnumerable<Widgets.DropdownMenuElement<Zone_Stockpile>> GenerateStockpileInclusion() {
+			
+			
+			// All stockpiles.
 			yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
 				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate
 				{
@@ -423,6 +426,8 @@ namespace CrunchyDuck.Math {
 				}),
 				payload = null
 			};
+
+			// Individual stockpiles.
 			List<SlotGroup> groupList = bill.billStack.billGiver.Map.haulDestinationManager.AllGroupsListInPriorityOrder;
 			int groupCount = groupList.Count;
 			int i = 0;
@@ -450,20 +455,21 @@ namespace CrunchyDuck.Math {
 				i = num;
 			}
 		}
+		
 		protected virtual IEnumerable<Widgets.DropdownMenuElement<Pawn>> GeneratePawnRestrictionOptions() {
 			if (ModsConfig.BiotechActive && bill.recipe.mechanitorOnlyRecipe) {
+				// Mechanitor category
 				yield return new Widgets.DropdownMenuElement<Pawn> {
-					option = new FloatMenuOption("AnyMechanitor".Translate(), delegate
-					{
-						bill.SetAnyPawnRestriction();
-					}),
+					option = new FloatMenuOption("AnyMechanitor".Translate(), delegate { bill.SetAnyPawnRestriction(); }),
 					payload = null
 				};
+				// Mechanitor pawns
 				foreach (Widgets.DropdownMenuElement<Pawn> item in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill, (Pawn p) => MechanitorUtility.IsMechanitor(p))) {
 					yield return item;
 				}
 				yield break;
 			}
+			// Any worker category
 			yield return new Widgets.DropdownMenuElement<Pawn> {
 				option = new FloatMenuOption("AnyWorker".Translate(), delegate
 				{
@@ -471,6 +477,7 @@ namespace CrunchyDuck.Math {
 				}),
 				payload = null
 			};
+			// Any slave category
 			if (ModsConfig.IdeologyActive) {
 				yield return new Widgets.DropdownMenuElement<Pawn> {
 					option = new FloatMenuOption("AnySlave".Translate(), delegate
@@ -480,6 +487,7 @@ namespace CrunchyDuck.Math {
 					payload = null
 				};
 			}
+			// Any mech category
 			if (ModsConfig.BiotechActive && MechWorkUtility.AnyWorkMechCouldDo(bill.recipe)) {
 				yield return new Widgets.DropdownMenuElement<Pawn> {
 					option = new FloatMenuOption("AnyMech".Translate(), delegate
@@ -489,6 +497,7 @@ namespace CrunchyDuck.Math {
 					payload = null
 				};
 			}
+			// Pawns
 			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {
 				yield return item2;
 			}

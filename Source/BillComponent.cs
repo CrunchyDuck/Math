@@ -56,6 +56,7 @@ namespace CrunchyDuck.Math {
 			unpause.buffer = unpause.lastValid;
 			Scribe_Values.Look(ref itemsToCount.lastValid, "itemsToCountLastValid");
 			itemsToCount.buffer = itemsToCount.lastValid;
+			Scribe_Values.Look(ref this.customItemsToCount, "itemsToCountBool");
 
 			Scribe_Values.Look(ref targetBill.targetCount, "target_count_last_result");
 			Scribe_Values.Look(ref targetBill.repeatCount, "doXTimesLastResult");
