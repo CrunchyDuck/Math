@@ -47,7 +47,7 @@ namespace CrunchyDuck.Math {
 		public Dialog_MathBillConfig(Bill_Production bill, IntVec3 billGiverPos) {
 			this.billGiverPos = billGiverPos;
 			this.bill = bill;
-			bc = BillManager.AddGetBillComponent(bill);
+			bc = BillManager.instance.AddGetBillComponent(bill);
 
 			forcePause = true;
 			doCloseX = true;
@@ -416,8 +416,6 @@ namespace CrunchyDuck.Math {
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.
 		private IEnumerable<Widgets.DropdownMenuElement<Zone_Stockpile>> GenerateStockpileInclusion() {
-			
-			
 			// All stockpiles.
 			yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
 				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate

@@ -73,12 +73,14 @@ namespace CrunchyDuck.Math {
 		}
 
 		private static void PerformPatches() {
+			// What can I say, I prefer a manual method of patching.
 			var harmony = new Harmony("CrunchyDuck.Math");
 			AddPatch(harmony, typeof(PatchExposeData));
 			AddPatch(harmony, typeof(DoConfigInterface_Patch));
-			AddPatch(harmony, typeof(Bill_ProductionConstructor_Patch));
+			AddPatch(harmony, typeof(Bill_Production_Constructor_Patch));
 			AddPatch(harmony, typeof(BillDetails_Patch));
 			AddPatch(harmony, typeof(CountProducts_Patch));
+			AddPatch(harmony, typeof(Bill_Production_DoConfigInterface_Patch));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {
@@ -216,7 +218,7 @@ namespace CrunchyDuck.Math {
 			// TODO: Maybe redo this with a loop on pawns so there's only 1 call.
 			CachedMapData cache = bc.Cache;
 			if (cache == null) {
-				BillManager.RemoveBillComponent(bc);
+				BillManager.instance.RemoveBillComponent(bc);
 				return;
 			}
 
@@ -251,7 +253,7 @@ namespace CrunchyDuck.Math {
 		public static void AddParameters(Expression e, InputField field, List<string> parameter_list) {
 			CachedMapData cache = field.bc.Cache;
 			if (cache == null) {
-				BillManager.RemoveBillComponent(field.bc);
+				BillManager.instance.RemoveBillComponent(field.bc);
 				return;
 			}
 

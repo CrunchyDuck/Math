@@ -31,7 +31,7 @@ namespace CrunchyDuck.Math {
 			billDialog = bill_dialogue;
 			BillMenuData.rect = rect;
 			billProduction = bill_dialogue.bill;
-			bc = BillManager.AddGetBillComponent(billProduction);
+			bc = BillManager.instance.AddGetBillComponent(billProduction);
 		}
 
 		public static void Unassign() {
@@ -106,7 +106,7 @@ namespace CrunchyDuck.Math {
 #endif
 
 		public static void Prefix(Bill_Production __instance, Rect baseRect, Color baseColor) {
-			var bc = BillManager.AddGetBillComponent(__instance);
+			var bc = BillManager.instance.AddGetBillComponent(__instance);
 			BillMenuData.AssignTo(bc);
 		}
 

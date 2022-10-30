@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:CrunchyDuck.Math.Bill_ProductionConstructor_Patch.Postfix(RimWorld.Bill_Production,Verse.RecipeDef,RimWorld.Precept_ThingStyle)")]
+[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:CrunchyDuck.Math.Bill_Production_Constructor_Patch.Postfix(RimWorld.Bill_Production,Verse.RecipeDef,RimWorld.Precept_ThingStyle)")]

@@ -89,17 +89,18 @@
     <Compile Include="BillComponent.cs" />
     <Compile Include="BillManager.cs" />
     <Compile Include="CachedMapData.cs" />
-    <Compile Include="CountProducts_Patch.cs" />
+    <Compile Include="Patches\Bill_Production_DoConfigInterface_Patch.cs" />
+    <Compile Include="Patches\CountProducts_Patch.cs" />
     <Compile Include="Dialog_MathBillConfig.cs" />
     <Compile Include="Dialog_MathInfoCard.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="BillDetails_Patch.cs" />
-    <Compile Include="Bill_ProductionConstructor_Patch.cs" />
-    <Compile Include="BillMenu_Patch.cs" />
-    <Compile Include="PatchExposeData.cs" />
+    <Compile Include="Patches\BillDetails_Patch.cs" />
+    <Compile Include="Patches\Bill_Production_Constructor_Patch.cs" />
+    <Compile Include="Patches\BillMenu_Patch.cs" />
+    <Compile Include="Patches\PatchExposeData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

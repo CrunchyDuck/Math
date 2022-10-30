@@ -8,9 +8,9 @@ using System;
 namespace CrunchyDuck.Math {
 	// TODO: Handle copy/pasting.
 	class BillManager : GameComponent {
-		public static BillManager instance;
+		public static BillManager instance;  // singleton my beloved
 
-		public static Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
+		public Dictionary<int, BillComponent> billTable = new Dictionary<int, BillComponent>();
 		public const int updateRegularity = 2500;  // 1 in game hour.
 		public static Dictionary<string, ThingDef> searchabeThings = new Dictionary<string, ThingDef>();
 
@@ -19,7 +19,7 @@ namespace CrunchyDuck.Math {
 		}
 
 		// Create it if it doesn't exist and return it.
-		public static BillComponent AddGetBillComponent(Bill_Production bill) {
+		public BillComponent AddGetBillComponent(Bill_Production bill) {
 			int load_id = GetBillID(bill);
 			BillComponent bill_comp;
 			if (billTable.ContainsKey(load_id)) {
@@ -58,7 +58,7 @@ namespace CrunchyDuck.Math {
 			Math.DoMath(bc.itemsToCount.lastValid, ref i, bc.itemsToCount);
 		}
 
-		public static void RemoveBillComponent(BillComponent bc) {
+		public void RemoveBillComponent(BillComponent bc) {
 			var i = billTable.FirstIndexOf(kvp => kvp.Value == bc);
 			billTable.Remove(i);
 		}

@@ -12,7 +12,7 @@ namespace CrunchyDuck.Math {
 
 		// TODO: How regularly is this called? I might want to make sure it only runs on a regular rate rather than continuously.
 		public static bool Prefix(ref int __result, Bill_Production bill) {
-			var bc = BillManager.AddGetBillComponent(bill);
+			var bc = BillManager.instance.AddGetBillComponent(bill);
 			// Use default behaviour.
 			if (!bc.customItemsToCount)
 				return true;
