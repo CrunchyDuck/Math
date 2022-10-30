@@ -28,6 +28,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Copy and link bills together (BWM)
 	// TODO: Drag to rearrange bills (BWM)
 	// TODO: Button to switch between "dropped" and "stockpile" (BWM)
+	// TODO: Inspect StatExtension.GetStatValue as a method of automating getting stats.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

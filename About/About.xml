@@ -70,7 +70,9 @@ Searching any attribute of a thing, such as its market value, weight, if it's ma
 [h2]Compatibility[/h2]
 You can add this to a new save, and you can also remove it from a save. You will get an error the first time you do so, but it shouldn't break your game.
 Things from other mods like new foods or weapons will work with this mod.
-If a mod changes the UI of the bill menu, it likely won't work with this mod. BWM is the only example I know of.
+If a mod changes the UI of the bill menu, it likely won't work with this mod.
+Better Workbench Management doesn't play nicely with this mod, and I'm gradually integrating its functionality into this mod anyways.
+Everybody Gets One doesn't seem to work.
 
 [b]Links:[/b]
 Discord with me and my budderoos: https://discord.gg/hUnEs9ZhwA
@@ -79,7 +81,7 @@ NCalc: https://github.com/ncalc/ncalc
 donate: I will keep doing what I do regardless of income. https://ko-fi.com/crunchyduck
 
 [b]Credits:[/b]
-falconne, who made [url=https://steamcommunity.com/sharedfiles/filedetails/?id=935982361]Better Workbench Management[/url] and its assets, which are licenced under GPL.
+falconne, who made [url=https://steamcommunity.com/sharedfiles/filedetails/?id=935982361]Better Workbench Management[/url] and its assets.
 
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/licence_image.png[/img]</description>
 	<modDependencies>

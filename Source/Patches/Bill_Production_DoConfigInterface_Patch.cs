@@ -15,13 +15,13 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static void Postfix(Bill_Production __instance, Rect baseRect, Color baseColor) {
-            var storeModeImage = bestStockpileImage;
+            var storeModeImage = dropOnFloorImage;
             var nextStoreMode = BillStoreModeDefOf.DropOnFloor;
             // TODO: Implement translations.
             //var tip = "IW.ClickToDropTip".Translate();
             var tip = "Currently dropping output on floor. Click to take to stockpile.";
             if (__instance.GetStoreMode() == BillStoreModeDefOf.DropOnFloor) {
-                storeModeImage = dropOnFloorImage;
+                storeModeImage = bestStockpileImage;
                 nextStoreMode = BillStoreModeDefOf.BestStockpile;
                 //tip = "IW.ClickToTakeToStockpileTip".Translate();
                 tip = "Current taking output to stockpile. Click to drop on floor.";
