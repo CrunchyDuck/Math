@@ -24,10 +24,9 @@ namespace CrunchyDuck.Math {
 	// TODO: Copy and link bills together (BWM)
 	// TODO: Drag to rearrange bills (BWM)
 	// TODO: Button to switch between "dropped" and "stockpile" (BWM)
-	// TODO: Inspect StatExtension.GetStatValue as a method of automating getting stats.
 	// TODO: Set up translation files.
 	// TODO: Move textures over to a somewhere with a StaticConstructorOnStartup
-	// TODO: Check how item labels work on other languages.
+	// BUG: Check how item labels work on other languages.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -266,6 +265,7 @@ namespace CrunchyDuck.Math {
 				return;
 			}
 
+			// BIG TODO: How can I let players search statdefs for these guys? Maybe manually do it?
 			e.Parameters["pwn"] = e.Parameters["pawns"] = cache.pawns.Count();
 			e.Parameters["col"] = e.Parameters["colonists"] = cache.colonists.Count();
 			e.Parameters["slv"] = e.Parameters["slaves"] = cache.slaves.Count();

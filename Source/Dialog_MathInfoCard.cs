@@ -108,6 +108,22 @@ Compacted steel -> ""compacted steel""
 Medicine x5 -> ""medicine""
 Go-juice -> ""go-juice""
 Uranium mace (legendary) -> mace", 2980));
+			stats.Add(new StatDrawEntry(cat, "Searching Thing Stats", "",
+@"Things have stats like ""market value"", ""nutrition"", ""mech bandwidth"". This mod supports two types of stat searching.
+
+The first type lets you search the stat of a Thing's prefab. This value is always the same, it doesn't depend on how many of that item you have or the quality of those items - It's the value those items normally have.
+
+The second type lets you search the stats of individual items you own. This search is performed by putting ""owned"", ""own"" or ""o"" before the name of the StatDef.
+
+Some examples of both:
+""kibble.nutrition"" will give you 0.05, the nutritional value of one piece of kibble.
+""kibble.owned nutrition"" will give you the total nutrition you have in stored kibble.
+
+This also works on categories, and will add up the result from every item in that category.
+""category meals.o nutrition"" will return how much nutrition you have in stored meals.
+""category meals.nutrition"" is pretty useless, but shows it's possible.
+", 2975));
+
 			stats.Add(new StatDrawEntry(cat, "Searching categories", "",
 @"You can search any category of things in game, such as ""category raw food"", ""cat textiles"", ""c meals"", etc. Categories can be seen in any stockpile or bill menu.
 

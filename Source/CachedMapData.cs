@@ -12,7 +12,7 @@ namespace CrunchyDuck.Math {
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
 
 		private static Regex getTarget = new Regex(@"(?<target>.+?)(?:\.|$)(?<statDef>.+)?", RegexOptions.Compiled);
-		private static Regex getStatDef = new Regex(@"(?:(?<isIndividual>i|ind|individual) )?(?<statDef>.+)?", RegexOptions.Compiled);
+		private static Regex getStatDef = new Regex(@"(?:(?<isIndividual>o|own|owned) )?(?<statDef>.+)?", RegexOptions.Compiled);
 		private static Regex checkCategory = new Regex(@"(c|cat|category) (?<target>.+)", RegexOptions.Compiled);
 
 		public List<Pawn> pawns = new List<Pawn>();
@@ -166,7 +166,7 @@ namespace CrunchyDuck.Math {
 				ThingCategoryDef cat;
 				if (!Math.searchableCategories.TryGetValue(category_split.Groups["target"].Value.ToParameter(), out cat))
 					return false;
-				Log.ErrorOnce("here", 2278);
+				// BUG: This doesn't get all thingdefs. I think I need to iterate .childCategories too.
 				foreach (ThingDef thingdef in cat.childThingDefs) {
 					count += CountThing(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual);
 				}
