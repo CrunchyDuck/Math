@@ -100,7 +100,7 @@ The count you get back will not include forbidden items, and will take into acco
 
 To search a ThingDef you need to convert the in-game name, make it lowercase, and wrap it in speech marks.
 Item quality, material and stack count should also be omitted from the name.
-If it has speech marks in its name, replace them with an underscore: _
+If it has speech marks or full stops in its name, replace them with an underscore: _
 Singular words like ostrich don't always need speechmarks - it's up to you.
 
 Let's look at some examples:
@@ -115,7 +115,7 @@ Categories are written just like Things, except you start the variable with the 
 Here are some examples:
 Humanlike corpses -> ""category humanlike corpses""
 Meals -> ""c meals""
-Eggs (unfert.) -> ""cat eggs (unfert.)""", 2970));
+Eggs (unfert.) -> ""cat eggs (unfert_)""", 2970));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.

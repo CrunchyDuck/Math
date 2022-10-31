@@ -10,7 +10,10 @@ namespace CrunchyDuck.Math {
 	class CachedMapData {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
-		private static Regex getCategory = new Regex(@"(c|cat|category) (.+)", RegexOptions.Compiled);
+
+		private static Regex getTarget = new Regex(@"(?<target>.+?)(?:\.|$)(?<statDef>.+)?", RegexOptions.Compiled);
+		private static Regex getStatDef = new Regex(@"(?:(?<isIndividual>i|ind|individual) )?(?<statDef>.+)?", RegexOptions.Compiled);
+		private static Regex checkCategory = new Regex(@"(c|cat|category) (?<target>.+)", RegexOptions.Compiled);
 
 		public List<Pawn> pawns = new List<Pawn>();
 		public List<Pawn> mechanitors = new List<Pawn>();
@@ -113,27 +116,76 @@ namespace CrunchyDuck.Math {
 			return false;
 		}
 
-		public bool SearchForResource(string parameter_name, BillComponent bc, out int count) {
+		/// <summary>
+		/// Search for a resource, a category of resources, with an optional statdef modifier.
+		/// </summary>
+		/// <param name="parameter"></param>
+		/// <param name="bc">Recipe component to search with.</param>
+		/// <param name="count">How much of the searched thing there is</param>
+		/// <returns>true if search was valid and count was filled.</returns>
+		public bool SearchForResource(string parameter, BillComponent bc, out float count) {
 			count = 0;
-			if (parameter_name.NullOrEmpty())
+			if (parameter.NullOrEmpty())
 				return false;
 
+			// Get target
+			Match match;
+			match = getTarget.Match(parameter);
+			string target = match.Groups["target"].Value;
+			if (target.NullOrEmpty())
+				return false;
+
+			// Get statdef
+			bool statdef_is_individual = false;
+			StatDef statdef = null;
+			if (match.Groups["statDef"].Success) {
+				match = getStatDef.Match(match.Groups["statDef"].Value);
+				if (match.Groups["statDef"].Value.NullOrEmpty()) {
+					return false;
+				}
+
+				statdef_is_individual = match.Groups["isIndividual"].Success;
+				var string_statdef = match.Groups["statDef"].Value.ToParameter();
+				// Gave statdef but is invalid.
+				if (!Math.searchableStats.ContainsKey(string_statdef)) {
+					return false;
+				}
+				statdef = Math.searchableStats[string_statdef];
+			}
+
 			// Search thing
-			if (Math.searchableThings.ContainsKey(parameter_name)) {
-				count = GetResourceCount(parameter_name, bc);
+			if (Math.searchableThings.ContainsKey(target)) {
+				count = CountThing(target, bc, statdef, statdef_is_individual);
 				return true;
 			}
-			// Search category
-			Match category_split = getCategory.Match(parameter_name);
-			ThingCategoryDef cat;
-			if (category_split.Success && Math.searchabeCategories.TryGetValue(category_split.Groups[2].Value.ToParameter(), out cat)) {
+
+			// Is it a category?
+			Match category_split = checkCategory.Match(target);
+			if (category_split.Success) {
+				// Is the category valid?
+				ThingCategoryDef cat;
+				if (!Math.searchableCategories.TryGetValue(category_split.Groups["target"].Value.ToParameter(), out cat))
+					return false;
+				Log.ErrorOnce("here", 2278);
 				foreach (ThingDef thingdef in cat.childThingDefs) {
-					count += GetResourceCount(thingdef.label.ToParameter(), bc);
+					count += CountThing(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual);
 				}
 				return true;
 			}
 
 			return false;
+		}
+
+		private float CountThing(string thing_name, BillComponent bc, StatDef sd = null, bool sd_is_individual = false) {
+			if (sd == null) {
+				return GetThings(thing_name, bc).Sum(t => t.stackCount);
+			}
+			else if (sd_is_individual) {
+				return GetThings(thing_name, bc).Sum(t => t.GetStatValue(sd) * t.stackCount);
+			}
+			else {
+				return Math.searchableThings[thing_name].GetStatValueAbstract(sd);
+			}
 		}
 
 		public int GetResourceCount_old(string parameter_name, BillComponent bc) {
@@ -162,23 +214,24 @@ namespace CrunchyDuck.Math {
 			return count;
 		}
 
-		public int GetResourceCount(string parameter_name, BillComponent bc) {
-			// TODO: Might be able to use RecipeWorkerCounter.GetCount instead?
-			int count = 0;
-			if (!resources.ContainsKey(parameter_name)) {
-				ThingDef td = Math.searchableThings[parameter_name];
-				resources[parameter_name] = map.listerThings.ThingsOfDef(td).ListFullCopy();
+		public List<Thing> GetThings(string thing_name, BillComponent bc) {
+			List<Thing> found_things = new List<Thing>();
+			// Fill the list of *all* of this thing first
+			if (!resources.ContainsKey(thing_name)) {
+				ThingDef td = Math.searchableThings[thing_name];
+				resources[thing_name] = map.listerThings.ThingsOfDef(td).ListFullCopy();
 				// Count equipped/inventory/hands.
 				foreach (Pawn pawn in map.mapPawns.FreeColonistsAndPrisonersSpawned) {
 					List<Thing> things = GetThingInPawn(pawn, td);
 					foreach (var thing in things) {
-						resources[parameter_name].Add(thing);
+						resources[thing_name].Add(thing);
 					}
 				}
 			}
 
 			// TODO: Index things that are on corpses. 
-			foreach (Thing _thing in resources[parameter_name]) {
+			// Filter this thing based on parameters.
+			foreach (Thing _thing in resources[thing_name]) {
 				Thing thing = _thing.GetInnerIfMinified();
 				// Check if in stockpile.
 				// TODO: Make default only check stockpiles, with an option to make it check everywhere.
@@ -198,7 +251,6 @@ namespace CrunchyDuck.Math {
 
 				// Quality
 				QualityCategory q;
-				// thing.def.HasComp(typeof(CompQuality))
 				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
 					continue;
 
@@ -216,10 +268,9 @@ namespace CrunchyDuck.Math {
 						continue;
 					}
 				}
-
-			  count += thing.stackCount;
+				found_things.Add(thing);
 			}
-			return count;
+			return found_things;
 		}
 
 		// Code taken from RecipeWorkerCounter.CountProducts

@@ -21,14 +21,13 @@ namespace CrunchyDuck.Math {
 	// TODO: Market value slider.
 	// TODO: Values for item properties, like armour.
 	// TODO: Expanded view with the ability to make variables.
-	// TODO: Stop bills from pausing the game?
-	// TODO: Uninstalling a workbench causes an enumeration error.
-	// TODO: Field for what is included in count, as well as what is cap.
-	// TODO: Set bill default somewhere, maybe mod option.
 	// TODO: Copy and link bills together (BWM)
 	// TODO: Drag to rearrange bills (BWM)
 	// TODO: Button to switch between "dropped" and "stockpile" (BWM)
 	// TODO: Inspect StatExtension.GetStatValue as a method of automating getting stats.
+	// TODO: Set up translation files.
+	// TODO: Move textures over to a somewhere with a StaticConstructorOnStartup
+	// TODO: Check how item labels work on other languages.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -40,7 +39,8 @@ namespace CrunchyDuck.Math {
 
 		private static Regex parameterNames = new Regex("(?:(\")(.+?)(\"))|([a-zA-Z0-9]+)", RegexOptions.Compiled);
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
-		public static Dictionary<string, ThingCategoryDef> searchabeCategories = new Dictionary<string, ThingCategoryDef>();
+		public static Dictionary<string, ThingCategoryDef> searchableCategories = new Dictionary<string, ThingCategoryDef>();
+		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
 
 		// TODO: Make this change colours when hovered over :)
 		public static Texture2D infoButtonImage = ContentFinder<Texture2D>.Get("yin_yang_kobold");
@@ -69,7 +69,15 @@ namespace CrunchyDuck.Math {
 				}
 				string param_name = thingDef.label.ToCategory_old();
 				old_searchabeCategories[param_name] = thingDef;
-				searchabeCategories[thingDef.label.ToParameter()] = thingDef;
+				searchableCategories[thingDef.label.ToParameter()] = thingDef;
+			}
+
+			var thing_list3 = DefDatabase<StatDef>.AllDefs;
+			foreach (StatDef def in thing_list3) {
+				if (def.label == null) {
+					continue;
+				}
+				searchableStats[def.label.ToParameter()] = def;
 			}
 		}
 
@@ -282,7 +290,7 @@ namespace CrunchyDuck.Math {
 
 			// TODO: Add more searching modifiers, such as the nutritional value of foods.
 			foreach (string parameter in parameter_list) {
-				int count;
+				float count;
 				if (cache.SearchForResource(parameter, field.bc, out count)) {
 					e.Parameters[parameter] = count;
 				}

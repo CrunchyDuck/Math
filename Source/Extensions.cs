@@ -20,6 +20,7 @@ namespace CrunchyDuck.Math {
 
 		public static string ToParameter(this string str) {
 			str = str.Replace("\"", "_");
+			str = str.Replace(".", "_");
 			str = str.ToLower();
 			return str;
 		}

@@ -2,8 +2,6 @@
 using Verse;
 
 namespace CrunchyDuck.Math {
-	// TODO: I'm pretty sure I could actually add this component to bill tables, rather than maintaining it independently.
-	// I have yet to test this though. If would clean things up a touch.
 	class BillComponent {
 		public Bill_Production targetBill;
 		public CachedMapData Cache {
