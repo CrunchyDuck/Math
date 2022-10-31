@@ -18,54 +18,15 @@ Type it in!!
 It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
 
 [h2]Variables[/h2]
-I've defined a few variables you'll want to use, and they can all be seen from the handy-dandy in-bill info card.
+[b]Math![/b] has a robust variable searching system, allowing you to search things like food or items, categories of things and stats of those things.
+Tutorials and descriptions can all be seen from the handy-dandy in-bill info card.
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/infocard.png[/img]
-All variables are [b]based on the map that the bill is contained in[/b]. So, if you have 4 colonists total but only 2 in the bill's map, "col" will equal 2. This lets it work on multiple maps, and means people in caravans and the like won't be included in recipes. Forbidden items also aren't counted.
-Some of the most useful variables are...
-
-"pawns" or "pwn" - All owned pawns (prisoners, slaves, colonists.) Doesn't include, say, passer-bys.
-"mechanitors" or "mech" - Number of mechanitors. Does not include slave or prisoner mechanitors.
-"colonists" or "col" - How many colonists (Not slaves or prisoners)
-"prisoners" or "pri" - How many prisoners
-"slaves" or "slv" - How many slaves
-"animals" or "anim" - How many animals.
-"babies" or "bab" - How many babies.
-
-"mechanitors bandwidth" or "mech ban" - Amount of free mechanitor bandwidth.
-
-Each of the above also have an intake variable, that allows you to calculate based on their cumulative food consumed per day:
-"anim in" or "animals intake" - Total intake of all animals per day.
-"pwn in" or "pawns intake" - Total intake of all pawns per day.
-etc.
-
-[b]Thing searching[/b]
-You can search for the count of [u]any[/u] ThingDef (items, ostriches, doors, rocks...) on the map. Anything that is forbidden will not be counted.
-This also take into account your bill's options. Set it to "normal and above" quality only? You won't be seeing any low tier [i]trash[/i] in your count! "hitpoints" and "tainted" work, and stockpile are being worked on.
-
-To search a ThingDef you need to convert the in-game name, make it lowercase, and wrap it in speech marks.
-Item quality, material and stack count should also be omitted from the name.
-If it has speech marks in its name, replace them with an underscore: _
-Singular words like ostrich don't always need speechmarks - it's up to you.
-
-Let's look at some examples:
-Compacted steel -> "compacted steel"
-Medicine x5 -> "medicine"
-Go-juice -> "go-juice"
-Uranium mace (legendary) -> mace
-
-[b]Category searching[/b]
-You can search categories of items the same way you'd search ThingDefs, except you pretend the category with "c ", "cat " or "category "
-Here are some examples:
-Humanlike corpses -> "category humanlike corpses"
-Meals -> "c meals"
-Eggs (unfert.) -> "cat eggs (unfert.)"
 
 [h2]Future updates[/h2]
 [b]Math![/b] is far from done, and I have many QOL updates planned. Some of the most interesting are:
 UI improvements from Better Workbench Management. As BWM has been left for over a year, I'm going to be taking over what it started by combining its improves with my own. In the future I might rename this mod to better reflect that.
 Custom user variables, letting you simplify equations or store results.
 Expandable text field to allow as much room as you'll need.
-Searching any attribute of a thing, such as its market value, weight, if it's male or female, etc.
 
 [h2]Compatibility[/h2]
 You can add this to a new save, and you can also remove it from a save. You will get an error the first time you do so, but it shouldn't break your game.

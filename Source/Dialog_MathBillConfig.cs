@@ -101,7 +101,7 @@ namespace CrunchyDuck.Math {
 
 			// math info button.
 			Rect rect_math_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
-			if (Widgets.ButtonImage(rect_math_button, Math.infoButtonImage, GUI.color)) {
+			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, GUI.color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
 			BillMenuData.Unassign();

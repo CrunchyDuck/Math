@@ -7,21 +7,18 @@ using System;
 
 namespace CrunchyDuck.Math {
 	class Bill_Production_DoConfigInterface_Patch {
-        private static Texture2D bestStockpileImage = ContentFinder<Texture2D>.Get("BWM_BestStockpile");
-        private static Texture2D dropOnFloorImage = ContentFinder<Texture2D>.Get("BWM_DropOnFloor");
-
         public static MethodInfo Target() {
 			return AccessTools.Method(typeof(Bill_Production), "DoConfigInterface");
 		}
 
 		public static void Postfix(Bill_Production __instance, Rect baseRect, Color baseColor) {
-            var storeModeImage = dropOnFloorImage;
+            var storeModeImage = Resources.dropOnFloorImage;
             var nextStoreMode = BillStoreModeDefOf.DropOnFloor;
             // TODO: Implement translations.
             //var tip = "IW.ClickToDropTip".Translate();
             var tip = "Currently dropping output on floor. Click to take to stockpile.";
             if (__instance.GetStoreMode() == BillStoreModeDefOf.DropOnFloor) {
-                storeModeImage = bestStockpileImage;
+                storeModeImage = Resources.bestStockpileImage;
                 nextStoreMode = BillStoreModeDefOf.BestStockpile;
                 //tip = "IW.ClickToTakeToStockpileTip".Translate();
                 tip = "Current taking output to stockpile. Click to drop on floor.";

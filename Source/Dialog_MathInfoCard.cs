@@ -60,7 +60,7 @@ namespace CrunchyDuck.Math {
 			Text.Font = GameFont.Medium;
 			Widgets.Label(rect1, "Math");
 			Rect rect2 = new Rect(inRect.x + 9f, rect1.y, 34f, 34f);
-			Widgets.ButtonImage(rect2, Math.infoButtonImage, GUI.color);
+			Widgets.ButtonImage(rect2, Resources.infoButtonImage, GUI.color);
 			//if (this.thing != null)
 			//	Widgets.ThingIcon(rect2, this.thing);
 			//else

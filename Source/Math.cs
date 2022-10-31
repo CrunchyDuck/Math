@@ -41,9 +41,6 @@ namespace CrunchyDuck.Math {
 		public static Dictionary<string, ThingCategoryDef> searchableCategories = new Dictionary<string, ThingCategoryDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
 
-		// TODO: Make this change colours when hovered over :)
-		public static Texture2D infoButtonImage = ContentFinder<Texture2D>.Get("yin_yang_kobold");
-
 		public static bool usedOldVariableNames = false;
 
 		static Math() {
