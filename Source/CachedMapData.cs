@@ -170,6 +170,11 @@ namespace CrunchyDuck.Math {
 				foreach (ThingDef thingdef in cat.childThingDefs) {
 					count += CountThing(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual);
 				}
+				foreach (ThingCategoryDef catdef in cat.childCategories) {
+					foreach (ThingDef thingdef in catdef.childThingDefs) {
+						count += CountThing(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual);
+					}
+				}
 				return true;
 			}
 

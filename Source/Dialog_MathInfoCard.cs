@@ -31,6 +31,7 @@ namespace CrunchyDuck.Math {
 		// TODO: Add this in.
 		//public override QuickSearchWidget CommonSearchWidget => this.tab != Dialog_InfoCard.InfoCardTab.Stats ? (QuickSearchWidget)null : StatsReportUtility.QuickSearchWidget;
 
+		// TODO: Add X in top right.
 		public Dialog_MathInfoCard(BillComponent bill) {
 			attachedBill = bill;
 			statEntries = GetStatEntries();
