@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Text;
 using Verse.Sound;
+using HarmonyLib;
 
 namespace CrunchyDuck.Math {
 	// After so much patching, I've decided to just completely reimplement the window.
@@ -270,6 +271,8 @@ namespace CrunchyDuck.Math {
 				button_label = "AnyMechanitor".Translate();
 			else if (ModsConfig.BiotechActive && bill.MechsOnly)
 				button_label = "AnyMech".Translate();
+			else if (ModsConfig.BiotechActive && bill.NonMechsOnly)
+				button_label = "AnyNonMech".Translate();
 			else
 				button_label = "AnyWorker".Translate();
 
