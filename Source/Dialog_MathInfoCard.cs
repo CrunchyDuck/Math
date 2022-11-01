@@ -29,11 +29,11 @@ namespace CrunchyDuck.Math {
 #endif
 		public override Vector2 InitialSize => new Vector2(950f, 760f);
 		protected override float Margin => 0.0f;
-
 		private InfoCardTab tab;
 
-		// TODO: Add this in.
-		//public override QuickSearchWidget CommonSearchWidget => this.tab != Dialog_InfoCard.InfoCardTab.Stats ? (QuickSearchWidget)null : StatsReportUtility.QuickSearchWidget;
+		// TODO BUG: Using search bar disables scroll.
+		public override QuickSearchWidget CommonSearchWidget => StatsReportUtility.QuickSearchWidget;
+		public override void Notify_CommonSearchChanged() => StatsReportUtility.Notify_QuickSearchChanged();
 
 		// TODO: Add X in top right.
 		public Dialog_MathInfoCard(BillComponent bill) {
@@ -66,7 +66,7 @@ namespace CrunchyDuck.Math {
 
 			Rect stats_area = new Rect(inRect);
 			stats_area.yMin = label_area.yMax + 40f;
-			stats_area.yMax += 7f;
+			stats_area.yMax += -38f;
 
 			TabDrawer.DrawTabs(stats_area, tabs);
 
