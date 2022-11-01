@@ -494,6 +494,13 @@ namespace CrunchyDuck.Math {
 					}),
 					payload = null
 				};
+				yield return new Widgets.DropdownMenuElement<Pawn> {
+					option = new FloatMenuOption("AnyNonMech".Translate(), delegate
+					{
+						bill.SetAnyNonMechRestriction();
+					}),
+					payload = null
+				};
 			}
 			// Pawns
 			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {
