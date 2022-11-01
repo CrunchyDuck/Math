@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
   <StatCategoryDef>
-    <defName>CDBasics</defName>
-    <label>Basics</label>
+    <defName>CDIntroduction</defName>
+    <label>Introduction</label>
     <displayOrder>1</displayOrder>
   </StatCategoryDef>
 
@@ -28,5 +28,11 @@
     <defName>CDModifiers</defName>
     <label>Modifiers</label>
     <displayOrder>4</displayOrder>
+  </StatCategoryDef>
+  
+  <StatCategoryDef>
+    <defName>CDBasics</defName>
+    <label>Basics</label>
+    <displayOrder>20</displayOrder>
   </StatCategoryDef>
 </Defs>

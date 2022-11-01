@@ -14,11 +14,12 @@ namespace CrunchyDuck.Math {
 	class Dialog_MathInfoCard : Window {
 		public List<StatDrawEntry> statEntries;
 		public BillComponent attachedBill;
-		public StatCategoryDef catBasics = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDBasics");
+		public StatCategoryDef catIntroduction = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDIntroduction");
 		public StatCategoryDef catPawns = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDPawns");
 		public StatCategoryDef catModifiers = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDModifiers");
 		public StatCategoryDef catExamples = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDExamples");
 		public StatCategoryDef catFunctions = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDFunctions");
+		public StatCategoryDef catBasics = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDBasics");
 
 		public static MethodInfo StatsWorker = AccessTools.Method(typeof(StatsReportUtility), "DrawStatsWorker");
 		public static MethodInfo StatsFinalize = AccessTools.Method(typeof(StatsReportUtility), "FinalizeCachedDrawEntries");
@@ -28,17 +29,21 @@ namespace CrunchyDuck.Math {
 #endif
 		public override Vector2 InitialSize => new Vector2(950f, 760f);
 		protected override float Margin => 0.0f;
+
+		private InfoCardTab tab;
+
 		// TODO: Add this in.
 		//public override QuickSearchWidget CommonSearchWidget => this.tab != Dialog_InfoCard.InfoCardTab.Stats ? (QuickSearchWidget)null : StatsReportUtility.QuickSearchWidget;
 
 		// TODO: Add X in top right.
 		public Dialog_MathInfoCard(BillComponent bill) {
 			attachedBill = bill;
-			statEntries = GetStatEntries();
+			statEntries = GetBasicEntries();
 			// If these values aren't reset you get some corruption nonsense because the system is jank.
 #if v1_4
 			statsCacheValues.SetValue(null, new List<string>());
 #endif
+			tab = InfoCardTab.Basic;
 		}
 
 		public override void Close(bool doCloseSound = true) {
@@ -46,7 +51,31 @@ namespace CrunchyDuck.Math {
 		}
 
 		public override void DoWindowContents(Rect inRect) {
-			statEntries = GetStatEntries();
+			List<TabRecord> tabs = new List<TabRecord>();
+			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
+			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
+
+			Rect label_area = new Rect(inRect);
+			label_area = label_area.ContractedBy(18f);
+			label_area.height = 34f;
+
+			//draw_area.height = 34f;
+			label_area.x += 34f;
+			Text.Font = GameFont.Medium;
+			Widgets.Label(label_area, "Math");
+
+			Rect stats_area = new Rect(inRect);
+			stats_area.yMin = label_area.yMax + 40f;
+			stats_area.yMax += 7f;
+
+			TabDrawer.DrawTabs(stats_area, tabs);
+
+			// By default you need to pass in Defs to get Window to show entries. This gets around that.
+			if (tab == InfoCardTab.Basic)
+				statEntries = GetBasicEntries();
+			else if (tab == InfoCardTab.StatDefs)
+				statEntries = GetStatDefEntries();
+			statsCacheValues.SetValue(null, new List<string>());
 			statsCache.SetValue(null, statEntries);
 			StatsFinalize.Invoke(null, new object[] { statsCache.GetValue(null) });
 
@@ -55,29 +84,22 @@ namespace CrunchyDuck.Math {
 			//	height = 34f
 			//};
 
-			Rect rect1 = new Rect(inRect).ContractedBy(18f);
-			rect1.height = 34f;
-			rect1.x += 34f;
-			Text.Font = GameFont.Medium;
-			Widgets.Label(rect1, "Math");
-			Rect rect2 = new Rect(inRect.x + 9f, rect1.y, 34f, 34f);
-			Widgets.ButtonImage(rect2, Resources.infoButtonImage, GUI.color);
+			// Draw image in top left.
+			Rect card_image = new Rect(inRect.x + 9f, label_area.y, 34f, 34f);
+			Widgets.ButtonImage(card_image, Resources.infoButtonImage, GUI.color);
 			//if (this.thing != null)
 			//	Widgets.ThingIcon(rect2, this.thing);
 			//else
 			//	Widgets.DefIcon(rect2, this.def, this.stuff, drawPlaceholder: true);
-			Rect rect3 = new Rect(inRect);
-			rect3.x += 18;  // Mine was weirdly offset and I'm not sure why. This is approximately right.
-			rect3.yMin = rect1.yMax + 18;
-			rect3.yMax -= 38f;
-			StatsWorker.Invoke(null, new object[] { rect3, null, null });
+
+			StatsWorker.Invoke(null, new object[] { stats_area.ContractedBy(18f), null, null });
 		}
 
-		private List<StatDrawEntry> GetStatEntries() {
+		private List<StatDrawEntry> GetBasicEntries() {
 			var stats = new List<StatDrawEntry>();
 			StatDrawEntry stat;
 
-			var cat = catBasics;
+			var cat = catIntroduction;
 			stat = new StatDrawEntry(cat, "Description", "",
 				@"This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
 
@@ -164,5 +186,28 @@ Eggs (unfert.) -> ""cat eggs (unfert_)""", 2970));
 
 			return stats;
 		}
+	
+		private List<StatDrawEntry> GetStatDefEntries() {
+			var stats = new List<StatDrawEntry>();
+
+			var cat = catIntroduction;
+			stats.Add(new StatDrawEntry(cat, "Description", "",
+@"Here you can see all StatDefs in the game. This is meant to be used as a reference to look up something you're not sure how to search.
+
+Click on a row to get an explanation.",
+				10000));
+
+			cat = catBasics;
+			foreach (StatDef statdef in Math.searchableStats.Values) {
+				stats.Add(new StatDrawEntry(statdef.category ?? cat, "​" + (statdef.label ?? statdef.defName).ToParameter(), "", statdef.description ?? "", statdef.displayPriorityInCategory));
+			}
+
+			return stats;
+		}	
+	}
+
+	public enum InfoCardTab {
+		Basic,
+		StatDefs,
 	}
 }

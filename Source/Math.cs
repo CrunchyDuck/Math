@@ -285,7 +285,6 @@ namespace CrunchyDuck.Math {
 			e.Parameters["bab in"] = e.Parameters["babies intake"] = cache.babiesIntake;
 #endif
 
-			// TODO: Add more searching modifiers, such as the nutritional value of foods.
 			foreach (string parameter in parameter_list) {
 				float count;
 				if (cache.SearchForResource(parameter, field.bc, out count)) {
