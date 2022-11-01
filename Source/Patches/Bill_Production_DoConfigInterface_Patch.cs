@@ -12,16 +12,16 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static void Postfix(Bill_Production __instance, Rect baseRect, Color baseColor) {
-            var storeModeImage = Resources.dropOnFloorImage;
-            var nextStoreMode = BillStoreModeDefOf.DropOnFloor;
-            // TODO: Implement translations.
-            //var tip = "IW.ClickToDropTip".Translate();
-            var tip = "Currently dropping output on floor. Click to take to stockpile.";
+            var storeModeImage = Resources.bestStockpileImage;
+            var nextStoreMode = BillStoreModeDefOf.BestStockpile;
+            //tip = "IW.ClickToTakeToStockpileTip".Translate();
+            var tip = "Current taking output to stockpile. Click to drop on floor.";
             if (__instance.GetStoreMode() == BillStoreModeDefOf.DropOnFloor) {
-                storeModeImage = Resources.bestStockpileImage;
-                nextStoreMode = BillStoreModeDefOf.BestStockpile;
-                //tip = "IW.ClickToTakeToStockpileTip".Translate();
-                tip = "Current taking output to stockpile. Click to drop on floor.";
+                storeModeImage = Resources.dropOnFloorImage;
+                nextStoreMode = BillStoreModeDefOf.DropOnFloor;
+                // TODO: Implement translations.
+                //var tip = "IW.ClickToDropTip".Translate();
+                tip = "Currently dropping output on floor. Click to take to stockpile.";
             }
 
             //var extendedBillDataStorage = Main.Instance.GetExtendedBillDataStorage();
