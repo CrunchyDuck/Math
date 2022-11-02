@@ -19,14 +19,10 @@ namespace CrunchyDuck.Math {
 	// TODO: Add pop up window for inputting larger bills.
 	// TODO: Update "look everywhere" to ACTUALLY look everywhere, not just in stockpiles.
 	// TODO: Market value slider.
-	// TODO: Values for item properties, like armour.
 	// TODO: Expanded view with the ability to make variables.
 	// TODO: Copy and link bills together (BWM)
 	// TODO: Drag to rearrange bills (BWM)
-	// TODO: Button to switch between "dropped" and "stockpile" (BWM)
 	// TODO: Set up translation files.
-	// TODO: Move textures over to a somewhere with a StaticConstructorOnStartup
-	// BUG: Check how item labels work on other languages.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -246,7 +242,6 @@ namespace CrunchyDuck.Math {
 			e.Parameters["bab_in"] = e.Parameters["babies_intake"] = cache.babiesIntake;
 #endif
 
-			// TODO: Add more searching modifiers, such as the nutritional value of foods.
 			foreach (string parameter in parameter_list) {
 				int count;
 				if (cache.SearchForResource_old(parameter, bc, out count)) {
