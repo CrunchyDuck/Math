@@ -200,6 +200,12 @@ namespace CrunchyDuck.Math {
 			return true;
 		}
 
+		public static CachedMapData GetCachedMap(Bill_Production bp) {
+			if (bp == null)
+				return null;
+			return GetCachedMap(bp.Map);
+		}
+
 		public static CachedMapData GetCachedMap(Map map) {
 			// I was able to get a null error by abandoning a base. This handles that.
 			if (map == null)

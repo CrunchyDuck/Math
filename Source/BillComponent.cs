@@ -6,7 +6,7 @@ namespace CrunchyDuck.Math {
 		public Bill_Production targetBill;
 		public CachedMapData Cache {
 			get {
-				return Math.GetCachedMap(targetBill.Map);
+				return Math.GetCachedMap(targetBill);
 			}
 		}
 		public int loadID { get { return BillManager.GetBillID(targetBill); } }
