@@ -124,15 +124,11 @@ namespace CrunchyDuck.Math {
 
 		public static void DoEq(bool increment) {
 			var bc = BillMenuData.bc;
+			var i = bc.targetBill.recipe.targetCountAdjustment* GenUI.CurrentAdjustmentMultiplier();
+			i *= increment ? 1 : -1;
+
 			InputField f = BillMenuData.GetCurrentlyRenderingField();
-			int number = 0;
-			Math.DoMath(f.lastValid, ref number, f);
-			var val = bc.targetBill.recipe.targetCountAdjustment * GenUI.CurrentAdjustmentMultiplier();
-			if (increment)
-				number += val;
-			else
-				number -= val;
-			BillMenuData.AssignCurrentlyRenderingField(number);
+			f.SetAll(f.CurrentValue + i);
 			SoundDefOf.DragSlider.PlayOneShotOnCamera();
 		}
 	}

@@ -23,6 +23,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Copy and link bills together (BWM)
 	// TODO: Drag to rearrange bills (BWM)
 	// TODO: Set up translation files.
+	// TODO: Change "Unpause field" to accept booleans rather than thresholds.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
