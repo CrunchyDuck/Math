@@ -83,6 +83,7 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(BillDetails_Patch));
 			AddPatch(harmony, typeof(CountProducts_Patch));
 			AddPatch(harmony, typeof(Bill_Production_DoConfigInterface_Patch));
+			AddPatch(harmony, typeof(Patch_Bill_LabelCap));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {

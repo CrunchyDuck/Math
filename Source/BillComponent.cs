@@ -9,7 +9,8 @@ namespace CrunchyDuck.Math {
 				return Math.GetCachedMap(targetBill);
 			}
 		}
-		public int loadID { get { return BillManager.GetBillID(targetBill); } }
+		public string name;
+
 		// I have to maintain my own buffers so I can modify them at will, e.g. when a + or - button is pressed.
 		public InputField itemsToCount;
 		public InputField doXTimes;
@@ -19,9 +20,9 @@ namespace CrunchyDuck.Math {
 		public bool isDoXTimes { get { return targetBill.repeatMode == BillRepeatModeDefOf.RepeatCount; } }
 		public bool isDoUntilX { get { return targetBill.repeatMode == BillRepeatModeDefOf.TargetCount; } }
 
-
 		public BillComponent(Bill_Production bill) {
 			targetBill = bill;
+			name = bill.Label.CapitalizeFirst();
 			doXTimes = new InputField(bill, InputField.Field.DoXTimes, this, 1);
 			doUntilX = new InputField(bill, InputField.Field.DoUntilX, this);
 			unpause = new InputField(bill, InputField.Field.Unpause, this, 5);
@@ -46,6 +47,7 @@ namespace CrunchyDuck.Math {
 
 		public void ExposeData() {
 			// I wanna change these but that'd break peoples' saves lmao
+			Scribe_Values.Look(ref name, "billName");
 			Scribe_Values.Look(ref doXTimes.lastValid, "repeat_count_last_valid");
 			doXTimes.buffer = doXTimes.lastValid;
 			Scribe_Values.Look(ref doUntilX.lastValid, "target_count_last_valid");

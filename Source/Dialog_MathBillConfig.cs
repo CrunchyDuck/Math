@@ -76,13 +76,15 @@ namespace CrunchyDuck.Math {
 				BillManager.UpdateBill(bc);
 			}
 
-			Text.Font = GameFont.Medium;
-			Widgets.Label(new Rect(40f, 0.0f, 400f, 34f), this.bill.LabelCap);
 			float width = (int)((inRect.width - 34.0) / 3.0);
 			Rect rect_left = new Rect(0.0f, 80f, width - extraPanelAllocation, inRect.height - 80f);
 			Rect rect_middle = new Rect(rect_left.xMax + 17f, 50f, width + (extraPanelAllocation * 2), inRect.height - 50f - CloseButSize.y);
 			Rect rect_right = new Rect(rect_middle.xMax + 17f, 50f, 0.0f, inRect.height - 50f - CloseButSize.y);
 			rect_right.xMax = inRect.xMax;
+
+			Text.Font = GameFont.Medium;
+			bc.name = Widgets.TextField(new Rect(40f, 0.0f, 400f, 34f), bc.name);
+			//Widgets.Label(new Rect(40f, 0.0f, 400f, 34f), this.bill.LabelCap);
 			Text.Font = GameFont.Small;
 
 			// Middle panel.
