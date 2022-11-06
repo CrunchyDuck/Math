@@ -224,7 +224,10 @@ namespace CrunchyDuck.Math {
 			// Fill the list of *all* of this thing first
 			if (!resources.ContainsKey(thing_name)) {
 				ThingDef td = Math.searchableThings[thing_name];
-				resources[thing_name] = map.listerThings.ThingsOfDef(td).ListFullCopy();
+				// Patch to fix a missing key bug report:
+				// https://steamcommunity.com/workshop/filedetails/discussion/2876902608/3487500856972015279/?ctp=3#c3495383439605482600
+				var l = map.listerThings.ThingsOfDef(td).ListFullCopy();
+				resources[thing_name] = l ?? new List<Thing>();
 				// Count equipped/inventory/hands.
 				foreach (Pawn pawn in map.mapPawns.FreeColonistsAndPrisonersSpawned) {
 					List<Thing> things = GetThingInPawn(pawn, td);
