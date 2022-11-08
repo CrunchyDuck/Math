@@ -156,6 +156,14 @@ Humanlike corpses -> ""category humanlike corpses""
 Meals -> ""c meals""
 Eggs (unfert.) -> ""cat eggs (unfert_)""", 2970));
 
+			stats.Add(new StatDrawEntry(cat, "Contributing variables", "",
+@"There are a lot of things that could be added to this mod. There are many things you might want to count or search or do that I haven't put support in for.
+It's not because adding variables is particularly hard, most of it is handled by nice systems nowadays. It's just that if I tried to add every variable I could think of, I would not have enough time in the day to do anything.
+I'm trying to find a unified way to add large groups of variable searching - like StatDef searching. But it takes time and experience and sometimes just isn't possible.
+
+If you want something added to the mod and if you know C#, I'm more than happy to accept contributions. You should discuss it with me in my Discord (Link on Math!'s workshop page) so I can help you with understand my codebase, make sure the contribution is one we can agree on, and so I can give some advice if necessary.
+", 2960));
+
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
 			// This is done to force the variables to be lowercase in menus.

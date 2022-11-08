@@ -28,6 +28,12 @@ UI improvements from Better Workbench Management. As BWM has been left for over 
 Custom user variables, letting you simplify equations or store results.
 Expandable text field to allow as much room as you'll need.
 
+[h2]Contributing[/h2]
+There are a lot of things that could be added to this mod. There are many things you might want to count or search or do that I haven't put support in for.
+It's not because adding variables is particularly hard, most of it is handled by nice systems nowadays. It's just that if I tried to add every variable I could think of, I would not have enough time in the day to do anything.
+I'm trying to find a unified way to add large groups of variable searching - like StatDef searching. But it takes time and experience and sometimes just isn't possible.
+If you want something added to the mod and if you know C#, I'm more than happy to accept contributions. You should discuss it with me [url=https://discord.gg/hUnEs9ZhwA]in my Discord[/url] so I can help you with understand my codebase, make sure the contribution is one we can agree on, and so I can give some advice if necessary.
+
 [h2]Compatibility[/h2]
 You can add this to a new save, and you can also remove it from a save. You will get an error the first time you do so, but it shouldn't break your game.
 Things from other mods like new foods or weapons will work with this mod.
@@ -39,6 +45,7 @@ Everybody Gets One doesn't seem to work.
 [b]Math![/b] will allow you to use variables in your native language.
 However, right now none of my tutorials/explanations are in other languages. I do intend to support other languages as much as I can however.
 If you speak any language besides English or Spanish and wish to contribute, I'd be happy to discuss it in my Discord.
+
 
 [b]Links:[/b]
 Discord with me and my budderoos: https://discord.gg/hUnEs9ZhwA
