@@ -19,15 +19,11 @@ namespace CrunchyDuck.Math {
 		private static Dictionary<string, Func<Thing, float>> customThingCounters = new Dictionary<string, Func<Thing, float>> {
 			{ "male", CountMalePawns },
 			{ "female", CountFemalePawns },
-
 			{ "intake", CountIntake },
-			{ "in", CountIntake },
-
-			{ "ban", CountBandwidth },
 			{ "bandwidth", CountBandwidth },
 		};
 		private static Dictionary<string, Func<ThingDef, float>> customThingDefCounters = new Dictionary<string, Func<ThingDef, float>> {
-			{ "stack count", t => t.stackLimit },
+			{ "stack limit", t => t.stackLimit },
 		};
 		private static Dictionary<string, Func<CachedMapData, List<Thing>>> customThingGetters = new Dictionary<string, Func<CachedMapData, List<Thing>>> {
 			{ "col", cmd => cmd.colonists },

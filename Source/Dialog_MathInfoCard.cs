@@ -171,16 +171,17 @@ If you want something added to the mod and if you know C#, I'm more than happy t
 			// BEWARE THE HIDDEN HORRORS.
 			// TODO: Fill these in with their current values.
 			cat = catExamples;
-			stats.Add(new StatDrawEntry(cat, "​\"pawns intake\" * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
+			stats.Add(new StatDrawEntry(cat, "​\"pawns.intake\" * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​col * 2", "", "Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.", 3000));
 			stats.Add(new StatDrawEntry(cat, "​if(\"slate blocks\" > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2999));
-			stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"anim in\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"anim in\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
+			// TODO: This was being cropped for too long.
+			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
 
 			cat = catPawns;
 			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map the bill is contained in.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map the bill is contained in. Does not include prisoners or slaves.", 3000));
 			stats.Add(new StatDrawEntry(cat, "​mechanitors", attachedBill.Cache.mechanitors.Count().ToString(), "Alias: mech\nNumber of owned mechanitors on the map the bill is contained in. Doesn't include slaves or prisoners", 2990));
-			stats.Add(new StatDrawEntry(cat, "​mechanitors bandwidth", attachedBill.Cache.mechanitorsAvailableBandwidth.ToString(), "Alias: mech ban\nAmount of available bandwidth for mechanitors on the map the bill is contained in.", 2980));
+			//stats.Add(new StatDrawEntry(cat, "​mechanitors bandwidth", attachedBill.Cache.mechanitorsAvailableBandwidth.ToString(), "Alias: mech ban\nAmount of available bandwidth for mechanitors on the map the bill is contained in.", 2980));
 			stats.Add(new StatDrawEntry(cat, "​slaves", attachedBill.Cache.slaves.Count().ToString(), "Alias: slv\nNumber of owned slaves on the map the bill is contained in.", 2970));
 			stats.Add(new StatDrawEntry(cat, "​prisoners", attachedBill.Cache.prisoners.Count().ToString(), "Alias: pri\nNumber of owned prisoners on the map the bill is contained in.", 2960));
 			stats.Add(new StatDrawEntry(cat, "​animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "Alias: anim\nNumber of owned animals on the map the bill is contained in.", 2950));
@@ -189,8 +190,8 @@ If you want something added to the mod and if you know C#, I'm more than happy t
 			stats.Add(new StatDrawEntry(cat, "​kids", attachedBill.Cache.kids.Count().ToString(), "Alias: kid\nNumber of owned children on the map the bill is contained in.", 2930));
 #endif
 
-			cat = catModifiers;
-			stats.Add(new StatDrawEntry(cat, "​\"pawns intake\"", attachedBill.Cache.pawnsIntake.ToString(), "Alias: \"pwn in\"\nThe \" in\" or \" intake\" modifier can be used on any group of pawns like \"slaves intake\", \"anim in\", etc. It returns the amount of nutrition a pawn requires per day after all modifiers have been applied.\n\nThis number can also be seen in a pawn's info card under \"Food consumption\".", 2995));
+			//cat = catModifiers;
+			//stats.Add(new StatDrawEntry(cat, "​\"pawns intake\"", attachedBill.Cache.pawnsIntake.ToString(), "Alias: \"pwn in\"\nThe \" in\" or \" intake\" modifier can be used on any group of pawns like \"slaves intake\", \"anim in\", etc. It returns the amount of nutrition a pawn requires per day after all modifiers have been applied.\n\nThis number can also be seen in a pawn's info card under \"Food consumption\".", 2995));
 
 			return stats;
 		}
@@ -205,9 +206,21 @@ If you want something added to the mod and if you know C#, I'm more than happy t
 Click on a row to get an explanation.",
 				10000));
 
+			// Add specially added stats first.
+			cat = catModifiers;
+//			stats.Add(new StatDrawEntry(cat, "Description", "",
+//@"These are ""StatDefs"" that aren't inherantly searchable, so I've added them manually. Search these the same as you would any other StatDef.",
+//				10000));
+			stats.Add(new StatDrawEntry(cat, "​male", "", "Whether a pawn is male.", 3000));
+			stats.Add(new StatDrawEntry(cat, "​female", "", "Whether a pawn is female.", 2990));
+			stats.Add(new StatDrawEntry(cat, "​intake", "", "How much food a pawn requires per day.", 2980));
+			stats.Add(new StatDrawEntry(cat, "​bandwidth", "", "How much bandwidth a pawn has.", 2970));
+			stats.Add(new StatDrawEntry(cat, "​stack limit", "", "The maximum amount of this item that can be stacked.", 2970));
+
 			cat = catBasics;
 			foreach (StatDef statdef in Math.searchableStats.Values) {
-				stats.Add(new StatDrawEntry(statdef.category ?? cat, "​" + (statdef.label ?? statdef.defName).ToParameter(), "", statdef.description ?? "", statdef.displayPriorityInCategory));
+				// TODO: Change this to be sort by alphabetical
+				stats.Add(new StatDrawEntry(statdef.category ?? cat, "​" + (statdef.label ?? statdef.defName).ToParameter(), "", statdef.description ?? "", statdef.displayPriorityInCategory + 1000));
 			}
 
 			return stats;

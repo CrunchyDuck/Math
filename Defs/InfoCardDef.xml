@@ -3,12 +3,12 @@
   <StatCategoryDef>
     <defName>CDIntroduction</defName>
     <label>Introduction</label>
-    <displayOrder>1</displayOrder>
+    <displayOrder>-10</displayOrder>
   </StatCategoryDef>
 
   <StatCategoryDef>
     <defName>CDPawns</defName>
-    <label>Pawn variables</label>
+    <label>Pawn groups</label>
     <displayOrder>3</displayOrder>
   </StatCategoryDef>
 
@@ -26,8 +26,8 @@
 
   <StatCategoryDef>
     <defName>CDModifiers</defName>
-    <label>Modifiers</label>
-    <displayOrder>4</displayOrder>
+    <label>Specifically added stats</label>
+    <displayOrder>0</displayOrder>
   </StatCategoryDef>
   
   <StatCategoryDef>
