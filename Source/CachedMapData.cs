@@ -154,29 +154,6 @@ namespace CrunchyDuck.Math {
 			return 0;
 		}
 
-		// TODO: Do multiple passes of DoMath, where the first tallies up all resources they want to search, and the second searches for all of them at once.
-		public bool SearchForResource_old(string parameter_name, BillComponent bc, out int count) {
-			count = 0;
-			if (parameter_name.NullOrEmpty())
-				return false;
-
-			// Search thing
-			if (Math.old_searchableThings.ContainsKey(parameter_name)) {
-				count = GetResourceCount_old(parameter_name, bc);
-				return true;
-			}
-			// Search category
-			else if (Math.old_searchabeCategories.ContainsKey(parameter_name)) {
-				ThingCategoryDef cat = Math.old_searchabeCategories[parameter_name];
-				foreach (ThingDef thingdef in cat.childThingDefs) {
-					count += GetResourceCount_old(thingdef.label.ToParameter_old(), bc);
-				}
-				return true;
-			}
-
-			return false;
-		}
-
 		/// <summary>
 		/// Search for a resource, a category of resources, with an optional statdef modifier.
 		/// </summary>
@@ -357,32 +334,6 @@ namespace CrunchyDuck.Math {
 		/// </summary>
 		private float CountThing(List<Thing> things, Func<Thing, float> thing_counter) {
 			return things.Sum(thing_counter);
-		}
-
-		public int GetResourceCount_old(string parameter_name, BillComponent bc) {
-			int count = 0;
-			if (!resources.ContainsKey(parameter_name)) {
-				resources[parameter_name] = map.listerThings.ThingsOfDef(Math.old_searchableThings[parameter_name]);
-			}
-
-			foreach (Thing thing in resources[parameter_name]) {
-				if (thing.IsForbidden(Faction.OfPlayer))
-					continue;
-				// Doesn't have enough hitpoints
-				if (!bc.targetBill.hpRange.IncludesEpsilon(thing.HitPoints / thing.MaxHitPoints))
-					continue;
-				// Has quality and is not good enough.
-				QualityCategory q;
-				if (thing.TryGetQuality(out q) && !bc.targetBill.qualityRange.Includes(q))
-					continue;
-				// Tainted when should not be.
-				Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel)thing : null;
-				if (a != null && !bc.targetBill.includeTainted && a.WornByCorpse)
-					continue;
-
-			  count += thing.stackCount;
-			}
-			return count;
 		}
 
 		public List<Thing> GetThings(string thing_name, BillComponent bc) {

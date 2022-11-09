@@ -108,7 +108,6 @@ The left column is the variable name, the right column is the current value.
 Click on a row to get an explanation.",
 				10000);
 			stats.Add(stat);
-			stats.Add(new StatDrawEntry(cat, "Old variable system", "", "Variables used to be input like \"col_in\", \"c_meals\", \"c_eggs__unfert__\". But this system was\n1. ugly\n2. Puts the burden on the user and\n3. kept breaking.\n\nInstead, I've switched to using \"variable\", which is much easier to parse, prettier, and also supports multiple langauges.\n\nEquations using the old method will appear purple to notify that it should be changed to the new version, as it will eventually be removed.", 3000));
 
 			stats.Add(new StatDrawEntry(cat, @"Using ""item count"" and ""target value""", "",
 @"You'll notice that there's a new checkbox on ""Do until you have X"" bills called ""Custom item count"".

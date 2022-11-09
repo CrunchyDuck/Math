@@ -412,9 +412,6 @@ namespace CrunchyDuck.Math {
 			else {
 				field.SetAll(field.buffer, test_val);
 			}
-			if (Math.usedOldVariableNames) {
-				GUI.color = new Color(0.8f, 0.2f, 0.8f, 0.8f);
-			}
 			field.buffer = Widgets.TextField(area, field.buffer);
 			GUI.color = original_col;
 		}
