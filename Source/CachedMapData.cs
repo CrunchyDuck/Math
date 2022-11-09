@@ -22,6 +22,9 @@ namespace CrunchyDuck.Math {
 
 			{ "intake", CountIntake },
 			{ "in", CountIntake },
+
+			{ "ban", CountBandwidth },
+			{ "bandwidth", CountBandwidth },
 		};
 		private static Dictionary<string, Func<ThingDef, float>> customThingDefCounters = new Dictionary<string, Func<ThingDef, float>> {
 			{ "stack count", t => t.stackLimit },
@@ -137,6 +140,16 @@ namespace CrunchyDuck.Math {
 			return 0;
 		}
 
+		private static float CountBandwidth(Thing potential_pawn) {
+			if (potential_pawn is Pawn) {
+				Pawn pawn = (Pawn)potential_pawn;
+				var mechanitor = pawn.mechanitor;
+				if (mechanitor != null)
+					return mechanitor.TotalBandwidth - mechanitor.UsedBandwidth;
+			}
+			return 0;
+		}
+
 		private static float CountFemalePawns(Thing potential_pawn) {
 			if (potential_pawn is Pawn) {
 				Pawn pawn = (Pawn)potential_pawn;
@@ -176,6 +189,7 @@ namespace CrunchyDuck.Math {
 		/// <param name="count">How much of the searched thing there is</param>
 		/// <returns>true if search was valid and count was filled.</returns>
 		public bool SearchForResource(string parameter, BillComponent bc, out float count) {
+			// TODO: Clean up this code. Please.
 			count = 0;
 			if (parameter.NullOrEmpty())
 				return false;
@@ -281,6 +295,7 @@ namespace CrunchyDuck.Math {
 				return true;
 			}
 
+			// TODO: Let custom things search with statdef.
 			// Search custom things
 			if (things != null) {
 				count = CountThingSorter(things, null, statdef, custom_thing_search, custom_thingdef_search);
