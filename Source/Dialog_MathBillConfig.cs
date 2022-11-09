@@ -28,6 +28,9 @@ namespace CrunchyDuck.Math {
         public override Vector2 InitialSize => new Vector2(800f + Settings.textInputAreaBonus, 634f + 100f);
 		private float extraPanelAllocation = Settings.textInputAreaBonus / 3;
 
+		private float infoHoverHue = 0;
+		private float hueSpeed = 1f / (60f * 5f);
+
 
 		private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
 		private static IEnumerable<SpecialThingFilterDef> HiddenSpecialThingFilters {
@@ -104,7 +107,8 @@ namespace CrunchyDuck.Math {
 
 			// math info button.
 			Rect rect_math_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
-			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, GUI.color)) {
+			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
+			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, GUI.color, Color.HSVToRGB(infoHoverHue, 1, 1))) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
 			BillMenuData.Unassign();
