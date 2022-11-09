@@ -49,6 +49,8 @@ namespace CrunchyDuck.Math {
 
 			{ "kid", cmd => cmd.kids },
 			{ "kids", cmd => cmd.kids },
+
+			{ "guests", cmd => cmd.guests },
 		};
 
 		public List<Thing> pawns = new List<Thing>();
@@ -60,6 +62,7 @@ namespace CrunchyDuck.Math {
 		public List<Thing> prisoners = new List<Thing>();
 		public List<Thing> slaves = new List<Thing>();
 		public List<Thing> ownedAnimals = new List<Thing>();
+		public List<Thing> guests = new List<Thing>();
 		public float pawnsIntake = 0;
 		public float colonistsIntake = 0;
 		public float mechanitorsIntake = 0;
@@ -74,21 +77,22 @@ namespace CrunchyDuck.Math {
 			this.map = map;
 
 			pawns = map.mapPawns.FreeColonistsAndPrisoners.Cast<Thing>().ToList();
+			guests = pawns.Where(p => ((Pawn)p).IsQuestLodger()).Cast<Thing>().ToList();
 			slaves = map.mapPawns.SlavesOfColonySpawned.Cast<Thing>().ToList();
-			colonists = map.mapPawns.FreeColonists.Except(slaves).ToList().Cast<Thing>().ToList();
+			colonists = map.mapPawns.FreeColonists.Except(slaves).Except(guests).Cast<Thing>().ToList();
 			prisoners = map.mapPawns.PrisonersOfColony.Cast<Thing>().ToList();
 			// stolen from MainTabWindow_Animals.Pawns :)
-			ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).ToList().Cast<Thing>().ToList();
+			ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).Cast<Thing>().ToList();
 
 #if v1_4
-			mechanitors = colonists.Where(p => ((Pawn)p).mechanitor != null).ToList().Cast<Thing>().ToList();
+			mechanitors = colonists.Where(p => ((Pawn)p).mechanitor != null).Cast<Thing>().ToList();
 			mechanitorsAvailableBandwidth = 0;
 			foreach(Pawn p in mechanitors) {
 				mechanitorsAvailableBandwidth += p.mechanitor.TotalBandwidth - p.mechanitor.UsedBandwidth;
 			}
 
-			kids = colonists.Where(p => ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Child).ToList().Cast<Thing>().ToList();
-			babies = colonists.Where(p => ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Baby || ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Newborn).ToList().Cast<Thing>().ToList();
+			kids = colonists.Where(p => ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Child).Cast<Thing>().ToList();
+			babies = colonists.Where(p => ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Baby || ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Newborn).Cast<Thing>().ToList();
 #endif
 		}
 

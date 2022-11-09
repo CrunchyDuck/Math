@@ -178,11 +178,12 @@ If you want something added to the mod and if you know C#, I'm more than happy t
 
 			cat = catPawns;
 			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map the bill is contained in.", 3001));
-			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map the bill is contained in. Does not include prisoners or slaves.", 3000));
+			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map the bill is contained in. Does not include prisoners, slaves or guests.", 3000));
 			stats.Add(new StatDrawEntry(cat, "​mechanitors", attachedBill.Cache.mechanitors.Count().ToString(), "Alias: mech\nNumber of owned mechanitors on the map the bill is contained in. Doesn't include slaves or prisoners", 2990));
 			//stats.Add(new StatDrawEntry(cat, "​mechanitors bandwidth", attachedBill.Cache.mechanitorsAvailableBandwidth.ToString(), "Alias: mech ban\nAmount of available bandwidth for mechanitors on the map the bill is contained in.", 2980));
 			stats.Add(new StatDrawEntry(cat, "​slaves", attachedBill.Cache.slaves.Count().ToString(), "Alias: slv\nNumber of owned slaves on the map the bill is contained in.", 2970));
 			stats.Add(new StatDrawEntry(cat, "​prisoners", attachedBill.Cache.prisoners.Count().ToString(), "Alias: pri\nNumber of owned prisoners on the map the bill is contained in.", 2960));
+			stats.Add(new StatDrawEntry(cat, "​guests", attachedBill.Cache.prisoners.Count().ToString(), "Number of lodgers or guests staying with you as a result of quests.", 2955));
 			stats.Add(new StatDrawEntry(cat, "​animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "Alias: anim\nNumber of owned animals on the map the bill is contained in.", 2950));
 #if v1_4
 			stats.Add(new StatDrawEntry(cat, "​babies", attachedBill.Cache.babies.Count().ToString(), "Alias: bab\nNumber of owned babies on the map the bill is contained in.", 2940));
