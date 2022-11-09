@@ -192,8 +192,11 @@ namespace CrunchyDuck.Math {
 			StatDef statdef = null;
 			Func<Thing, float> custom_thing_search = null;
 			Func<ThingDef, float> custom_thingdef_search = null;
-			List<Thing> things;
-			ThingDef thingdef;
+			List<Thing> things = null;
+			ThingDef thingdef = null;
+			if (customThingGetters.TryGetValue(target, out Func<CachedMapData, List<Thing>> getter)) {
+				things = getter.Invoke(this);
+			}
 
 			// Searched a stat of the thing group.
 			if (match.Groups["statDef"].Success) {
@@ -216,10 +219,17 @@ namespace CrunchyDuck.Math {
 					return false;
 			}
 
-			// Tried searching thingdef, but gave no search method.
-			if (counting_statdef && !count_individual_things)
-				if (statdef == null && custom_thingdef_search == null)
-					return false;
+			if (counting_statdef) {
+				// Searching custom thing.
+				if (things != null) {
+					if (custom_thing_search == null && custom_thingdef_search == null)
+						return false;
+				}
+				else {
+					if (!count_individual_things && statdef == null && custom_thingdef_search == null)
+						return false;
+				}
+			}
 
 			// Search thing
 			if (Math.searchableThings.ContainsKey(target)) {
@@ -272,9 +282,11 @@ namespace CrunchyDuck.Math {
 			}
 
 			// Search custom things
-			//if (customThingGetters.TryGetValue(target, out Func<CachedMapData, List<Thing>> getter)) {
-			//	CountThingSorter(getter.Invoke(this), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
-			//}
+			if (things != null) {
+				count = CountThingSorter(things, null, statdef, custom_thing_search, custom_thingdef_search);
+				return true;
+				//CountThingSorter(getter.Invoke(this), statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
+			}
 
 			return false;
 		}
