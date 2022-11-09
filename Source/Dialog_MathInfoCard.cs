@@ -20,6 +20,7 @@ namespace CrunchyDuck.Math {
 		public StatCategoryDef catExamples = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDExamples");
 		public StatCategoryDef catFunctions = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDFunctions");
 		public StatCategoryDef catBasics = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDBasics");
+		public StatCategoryDef catTraits = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDTraits");
 
 		public static MethodInfo StatsWorker = AccessTools.Method(typeof(StatsReportUtility), "DrawStatsWorker");
 		public static MethodInfo StatsFinalize = AccessTools.Method(typeof(StatsReportUtility), "FinalizeCachedDrawEntries");
@@ -53,6 +54,7 @@ namespace CrunchyDuck.Math {
 		public override void DoWindowContents(Rect inRect) {
 			List<TabRecord> tabs = new List<TabRecord>();
 			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
+			tabs.Add(new TabRecord("Traits", () => tab = InfoCardTab.Traits, tab == InfoCardTab.Traits));
 			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
 
 			Rect label_area = new Rect(inRect);
@@ -75,6 +77,8 @@ namespace CrunchyDuck.Math {
 				statEntries = GetBasicEntries();
 			else if (tab == InfoCardTab.StatDefs)
 				statEntries = GetStatDefEntries();
+			else if (tab == InfoCardTab.Traits)
+				statEntries = GetTraitEntries();
 			statsCacheValues.SetValue(null, new List<string>());
 			statsCache.SetValue(null, statEntries);
 			StatsFinalize.Invoke(null, new object[] { statsCache.GetValue(null) });
@@ -93,6 +97,27 @@ namespace CrunchyDuck.Math {
 			//	Widgets.DefIcon(rect2, this.def, this.stuff, drawPlaceholder: true);
 
 			StatsWorker.Invoke(null, new object[] { stats_area.ContractedBy(18f), null, null });
+		}
+
+		private List<StatDrawEntry> GetTraitEntries() {
+			var stats = new List<StatDrawEntry>();
+			StatDrawEntry stat;
+
+			var cat = catIntroduction;
+			stat = new StatDrawEntry(cat, "Description", "",
+@"Here you can see the list of all traits available to search on pawn groups.",
+				10000);
+			stats.Add(stat);
+
+			cat = catTraits;
+			var traits_sorted = Math.searchableTraits.Values.OrderByDescending(t => t.traitDef.degreeDatas[t.index].label);
+			int i = 0;
+			foreach (var trait_container in traits_sorted) {
+				var trait_dat = trait_container.traitDef.degreeDatas[trait_container.index];
+				stats.Add(new StatDrawEntry(cat, "​" + trait_dat.label.ToParameter(), "", trait_dat.description, i++));
+			}
+
+			return stats;
 		}
 
 		private List<StatDrawEntry> GetBasicEntries() {
@@ -155,6 +180,9 @@ Humanlike corpses -> ""category humanlike corpses""
 Meals -> ""c meals""
 Eggs (unfert.) -> ""cat eggs (unfert_)""", 2970));
 
+			stats.Add(new StatDrawEntry(cat, "Searching traits", "",
+@"You can search any trait on any pawn group, such as ""pawns.traits.jogger"", ""colonists.traits.nudist"", ""colonists.traits.gay""", 2965));
+
 			stats.Add(new StatDrawEntry(cat, "Contributing variables", "",
 @"There are a lot of things that could be added to this mod. There are many things you might want to count or search or do that I haven't put support in for.
 It's not because adding variables is particularly hard, most of it is handled by nice systems nowadays. It's just that if I tried to add every variable I could think of, I would not have enough time in the day to do anything.
@@ -172,7 +200,8 @@ If you want something added to the mod and if you know C#, I'm more than happy t
 			cat = catExamples;
 			stats.Add(new StatDrawEntry(cat, "​\"pawns.intake\" * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
 			stats.Add(new StatDrawEntry(cat, "​col * 2", "", "Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.", 3000));
-			stats.Add(new StatDrawEntry(cat, "​if(\"slate blocks\" > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2999));
+			stats.Add(new StatDrawEntry(cat, @"​colonists - ""colonists.nudist""", "", "Clothing production! Counts all colonists, except nudists.", 2999));
+			stats.Add(new StatDrawEntry(cat, "​if(\"slate blocks\" > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2950));
 			// TODO: This was being cropped for too long.
 			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
 
@@ -229,6 +258,7 @@ Click on a row to get an explanation.",
 
 	public enum InfoCardTab {
 		Basic,
+		Traits,
 		StatDefs,
 	}
 }

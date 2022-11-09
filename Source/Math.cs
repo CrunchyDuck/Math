@@ -35,34 +35,36 @@ namespace CrunchyDuck.Math {
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
 		public static Dictionary<string, ThingCategoryDef> searchableCategories = new Dictionary<string, ThingCategoryDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
+		public static Dictionary<string, (TraitDef traitDef, int index)> searchableTraits = new Dictionary<string, (TraitDef, int)>();
 
 		static Math() {
 			PerformPatches();
 
 			// I checked, this does run after all defs are loaded :)
 			// Code taken from DebugThingPlaceHelper.TryPlaceOptionsForStackCount
-			var thing_list = DefDatabase<ThingDef>.AllDefs;
-			foreach (ThingDef thingDef in thing_list) {
-				if (thingDef.label == null) {
-					continue;
+			IndexDefs(searchableStats);
+			IndexDefs(searchableCategories);
+			IndexDefs(searchableThings);
+			// The trait system is stupid. Why all this degrees nonsense? Just to mark incompatible traits? Needless.
+			foreach (TraitDef traitdef in DefDatabase<TraitDef>.AllDefs) {
+				int i = -1;
+				foreach (TraitDegreeData stupid_degree_nonsense in traitdef.degreeDatas) {
+					i++;
+					if (stupid_degree_nonsense.label.NullOrEmpty())
+						continue;
+					searchableTraits[stupid_degree_nonsense.label.ToParameter()] = (traitdef, i);
 				}
-				searchableThings[thingDef.label.ToParameter()] = thingDef;
 			}
+		}
 
-			var thing_list2 = DefDatabase<ThingCategoryDef>.AllDefs;
-			foreach (ThingCategoryDef thingDef in thing_list2) {
-				if (thingDef.label == null) {
-					continue;
-				}
-				searchableCategories[thingDef.label.ToParameter()] = thingDef;
-			}
+		private static void IndexDefs<T>(Dictionary<string, T> dict) where T : Def {
+			var thing_list = DefDatabase<T>.AllDefs;
 
-			var thing_list3 = DefDatabase<StatDef>.AllDefs;
-			foreach (StatDef def in thing_list3) {
+			foreach (T def in thing_list) {
 				if (def.label == null) {
 					continue;
 				}
-				searchableStats[def.label.ToParameter()] = def;
+				dict[def.label.ToParameter()] = def;
 			}
 		}
 

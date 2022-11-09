@@ -12,8 +12,9 @@ namespace CrunchyDuck.Math {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
 
-		private static Regex getTarget = new Regex(@"(?<target>.+?)(?:\.|$)(?<statDef>.+)?", RegexOptions.Compiled);
+		private static Regex getTarget = new Regex(@"(?<target>.+?)(?:\.|$)(?<specifier>.+)?", RegexOptions.Compiled);
 		private static Regex getStatDef = new Regex(@"(?:(?<isIndividual>o|own|owned) )?(?<statDef>.+)?", RegexOptions.Compiled);
+		private static Regex getTraitDef = new Regex(@"(?:traits.)(?<traitDef>.+)?", RegexOptions.Compiled);
 		private static Regex checkCategory = new Regex(@"(c|cat|category) (?<target>.+)", RegexOptions.Compiled);
 		// This codebase is getting to be messy.
 		private static Dictionary<string, Func<Thing, float>> customThingCounters = new Dictionary<string, Func<Thing, float>> {
@@ -87,7 +88,7 @@ namespace CrunchyDuck.Math {
 #if v1_4
 			mechanitors = colonists.Where(p => ((Pawn)p).mechanitor != null).Cast<Thing>().ToList();
 			mechanitorsAvailableBandwidth = 0;
-			foreach(Pawn p in mechanitors) {
+			foreach (Pawn p in mechanitors) {
 				mechanitorsAvailableBandwidth += p.mechanitor.TotalBandwidth - p.mechanitor.UsedBandwidth;
 			}
 
@@ -180,40 +181,55 @@ namespace CrunchyDuck.Math {
 
 			bool count_individual_things = false;
 			bool counting_statdef = false;
+			bool custom_thing_counter = false;
 			StatDef statdef = null;
 			Func<Thing, float> custom_thing_search = null;
 			Func<ThingDef, float> custom_thingdef_search = null;
 			List<Thing> things = null;
 			ThingDef thingdef = null;
+			string trait_name = null;
 			if (customThingGetters.TryGetValue(target, out Func<CachedMapData, List<Thing>> getter)) {
+				custom_thing_counter = true;
 				things = getter.Invoke(this);
 			}
 
 			// Searched a stat of the thing group.
-			if (match.Groups["statDef"].Success) {
-				counting_statdef = true;
-				match = getStatDef.Match(match.Groups["statDef"].Value);
-				if (match.Groups["statDef"].Value.NullOrEmpty()) {
-					return false;
+			if (match.Groups["specifier"].Success) {
+				string specifier = match.Groups["specifier"].Value;
+				// Is the specifier a traitdef?
+				Match trait_match = getTraitDef.Match(specifier);
+				// Searching a trait.
+				if (trait_match.Success) {
+					trait_name = trait_match.Groups["traitDef"].Value;
+					if (!Math.searchableTraits.ContainsKey(trait_name))
+						return false;
 				}
+				// Searching a statdef.
+				else {
+					Match stat_match = getStatDef.Match(specifier);
+					counting_statdef = true;
+					if (stat_match.Groups["statDef"].Value.NullOrEmpty()) {
+						return false;
+					}
 
-				count_individual_things = match.Groups["isIndividual"].Success;
-				var string_statdef = match.Groups["statDef"].Value.ToParameter();
-				if (Math.searchableStats.ContainsKey(string_statdef))
-					statdef = Math.searchableStats[string_statdef];
-				else if (customThingCounters.ContainsKey(string_statdef))
-					custom_thing_search = customThingCounters[string_statdef];
-				else if (customThingDefCounters.ContainsKey(string_statdef))
-					custom_thingdef_search = customThingDefCounters[string_statdef];
-				// Gave statdef but is invalid.
-				else
-					return false;
+					count_individual_things = stat_match.Groups["isIndividual"].Success;
+					var string_statdef = stat_match.Groups["statDef"].Value.ToParameter();
+					if (Math.searchableStats.ContainsKey(string_statdef))
+						statdef = Math.searchableStats[string_statdef];
+					else if (customThingCounters.ContainsKey(string_statdef))
+						custom_thing_search = customThingCounters[string_statdef];
+					else if (customThingDefCounters.ContainsKey(string_statdef))
+						custom_thingdef_search = customThingDefCounters[string_statdef];
+					// Gave statdef but is invalid.
+					else
+						return false;
+				}
 			}
 
 			if (counting_statdef) {
-				// Searching custom thing.
-				if (things != null) {
-					if (custom_thing_search == null && custom_thingdef_search == null)
+				// Searching custom thing, like a pawn group
+				if (custom_thing_counter) {
+					if (custom_thing_search == null && custom_thingdef_search == null && statdef == null)
 						return false;
 				}
 				else {
@@ -232,7 +248,7 @@ namespace CrunchyDuck.Math {
 					thingdef = Math.searchableThings[target];
 					things = null;
 				}
-				count = CountThingSorter(things, thingdef, statdef, custom_thing_search, custom_thingdef_search);
+				count = CountThingSorter(things, thingdef, trait_name, statdef, custom_thing_search, custom_thingdef_search);
 				return true;
 			}
 
@@ -253,7 +269,7 @@ namespace CrunchyDuck.Math {
 						things = null;
 						thingdef = cat_thingdef;
 					}
-					count += CountThingSorter(things, thingdef, statdef, custom_thing_search, custom_thingdef_search);
+					count += CountThingSorter(things, thingdef, trait_name, statdef, custom_thing_search, custom_thingdef_search);
 				}
 				// Search child categories
 				foreach (ThingCategoryDef catdef in cat.childCategories) {
@@ -266,7 +282,7 @@ namespace CrunchyDuck.Math {
 							things = null;
 							thingdef = cat_thingdef;
 						}
-						count += CountThingSorter(things, thingdef, statdef, custom_thing_search, custom_thingdef_search);
+						count += CountThingSorter(things, thingdef, trait_name, statdef, custom_thing_search, custom_thingdef_search);
 					}
 				}
 				return true;
@@ -274,8 +290,8 @@ namespace CrunchyDuck.Math {
 
 			// TODO: Let custom things search with statdef.
 			// Search custom things
-			if (things != null) {
-				count = CountThingSorter(things, null, statdef, custom_thing_search, custom_thingdef_search);
+			if (custom_thing_counter) {
+				count = CountThingSorter(things, null, trait_name, statdef, custom_thing_search, custom_thingdef_search);
 				return true;
 				//CountThingSorter(getter.Invoke(this), statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
 			}
@@ -286,12 +302,14 @@ namespace CrunchyDuck.Math {
 		/// <summary>
 		/// Used by SearchForResources to figure out how it should count what it has parsed.
 		/// </summary>
-		private float CountThingSorter(List<Thing> things, ThingDef thingdef, StatDef sd, Func<Thing, float> thing_counter, Func<ThingDef, float> thingdef_counter) {
+		private float CountThingSorter(List<Thing> things, ThingDef thingdef, string trait_name, StatDef sd, Func<Thing, float> thing_counter, Func<ThingDef, float> thingdef_counter) {
 			if (things != null) {
 				if (sd != null)
 					return CountThing(things, sd);
 				else if (thing_counter != null)
 					return CountThing(things, thing_counter);
+				else if (trait_name != null)
+					return CountThing(things, trait_name);
 				else
 					return CountThing(things);
 			}
@@ -301,6 +319,21 @@ namespace CrunchyDuck.Math {
 				else
 					return CountThingDef(thingdef, thingdef_counter);
 			}
+		}
+
+		private float CountThing(List<Thing> things, string trait_name) {
+			float count = 0;
+			foreach (Thing thing in things) {
+				if (thing is Pawn) {
+					Pawn pawn = (Pawn)thing;
+					var trait_dat = Math.searchableTraits[trait_name];
+					var trait_def = trait_dat.traitDef;
+					var trait_degree = trait_def.degreeDatas[trait_dat.index].degree;
+					if (pawn.story.traits.HasTrait(trait_def, trait_degree))
+						count++;
+				}
+			}
+			return count;
 		}
 
 		/// <summary>

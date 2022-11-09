@@ -29,6 +29,12 @@
     <label>Specifically added stats</label>
     <displayOrder>0</displayOrder>
   </StatCategoryDef>
+
+  <StatCategoryDef>
+    <defName>CDTraits</defName>
+    <label>Traits</label>
+    <displayOrder>20</displayOrder>
+  </StatCategoryDef>
   
   <StatCategoryDef>
     <defName>CDBasics</defName>
