@@ -187,18 +187,23 @@ namespace CrunchyDuck.Math {
 			if (target.NullOrEmpty())
 				return false;
 
-			// Get statdef
-			bool statdef_is_individual = false;
+			bool count_individual_things = false;
+			bool counting_statdef = false;
 			StatDef statdef = null;
 			Func<Thing, float> custom_thing_search = null;
 			Func<ThingDef, float> custom_thingdef_search = null;
+			List<Thing> things;
+			ThingDef thingdef;
+
+			// Searched a stat of the thing group.
 			if (match.Groups["statDef"].Success) {
+				counting_statdef = true;
 				match = getStatDef.Match(match.Groups["statDef"].Value);
 				if (match.Groups["statDef"].Value.NullOrEmpty()) {
 					return false;
 				}
 
-				statdef_is_individual = match.Groups["isIndividual"].Success;
+				count_individual_things = match.Groups["isIndividual"].Success;
 				var string_statdef = match.Groups["statDef"].Value.ToParameter();
 				if (Math.searchableStats.ContainsKey(string_statdef))
 					statdef = Math.searchableStats[string_statdef];
@@ -211,9 +216,22 @@ namespace CrunchyDuck.Math {
 					return false;
 			}
 
+			// Tried searching thingdef, but gave no search method.
+			if (counting_statdef && !count_individual_things)
+				if (statdef == null && custom_thingdef_search == null)
+					return false;
+
 			// Search thing
 			if (Math.searchableThings.ContainsKey(target)) {
-				count = CountThingSorter(target, bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
+				if (!counting_statdef || count_individual_things) {
+					things = GetThings(target, bc);
+					thingdef = null;
+				}
+				else {
+					thingdef = Math.searchableThings[target];
+					things = null;
+				}
+				count = CountThingSorter(things, thingdef, statdef, custom_thing_search, custom_thingdef_search);
 				return true;
 			}
 
@@ -224,18 +242,36 @@ namespace CrunchyDuck.Math {
 				ThingCategoryDef cat;
 				if (!Math.searchableCategories.TryGetValue(category_split.Groups["target"].Value.ToParameter(), out cat))
 					return false;
-				foreach (ThingDef thingdef in cat.childThingDefs) {
-					count += CountThingSorter(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
+				// Search things in category.
+				foreach (ThingDef cat_thingdef in cat.childThingDefs) {
+					if (!counting_statdef || count_individual_things) {
+						things = GetThings(cat_thingdef.label.ToParameter(), bc);
+						thingdef = null;
+					}
+					else {
+						things = null;
+						thingdef = cat_thingdef;
+					}
+					count += CountThingSorter(things, thingdef, statdef, custom_thing_search, custom_thingdef_search);
 				}
+				// Search child categories
 				foreach (ThingCategoryDef catdef in cat.childCategories) {
-					foreach (ThingDef thingdef in catdef.childThingDefs) {
-						count += CountThingSorter(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
+					foreach (ThingDef cat_thingdef in catdef.childThingDefs) {
+						if (!counting_statdef || count_individual_things) {
+							things = GetThings(cat_thingdef.label.ToParameter(), bc);
+							thingdef = null;
+						}
+						else {
+							things = null;
+							thingdef = cat_thingdef;
+						}
+						count += CountThingSorter(things, thingdef, statdef, custom_thing_search, custom_thingdef_search);
 					}
 				}
 				return true;
 			}
 
-			// Search custom
+			// Search custom things
 			//if (customThingGetters.TryGetValue(target, out Func<CachedMapData, List<Thing>> getter)) {
 			//	CountThingSorter(getter.Invoke(this), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
 			//}
@@ -246,22 +282,28 @@ namespace CrunchyDuck.Math {
 		/// <summary>
 		/// Used by SearchForResources to figure out how it should count what it has parsed.
 		/// </summary>
-		private float CountThingSorter(string thing_name, BillComponent bc, StatDef sd, bool sd_is_def, Func<Thing, float> thing_counter, Func<ThingDef, float> thingdef_counter) {
-			if (sd != null)
-				return CountThing(thing_name, bc, sd, sd_is_def);
-			if (thingdef_counter != null)
-				return CountThing(thing_name, bc, thingdef_counter);
-			if (thing_counter != null)
-				return CountThing(thing_name, bc, thing_counter);
-			else
-				return CountThing(thing_name, bc);
+		private float CountThingSorter(List<Thing> things, ThingDef thingdef, StatDef sd, Func<Thing, float> thing_counter, Func<ThingDef, float> thingdef_counter) {
+			if (things != null) {
+				if (sd != null)
+					return CountThing(things, sd);
+				else if (thing_counter != null)
+					return CountThing(things, thing_counter);
+				else
+					return CountThing(things);
+			}
+			else {
+				if (sd != null)
+					return CountThingDef(thingdef, sd);
+				else
+					return CountThingDef(thingdef, thingdef_counter);
+			}
 		}
 
 		/// <summary>
 		/// Count how many of this thing are on bc's map.
 		/// </summary>
-		private float CountThing(string thing_name, BillComponent bc) {
-			return GetThings(thing_name, bc).Sum(t => t.stackCount);
+		private float CountThing(List<Thing> things) {
+			return things.Sum(t => t.stackCount);
 		}
 
 		/// <summary>
@@ -271,29 +313,27 @@ namespace CrunchyDuck.Math {
 		/// <param name="bc"></param>
 		/// <param name="sd">StatDef to count.</param>
 		/// <param name="sd_is_def">If set to false, will sum up all stats. Else, will only count the value in the def.</param>
-		private float CountThing(string thing_name, BillComponent bc, StatDef sd, bool sd_is_def = false) {
+		private float CountThing(List<Thing> things, StatDef sd) {
 			// Count stats of all items.
-			if (!sd_is_def) {
-				return GetThings(thing_name, bc).Sum(t => t.GetStatValue(sd) * t.stackCount);
-			}
-			// Count stat of def.
-			else {
-				return Math.searchableThings[thing_name].GetStatValueAbstract(sd);
-			}
+			return things.Sum(t => t.GetStatValue(sd) * t.stackCount);
+		}
+
+		private float CountThingDef(ThingDef thingdef, StatDef sd) {
+			return thingdef.GetStatValueAbstract(sd);
 		}
 
 		/// <summary>
 		/// Count properties of a thingdef with an arbitrary counter.
 		/// </summary>
-		private float CountThing(string thing_name, BillComponent bc, Func<ThingDef, float> thingdef_counter) {
-			return thingdef_counter.Invoke(Math.searchableThings[thing_name]);
+		private float CountThingDef(ThingDef thingdef, Func<ThingDef, float> thingdef_counter) {
+			return thingdef_counter.Invoke(thingdef);
 		}
 
 		/// <summary>
 		/// Count properties of a thing with an arbitrary counter.
 		/// </summary>
-		private float CountThing(string thing_name, BillComponent bc, Func<Thing, float> thing_counter) {
-			return GetThings(thing_name, bc).Sum(thing_counter);
+		private float CountThing(List<Thing> things, Func<Thing, float> thing_counter) {
+			return things.Sum(thing_counter);
 		}
 
 		public int GetResourceCount_old(string parameter_name, BillComponent bc) {
