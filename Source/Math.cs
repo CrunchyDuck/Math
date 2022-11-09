@@ -265,28 +265,28 @@ namespace CrunchyDuck.Math {
 				return;
 			}
 
-			// BIG TODO: How can I let players search statdefs for these guys? Maybe manually do it?
-			e.Parameters["pwn"] = e.Parameters["pawns"] = cache.pawns.Count();
-			e.Parameters["col"] = e.Parameters["colonists"] = cache.colonists.Count();
-			e.Parameters["slv"] = e.Parameters["slaves"] = cache.slaves.Count();
-			e.Parameters["pri"] = e.Parameters["prisoners"] = cache.prisoners.Count();
-			e.Parameters["anim"] = e.Parameters["animals"] = cache.ownedAnimals.Count();
+//			// BIG TODO: How can I let players search statdefs for these guys? Maybe manually do it?
+//			e.Parameters["pwn"] = e.Parameters["pawns"] = cache.pawns.Count();
+//			e.Parameters["col"] = e.Parameters["colonists"] = cache.colonists.Count();
+//			e.Parameters["slv"] = e.Parameters["slaves"] = cache.slaves.Count();
+//			e.Parameters["pri"] = e.Parameters["prisoners"] = cache.prisoners.Count();
+//			e.Parameters["anim"] = e.Parameters["animals"] = cache.ownedAnimals.Count();
 
-			e.Parameters["pwn in"] = e.Parameters["pawns intake"] = cache.pawnsIntake;
-			e.Parameters["col in"] = e.Parameters["colonists intake"] = cache.colonistsIntake;
-			e.Parameters["slv in"] = e.Parameters["slaves intake"] = cache.slavesIntake;
-			e.Parameters["pri in"] = e.Parameters["prisoners intake"] = cache.prisonersIntake;
-			e.Parameters["anim in"] = e.Parameters["animals intake"] = cache.ownedAnimalsIntake;
+//			e.Parameters["pwn in"] = e.Parameters["pawns intake"] = cache.pawnsIntake;
+//			e.Parameters["col in"] = e.Parameters["colonists intake"] = cache.colonistsIntake;
+//			e.Parameters["slv in"] = e.Parameters["slaves intake"] = cache.slavesIntake;
+//			e.Parameters["pri in"] = e.Parameters["prisoners intake"] = cache.prisonersIntake;
+//			e.Parameters["anim in"] = e.Parameters["animals intake"] = cache.ownedAnimalsIntake;
 
-#if v1_4
-			e.Parameters["mech"] = e.Parameters["mechanitors"] = cache.mechanitors.Count();
-			e.Parameters["mech in"] = e.Parameters["mechanitors intake"] = cache.mechanitorsIntake;
-			e.Parameters["mech ban"] = e.Parameters["mechanitors bandwidth"] = cache.mechanitorsAvailableBandwidth;
-			e.Parameters["bab"] = e.Parameters["babies"] = cache.babies.Count();
-			e.Parameters["kid"] = e.Parameters["kids"] = cache.kids.Count();
-			e.Parameters["kid in"] = e.Parameters["kids intake"] = cache.kidsIntake;
-			e.Parameters["bab in"] = e.Parameters["babies intake"] = cache.babiesIntake;
-#endif
+//#if v1_4
+//			e.Parameters["mech"] = e.Parameters["mechanitors"] = cache.mechanitors.Count();
+//			e.Parameters["mech in"] = e.Parameters["mechanitors intake"] = cache.mechanitorsIntake;
+//			e.Parameters["mech ban"] = e.Parameters["mechanitors bandwidth"] = cache.mechanitorsAvailableBandwidth;
+//			e.Parameters["bab"] = e.Parameters["babies"] = cache.babies.Count();
+//			e.Parameters["kid"] = e.Parameters["kids"] = cache.kids.Count();
+//			e.Parameters["kid in"] = e.Parameters["kids intake"] = cache.kidsIntake;
+//			e.Parameters["bab in"] = e.Parameters["babies intake"] = cache.babiesIntake;
+//#endif
 
 			foreach (string parameter in parameter_list) {
 				float count;

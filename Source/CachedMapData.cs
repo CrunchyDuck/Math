@@ -3,6 +3,7 @@ using Verse;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System;
 
 namespace CrunchyDuck.Math {
 	// TODO: Add male/female searching for pawns.
@@ -14,16 +15,52 @@ namespace CrunchyDuck.Math {
 		private static Regex getTarget = new Regex(@"(?<target>.+?)(?:\.|$)(?<statDef>.+)?", RegexOptions.Compiled);
 		private static Regex getStatDef = new Regex(@"(?:(?<isIndividual>o|own|owned) )?(?<statDef>.+)?", RegexOptions.Compiled);
 		private static Regex checkCategory = new Regex(@"(c|cat|category) (?<target>.+)", RegexOptions.Compiled);
+		// This codebase is getting to be messy.
+		private static Dictionary<string, Func<Thing, float>> customThingCounters = new Dictionary<string, Func<Thing, float>> {
+			{ "male", CountMalePawns },
+			{ "female", CountFemalePawns },
 
-		public List<Pawn> pawns = new List<Pawn>();
-		public List<Pawn> mechanitors = new List<Pawn>();
+			{ "intake", CountIntake },
+			{ "in", CountIntake },
+		};
+		private static Dictionary<string, Func<ThingDef, float>> customThingDefCounters = new Dictionary<string, Func<ThingDef, float>> {
+			{ "stack count", t => t.stackLimit },
+		};
+		private static Dictionary<string, Func<CachedMapData, List<Thing>>> customThingGetters = new Dictionary<string, Func<CachedMapData, List<Thing>>> {
+			{ "col", cmd => cmd.colonists },
+			{ "colonists", cmd => cmd.colonists },
+
+			{ "pwn", cmd => cmd.pawns },
+			{ "pawns", cmd => cmd.pawns },
+
+			{ "slv", cmd => cmd.slaves },
+			{ "slaves", cmd => cmd.slaves },
+
+			{ "pri", cmd => cmd.prisoners },
+			{ "prisoners", cmd => cmd.prisoners },
+
+			{ "anim", cmd => cmd.ownedAnimals },
+			{ "animals", cmd => cmd.ownedAnimals },
+
+			{ "bab", cmd => cmd.babies },
+			{ "babies", cmd => cmd.babies },
+
+			{ "mech", cmd => cmd.mechanitors },
+			{ "mechanitors", cmd => cmd.mechanitors },
+
+			{ "kid", cmd => cmd.kids },
+			{ "kids", cmd => cmd.kids },
+		};
+
+		public List<Thing> pawns = new List<Thing>();
+		public List<Thing> mechanitors = new List<Thing>();
 		public int mechanitorsAvailableBandwidth = 0;
-		public List<Pawn> colonists = new List<Pawn>();
-		public List<Pawn> kids = new List<Pawn>();
-		public List<Pawn> babies = new List<Pawn>();
-		public List<Pawn> prisoners = new List<Pawn>();
-		public List<Pawn> slaves = new List<Pawn>();
-		public List<Pawn> ownedAnimals = new List<Pawn>();
+		public List<Thing> colonists = new List<Thing>();
+		public List<Thing> kids = new List<Thing>();
+		public List<Thing> babies = new List<Thing>();
+		public List<Thing> prisoners = new List<Thing>();
+		public List<Thing> slaves = new List<Thing>();
+		public List<Thing> ownedAnimals = new List<Thing>();
 		public float pawnsIntake = 0;
 		public float colonistsIntake = 0;
 		public float mechanitorsIntake = 0;
@@ -37,31 +74,22 @@ namespace CrunchyDuck.Math {
 		public CachedMapData(Map map) {
 			this.map = map;
 
-			pawns = map.mapPawns.FreeColonistsAndPrisoners;
-			slaves = map.mapPawns.SlavesOfColonySpawned;
-			colonists = map.mapPawns.FreeColonists.Except(slaves).ToList();
-			prisoners = map.mapPawns.PrisonersOfColony;
+			pawns = map.mapPawns.FreeColonistsAndPrisoners.Cast<Thing>().ToList();
+			slaves = map.mapPawns.SlavesOfColonySpawned.Cast<Thing>().ToList();
+			colonists = map.mapPawns.FreeColonists.Except(slaves).ToList().Cast<Thing>().ToList();
+			prisoners = map.mapPawns.PrisonersOfColony.Cast<Thing>().ToList();
 			// stolen from MainTabWindow_Animals.Pawns :)
-			ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).ToList();
-
-			pawnsIntake = CountIntake(pawns);
-			colonistsIntake = CountIntake(colonists);
-			slavesIntake = CountIntake(slaves);
-			prisonersIntake = CountIntake(prisoners);
-			ownedAnimalsIntake = CountIntake(ownedAnimals);
+			ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).ToList().Cast<Thing>().ToList();
 
 #if v1_4
-			mechanitors = colonists.Where(p => p.mechanitor != null).ToList();
-			mechanitorsIntake = CountIntake(mechanitors);
+			mechanitors = colonists.Where(p => ((Pawn)p).mechanitor != null).ToList().Cast<Thing>().ToList();
 			mechanitorsAvailableBandwidth = 0;
 			foreach(Pawn p in mechanitors) {
 				mechanitorsAvailableBandwidth += p.mechanitor.TotalBandwidth - p.mechanitor.UsedBandwidth;
 			}
 
-			kids = colonists.Where(p => p.DevelopmentalStage == DevelopmentalStage.Child).ToList();
-			babies = colonists.Where(p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn).ToList();
-			kidsIntake = CountIntake(kids);
-			babiesIntake = CountIntake(babies);
+			kids = colonists.Where(p => ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Child).ToList().Cast<Thing>().ToList();
+			babies = colonists.Where(p => ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Baby || ((Pawn)p).DevelopmentalStage == DevelopmentalStage.Newborn).ToList().Cast<Thing>().ToList();
 #endif
 		}
 
@@ -91,6 +119,30 @@ namespace CrunchyDuck.Math {
 				}
 			}
 			return intake;
+		}
+
+		private static float CountIntake(Thing potential_pawn) {
+			if (potential_pawn is Pawn) {
+				Pawn pawn = (Pawn)potential_pawn;
+				return float.Parse(RaceProperties.NutritionEatenPerDay(pawn));
+			}
+			return 0;
+		}
+
+		private static float CountMalePawns(Thing potential_pawn) {
+			if (potential_pawn is Pawn) {
+				Pawn pawn = (Pawn)potential_pawn;
+				return pawn.gender == Gender.Male ? 1 : 0;
+			}
+			return 0;
+		}
+
+		private static float CountFemalePawns(Thing potential_pawn) {
+			if (potential_pawn is Pawn) {
+				Pawn pawn = (Pawn)potential_pawn;
+				return pawn.gender == Gender.Female ? 1 : 0;
+			}
+			return 0;
 		}
 
 		// TODO: Do multiple passes of DoMath, where the first tallies up all resources they want to search, and the second searches for all of them at once.
@@ -138,6 +190,8 @@ namespace CrunchyDuck.Math {
 			// Get statdef
 			bool statdef_is_individual = false;
 			StatDef statdef = null;
+			Func<Thing, float> custom_thing_search = null;
+			Func<ThingDef, float> custom_thingdef_search = null;
 			if (match.Groups["statDef"].Success) {
 				match = getStatDef.Match(match.Groups["statDef"].Value);
 				if (match.Groups["statDef"].Value.NullOrEmpty()) {
@@ -146,51 +200,100 @@ namespace CrunchyDuck.Math {
 
 				statdef_is_individual = match.Groups["isIndividual"].Success;
 				var string_statdef = match.Groups["statDef"].Value.ToParameter();
+				if (Math.searchableStats.ContainsKey(string_statdef))
+					statdef = Math.searchableStats[string_statdef];
+				else if (customThingCounters.ContainsKey(string_statdef))
+					custom_thing_search = customThingCounters[string_statdef];
+				else if (customThingDefCounters.ContainsKey(string_statdef))
+					custom_thingdef_search = customThingDefCounters[string_statdef];
 				// Gave statdef but is invalid.
-				if (!Math.searchableStats.ContainsKey(string_statdef)) {
+				else
 					return false;
-				}
-				statdef = Math.searchableStats[string_statdef];
 			}
 
 			// Search thing
 			if (Math.searchableThings.ContainsKey(target)) {
-				count = CountThing(target, bc, statdef, statdef_is_individual);
+				count = CountThingSorter(target, bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
 				return true;
 			}
 
-			// Is it a category?
+			// Search category
 			Match category_split = checkCategory.Match(target);
 			if (category_split.Success) {
 				// Is the category valid?
 				ThingCategoryDef cat;
 				if (!Math.searchableCategories.TryGetValue(category_split.Groups["target"].Value.ToParameter(), out cat))
 					return false;
-				// BUG: This doesn't get all thingdefs. I think I need to iterate .childCategories too.
 				foreach (ThingDef thingdef in cat.childThingDefs) {
-					count += CountThing(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual);
+					count += CountThingSorter(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
 				}
 				foreach (ThingCategoryDef catdef in cat.childCategories) {
 					foreach (ThingDef thingdef in catdef.childThingDefs) {
-						count += CountThing(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual);
+						count += CountThingSorter(thingdef.label.ToParameter(), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
 					}
 				}
 				return true;
 			}
 
+			// Search custom
+			//if (customThingGetters.TryGetValue(target, out Func<CachedMapData, List<Thing>> getter)) {
+			//	CountThingSorter(getter.Invoke(this), bc, statdef, statdef_is_individual, custom_thing_search, custom_thingdef_search);
+			//}
+
 			return false;
 		}
 
-		private float CountThing(string thing_name, BillComponent bc, StatDef sd = null, bool sd_is_individual = false) {
-			if (sd == null) {
-				return GetThings(thing_name, bc).Sum(t => t.stackCount);
-			}
-			else if (sd_is_individual) {
+		/// <summary>
+		/// Used by SearchForResources to figure out how it should count what it has parsed.
+		/// </summary>
+		private float CountThingSorter(string thing_name, BillComponent bc, StatDef sd, bool sd_is_def, Func<Thing, float> thing_counter, Func<ThingDef, float> thingdef_counter) {
+			if (sd != null)
+				return CountThing(thing_name, bc, sd, sd_is_def);
+			if (thingdef_counter != null)
+				return CountThing(thing_name, bc, thingdef_counter);
+			if (thing_counter != null)
+				return CountThing(thing_name, bc, thing_counter);
+			else
+				return CountThing(thing_name, bc);
+		}
+
+		/// <summary>
+		/// Count how many of this thing are on bc's map.
+		/// </summary>
+		private float CountThing(string thing_name, BillComponent bc) {
+			return GetThings(thing_name, bc).Sum(t => t.stackCount);
+		}
+
+		/// <summary>
+		/// Count a statdef.
+		/// </summary>
+		/// <param name="thing_name"></param>
+		/// <param name="bc"></param>
+		/// <param name="sd">StatDef to count.</param>
+		/// <param name="sd_is_def">If set to false, will sum up all stats. Else, will only count the value in the def.</param>
+		private float CountThing(string thing_name, BillComponent bc, StatDef sd, bool sd_is_def = false) {
+			// Count stats of all items.
+			if (!sd_is_def) {
 				return GetThings(thing_name, bc).Sum(t => t.GetStatValue(sd) * t.stackCount);
 			}
+			// Count stat of def.
 			else {
 				return Math.searchableThings[thing_name].GetStatValueAbstract(sd);
 			}
+		}
+
+		/// <summary>
+		/// Count properties of a thingdef with an arbitrary counter.
+		/// </summary>
+		private float CountThing(string thing_name, BillComponent bc, Func<ThingDef, float> thingdef_counter) {
+			return thingdef_counter.Invoke(Math.searchableThings[thing_name]);
+		}
+
+		/// <summary>
+		/// Count properties of a thing with an arbitrary counter.
+		/// </summary>
+		private float CountThing(string thing_name, BillComponent bc, Func<Thing, float> thing_counter) {
+			return GetThings(thing_name, bc).Sum(thing_counter);
 		}
 
 		public int GetResourceCount_old(string parameter_name, BillComponent bc) {
