@@ -53,6 +53,8 @@ namespace CrunchyDuck.Math {
 
 		public override void DoWindowContents(Rect inRect) {
 			List<TabRecord> tabs = new List<TabRecord>();
+
+			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
 			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
 			tabs.Add(new TabRecord("Traits", () => tab = InfoCardTab.Traits, tab == InfoCardTab.Traits));
 			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
@@ -104,8 +106,7 @@ namespace CrunchyDuck.Math {
 			StatDrawEntry stat;
 
 			var cat = catIntroduction;
-			stat = new StatDrawEntry(cat, "Description", "",
-@"Here you can see the list of all traits available to search on pawn groups.",
+			stat = new StatDrawEntry(cat, "Description".Translate(), "", "CD_M_infocard_traits_description".Translate(),
 				10000);
 			stats.Add(stat);
 
@@ -123,100 +124,47 @@ namespace CrunchyDuck.Math {
 		private List<StatDrawEntry> GetBasicEntries() {
 			var stats = new List<StatDrawEntry>();
 			StatDrawEntry stat;
+			int display_priority = 10000;
 
 			var cat = catIntroduction;
-			stat = new StatDrawEntry(cat, "Description", "",
-				@"This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
-
-The left column is the variable name, the right column is the current value.
-
-Click on a row to get an explanation.",
-				10000);
+			stat = new StatDrawEntry(cat, "Description".Translate(), "", "CD_M_infocard_introduction_description".Translate(),
+				display_priority--);
 			stats.Add(stat);
 
-			stats.Add(new StatDrawEntry(cat, @"Using ""item count"" and ""target value""", "",
-@"You'll notice that there's a new checkbox on ""Do until you have X"" bills called ""Custom item count"".
-Turning this on, you can customize what the recipe counts to check how much of something it has.
-For example, if you type in ""category meals"", it will count ""simple meal"", ""fine meal"", ""packaged survival meal"", etc.
+			stats.Add(new StatDrawEntry(cat, "CD_M_tutorial_item_count".Translate(), "", "CD_M_tutorial_item_count_description".Translate(), display_priority--));
 
-Leaving ""Custom item count"" off will use the default counting logic.", 2990));
+			stats.Add(new StatDrawEntry(cat, "CD_M_tutorial_searching_things".Translate(), "", "CD_M_tutorial_searching_things_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "CD_M_tutorial_searching_stats".Translate(), "", "CD_M_tutorial_searching_stats_description".Translate(), display_priority--));
 
-			stats.Add(new StatDrawEntry(cat, "Searching Things", "",
-@"You can search any Thing in the game such as ""slate blocks"", ostriches, ""compacted steel"", etc.
-The count you get back will not include forbidden items, and will take into account the recipe's settings. E.G. if an item has 40% hitpoints but recipe requires 50%, it won't be counted.
+			stats.Add(new StatDrawEntry(cat, "CD_M_tutorial_searching_categories".Translate(), "", "CD_M_tutorial_searching_categories_description".Translate(), display_priority--));
 
-To search a ThingDef you need to convert the in-game name, make it lowercase, and wrap it in speech marks.
-Item quality, material and stack count should also be omitted from the name.
-If it has speech marks or full stops in its name, replace them with an underscore: _
-Singular words like ostrich don't always need speechmarks - it's up to you.
-
-Let's look at some examples:
-Compacted steel -> ""compacted steel""
-Medicine x5 -> ""medicine""
-Go-juice -> ""go-juice""
-Uranium mace (legendary) -> mace", 2980));
-			stats.Add(new StatDrawEntry(cat, "Searching Thing Stats", "",
-@"Things have stats like ""market value"", ""nutrition"", ""mech bandwidth"". This mod supports two types of stat searching.
-
-The first type lets you search the stat of a Thing's prefab. This value is always the same, it doesn't depend on how many of that item you have or the quality of those items - It's the value those items normally have.
-
-The second type lets you search the stats of individual items you own. This search is performed by putting ""owned"", ""own"" or ""o"" before the name of the StatDef.
-
-Some examples of both:
-""kibble.nutrition"" will give you 0.05, the nutritional value of one piece of kibble.
-""kibble.owned nutrition"" will give you the total nutrition you have in stored kibble.
-
-This also works on categories, and will add up the result from every item in that category.
-""category meals.o nutrition"" will return how much nutrition you have in stored meals.
-""category meals.nutrition"" is pretty useless, but shows it's possible.
-", 2975));
-
-			stats.Add(new StatDrawEntry(cat, "Searching categories", "",
-@"You can search any category of things in game, such as ""category raw food"", ""cat textiles"", ""c meals"", etc. Categories can be seen in any stockpile or bill menu.
-
-Categories are written just like Things, except you start the variable with the word ""category"", or ""cat"", or simply ""c"".
-Here are some examples:
-Humanlike corpses -> ""category humanlike corpses""
-Meals -> ""c meals""
-Eggs (unfert.) -> ""cat eggs (unfert_)""", 2970));
-
-			stats.Add(new StatDrawEntry(cat, "Searching traits", "",
-@"You can search any trait on any pawn group, such as ""pawns.traits.jogger"", ""colonists.traits.nudist"", ""colonists.traits.gay""", 2965));
-
-			stats.Add(new StatDrawEntry(cat, "Contributing variables", "",
-@"There are a lot of things that could be added to this mod. There are many things you might want to count or search or do that I haven't put support in for.
-It's not because adding variables is particularly hard, most of it is handled by nice systems nowadays. It's just that if I tried to add every variable I could think of, I would not have enough time in the day to do anything.
-I'm trying to find a unified way to add large groups of variable searching - like StatDef searching. But it takes time and experience and sometimes just isn't possible.
-
-If you want something added to the mod and if you know C#, I'm more than happy to accept contributions. You should discuss it with me in my Discord (Link on Math!'s workshop page) so I can help you with understand my codebase, make sure the contribution is one we can agree on, and so I can give some advice if necessary.
-", 2960));
+			stats.Add(new StatDrawEntry(cat, "CD_M_tutorial_searching_traits".Translate(), "", "CD_M_tutorial_searching_traits_description".Translate(), display_priority--));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
 			// This is done to force the variables to be lowercase in menus.
 			// nice thinking oken
 			// BEWARE THE HIDDEN HORRORS.
-			// TODO: Fill these in with their current values.
+			// TODO: Fill these in with their in-game values.
 			cat = catExamples;
-			stats.Add(new StatDrawEntry(cat, "​\"pawns.intake\" * 5", "", "Calculates how much nutrition your pawns need for 5 days.\nA simple meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.", 3001));
-			stats.Add(new StatDrawEntry(cat, "​col * 2", "", "Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.", 3000));
-			stats.Add(new StatDrawEntry(cat, @"​colonists - ""colonists.nudist""", "", "Clothing production! Counts all colonists, except nudists.", 2999));
-			stats.Add(new StatDrawEntry(cat, "​if(\"slate blocks\" > 200, 50, 0)", "", "Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.", 2950));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD_M_tutorial_example_intake".Translate(), "", "CD_M_tutorial_example_intake_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD_M_tutorial_example_colonists".Translate(), "", "CD_M_tutorial_example_colonists_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD_M_tutorial_example_clothing_production".Translate(), "", "CD_M_tutorial_example_clothing_production_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD_M_tutorial_example_if".Translate(), "", "CD_M_tutorial_example_if_description".Translate(), 2950));
 			// TODO: This was being cropped for too long.
 			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
 
 			cat = catPawns;
-			stats.Add(new StatDrawEntry(cat, "​pawns", attachedBill.Cache.pawns.Count().ToString(), "Alias: pwn\nNumber of owned pawns on the map the bill is contained in.", 3001));
-			stats.Add(new StatDrawEntry(cat, "​colonists", attachedBill.Cache.colonists.Count().ToString(), "Alias: col\nNumber of colonists on the map the bill is contained in. Does not include prisoners, slaves or guests.", 3000));
-			stats.Add(new StatDrawEntry(cat, "​mechanitors", attachedBill.Cache.mechanitors.Count().ToString(), "Alias: mech\nNumber of owned mechanitors on the map the bill is contained in. Doesn't include slaves or prisoners", 2990));
-			//stats.Add(new StatDrawEntry(cat, "​mechanitors bandwidth", attachedBill.Cache.mechanitorsAvailableBandwidth.ToString(), "Alias: mech ban\nAmount of available bandwidth for mechanitors on the map the bill is contained in.", 2980));
-			stats.Add(new StatDrawEntry(cat, "​slaves", attachedBill.Cache.slaves.Count().ToString(), "Alias: slv\nNumber of owned slaves on the map the bill is contained in.", 2970));
-			stats.Add(new StatDrawEntry(cat, "​prisoners", attachedBill.Cache.prisoners.Count().ToString(), "Alias: pri\nNumber of owned prisoners on the map the bill is contained in.", 2960));
-			stats.Add(new StatDrawEntry(cat, "​guests", attachedBill.Cache.prisoners.Count().ToString(), "Number of lodgers or guests staying with you as a result of quests.", 2955));
-			stats.Add(new StatDrawEntry(cat, "​animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "Alias: anim\nNumber of owned animals on the map the bill is contained in.", 2950));
+			stats.Add(new StatDrawEntry(cat, "​" + "pawns", attachedBill.Cache.pawns.Count().ToString(), "CD_M_pawn_group_pawns_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "colonists", attachedBill.Cache.colonists.Count().ToString(), "CD_M_pawn_group_colonists_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", attachedBill.Cache.mechanitors.Count().ToString(), "CD_M_pawn_group_mechanitors_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "slaves", attachedBill.Cache.slaves.Count().ToString(), "CD_M_pawn_group_slaves_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", attachedBill.Cache.prisoners.Count().ToString(), "CD_M_pawn_group_prisoners_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "guests", attachedBill.Cache.prisoners.Count().ToString(), "CD_M_pawn_group_guests_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "CD_M_pawn_group_animals_description".Translate(), display_priority--));
 #if v1_4
-			stats.Add(new StatDrawEntry(cat, "​babies", attachedBill.Cache.babies.Count().ToString(), "Alias: bab\nNumber of owned babies on the map the bill is contained in.", 2940));
-			stats.Add(new StatDrawEntry(cat, "​kids", attachedBill.Cache.kids.Count().ToString(), "Alias: kid\nNumber of owned children on the map the bill is contained in.", 2930));
+			stats.Add(new StatDrawEntry(cat, "​" + "babies", attachedBill.Cache.babies.Count().ToString(), "CD_M_pawn_group_babies_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "kids", attachedBill.Cache.kids.Count().ToString(), "CD_M_pawn_group_kids_description".Translate(), display_priority--));
 #endif
 
 			//cat = catModifiers;
@@ -227,29 +175,27 @@ If you want something added to the mod and if you know C#, I'm more than happy t
 	
 		private List<StatDrawEntry> GetStatDefEntries() {
 			var stats = new List<StatDrawEntry>();
+			int display_priority = 10000;
 
 			var cat = catIntroduction;
-			stats.Add(new StatDrawEntry(cat, "Description", "",
-@"Here you can see all StatDefs in the game. This is meant to be used as a reference to look up something you're not sure how to search.
-
-Click on a row to get an explanation.",
-				10000));
+			stats.Add(new StatDrawEntry(cat, "Description".Translate(), "", "CD_M_infocard_statdefs_description".Translate(), display_priority--));
 
 			// Add specially added stats first.
 			cat = catModifiers;
 //			stats.Add(new StatDrawEntry(cat, "Description", "",
 //@"These are ""StatDefs"" that aren't inherantly searchable, so I've added them manually. Search these the same as you would any other StatDef.",
 //				10000));
-			stats.Add(new StatDrawEntry(cat, "​male", "", "Whether a pawn is male.", 3000));
-			stats.Add(new StatDrawEntry(cat, "​female", "", "Whether a pawn is female.", 2990));
-			stats.Add(new StatDrawEntry(cat, "​intake", "", "How much food a pawn requires per day.", 2980));
-			stats.Add(new StatDrawEntry(cat, "​bandwidth", "", "How much bandwidth a pawn has.", 2970));
-			stats.Add(new StatDrawEntry(cat, "​stack limit", "", "The maximum amount of this item that can be stacked.", 2970));
+			stats.Add(new StatDrawEntry(cat, "​" + "male", "", "CD_M_counters_male_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "female", "", "CD_M_counters_female_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "intake", "", "CD_M_counters_intake_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "bandwidth", "", "CD_M_counters_bandwidth_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "stack limit", "", "CD_M_counters_stack_limit_description".Translate(), display_priority--));
 
 			cat = catBasics;
-			foreach (StatDef statdef in Math.searchableStats.Values) {
-				// TODO: Change this to be sort by alphabetical
-				stats.Add(new StatDrawEntry(statdef.category ?? cat, "​" + (statdef.label ?? statdef.defName).ToParameter(), "", statdef.description ?? "", statdef.displayPriorityInCategory + 1000));
+			var stats_sorted = Math.searchableStats.Values.OrderByDescending(t => t.label);
+			int i = 0;
+			foreach (StatDef statdef in stats_sorted) {
+				stats.Add(new StatDrawEntry(cat, "​" + statdef.label.ToParameter(), "", statdef.description ?? "", i++));
 			}
 
 			return stats;

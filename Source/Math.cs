@@ -14,8 +14,6 @@ namespace CrunchyDuck.Math {
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
 	// TODO: Add math variable name to the i menu of all objects.
 	// TODO: Clothing rules/restriction variable.
-	// TODO: Add support for other lanuages/redefine how variables are segmented.
-	// TODO: unpause doesn't update properly. Confirm this?
 	// TODO: Add pop up window for inputting larger bills.
 	// TODO: Update "look everywhere" to ACTUALLY look everywhere, not just in stockpiles.
 	// TODO: Market value slider.
@@ -24,6 +22,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Drag to rearrange bills (BWM)
 	// TODO: Set up translation files.
 	// TODO: Change "Unpause field" to accept booleans rather than thresholds.
+	// TODO: Language support for core variables. For example, changing my regex to support "ninos" instead of "kids"
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
