@@ -28,6 +28,7 @@ namespace CrunchyDuck.Math {
 	// TODO: When updating the mod, make the info card cycle colours until first clicked, to draw attention to it.
 	// TODO: Searching buildings like "simple research bench" doesn't work.
 	// TODO: Saving and loading bills, menu similar to infocard/variable card.
+	// TODO BUG: Input fields save invalid input.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

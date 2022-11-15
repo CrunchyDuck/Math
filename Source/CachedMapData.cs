@@ -98,7 +98,8 @@ namespace CrunchyDuck.Math {
 #endif
 		}
 
-		private static float CountIntake(List<Pawn> pawns) {
+		// TODO: Move these counters to relevant filters.
+		public static float CountIntake(List<Pawn> pawns) {
 			float intake = 0;
 			foreach (Pawn p in pawns) {
 				// This whole thing feels absurd, but I don't know how else I'm meant to get the hunger rate.
@@ -126,7 +127,7 @@ namespace CrunchyDuck.Math {
 			return intake;
 		}
 
-		private static float CountIntake(Thing potential_pawn) {
+		public static float CountIntake(Thing potential_pawn) {
 			if (potential_pawn is Pawn) {
 				Pawn pawn = (Pawn)potential_pawn;
 				return float.Parse(RaceProperties.NutritionEatenPerDay(pawn));
@@ -134,7 +135,7 @@ namespace CrunchyDuck.Math {
 			return 0;
 		}
 
-		private static float CountMalePawns(Thing potential_pawn) {
+		public static float CountMalePawns(Thing potential_pawn) {
 			if (potential_pawn is Pawn) {
 				Pawn pawn = (Pawn)potential_pawn;
 				return pawn.gender == Gender.Male ? 1 : 0;
@@ -142,7 +143,7 @@ namespace CrunchyDuck.Math {
 			return 0;
 		}
 
-		private static float CountBandwidth(Thing potential_pawn) {
+		public static float CountBandwidth(Thing potential_pawn) {
 			if (potential_pawn is Pawn) {
 				Pawn pawn = (Pawn)potential_pawn;
 				var mechanitor = pawn.mechanitor;
@@ -152,7 +153,7 @@ namespace CrunchyDuck.Math {
 			return 0;
 		}
 
-		private static float CountFemalePawns(Thing potential_pawn) {
+		public static float CountFemalePawns(Thing potential_pawn) {
 			if (potential_pawn is Pawn) {
 				Pawn pawn = (Pawn)potential_pawn;
 				return pawn.gender == Gender.Female ? 1 : 0;
@@ -180,9 +181,14 @@ namespace CrunchyDuck.Math {
 						else
 							return false;
 					}
-
+					else if (PawnFilter.filterMethods.ContainsKey(command)) {
+						filter = new PawnFilter(bc);
+					}
 					// Can't find filter.
-					return false;
+					else {
+						return false;
+					}
+
 				}
 
 				// Parse input

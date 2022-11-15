@@ -53,6 +53,7 @@
     <Compile Include="CachedMapData.cs" />
     <Compile Include="MathFilters\CategoryFilter.cs" />
     <Compile Include="MathFilters\MathFilter.cs" />
+    <Compile Include="MathFilters\PawnFilter.cs" />
     <Compile Include="MathFilters\ThingFilter.cs" />
     <Compile Include="Patches\Bill_Production_DoConfigInterface_Patch.cs" />
     <Compile Include="Patches\CountProducts_Patch.cs" />
