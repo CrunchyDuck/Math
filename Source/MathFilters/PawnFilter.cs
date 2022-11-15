@@ -11,14 +11,28 @@ namespace CrunchyDuck.Math.MathFilters {
 
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
 			{ "pawns", p => !p.AnimalOrWildMan() },
+			
 			{ "colonists", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger()},
+			{ "col", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger()},
+
 			{ "mechanitors", p => p.mechanitor != null },
+			{ "mech", p => p.mechanitor != null },
+
 			{ "prisoners", p => p.IsPrisoner},
+			{ "pri", p => p.IsPrisoner},
+
 			{ "slaves", p => p.IsSlave},
+			{ "slv", p => p.IsSlave},
+
 			{ "guests", p => p.IsQuestLodger()},
+
 			{ "animals", p => p.AnimalOrWildMan()},
+			{ "anim", p => p.AnimalOrWildMan()},
+
 			{ "kids", p => p.DevelopmentalStage == DevelopmentalStage.Child},
+
 			{ "babies", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
+			{ "bab", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
 		};
 
 		public static Dictionary<string, Func<Pawn, float>> counterMethods = new Dictionary<string, Func<Pawn, float>>() {

@@ -173,7 +173,7 @@ namespace CrunchyDuck.Math {
 						filter = new MathFilters.ThingFilter(bc, command);
 						continue;
 					}
-					else if (command == "categories") {
+					else if (CategoryFilter.names.Contains(command)) {
 						if (i + 1 < commands.Length && CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value)) {
 							filter = new MathFilters.ThingFilter(bc, value);
 							continue;

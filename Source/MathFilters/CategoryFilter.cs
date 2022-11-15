@@ -6,6 +6,7 @@ using RimWorld;
 namespace CrunchyDuck.Math.MathFilters {
 	// For now, this isn't used. I don't have enough advanced logic with categories to justify an object - Instead I just cast the user's category into a ThingFilter.
 	class CategoryFilter : MathFilter {
+		public static string[] names = new string[] { "categories", "c" };
 		public static Dictionary<string, ThingCategoryDef> searchableCategories = new Dictionary<string, ThingCategoryDef>();
 		public override bool CanCount { get { return true; } }
 
