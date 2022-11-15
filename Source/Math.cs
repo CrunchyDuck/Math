@@ -23,6 +23,10 @@ namespace CrunchyDuck.Math {
 	// TODO: Set up translation files.
 	// TODO: Change "Unpause field" to accept booleans rather than thresholds.
 	// TODO: Language support for core variables. For example, changing my regex to support "ninos" instead of "kids"
+	// TODO: Rework pawn groups. Add a tab, allow searching specific pawns, make pawn group filtering better (filter modifiers like prisoner, guest, child)
+	// Access individual pawns as pawn group. 
+	// TODO: When updating the mod, make the info card cycle colours until first clicked, to draw attention to it.
+	// TODO: Searching buildings like "simple research bench" doesn't work.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables

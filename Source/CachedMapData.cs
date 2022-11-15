@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 
 namespace CrunchyDuck.Math {
+	// TODO: Add in checking against pawn skills, like "get all pawns with shooting > 3"
 	class CachedMapData {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);

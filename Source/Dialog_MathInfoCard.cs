@@ -167,9 +167,6 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​" + "kids", attachedBill.Cache.kids.Count().ToString(), "CD_M_pawn_group_kids_description".Translate(), display_priority--));
 #endif
 
-			//cat = catModifiers;
-			//stats.Add(new StatDrawEntry(cat, "​\"pawns intake\"", attachedBill.Cache.pawnsIntake.ToString(), "Alias: \"pwn in\"\nThe \" in\" or \" intake\" modifier can be used on any group of pawns like \"slaves intake\", \"anim in\", etc. It returns the amount of nutrition a pawn requires per day after all modifiers have been applied.\n\nThis number can also be seen in a pawn's info card under \"Food consumption\".", 2995));
-
 			return stats;
 		}
 	

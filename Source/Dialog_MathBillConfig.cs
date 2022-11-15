@@ -269,6 +269,13 @@ namespace CrunchyDuck.Math {
 			// Here's what the original code for this looked like, so you can see how much shit I went through for this.
 			// string buttonLabel = this.bill.PawnRestriction == null ? (!ModsConfig.IdeologyActive || !this.bill.SlavesOnly ? (!ModsConfig.BiotechActive || !this.bill.recipe.mechanitorOnlyRecipe ? (!ModsConfig.BiotechActive || !this.bill.MechsOnly ? (string)"AnyWorker".Translate() : (string)"AnyMech".Translate()) : (string)"AnyMechanitor".Translate()) : (string)"AnySlave".Translate()) : this.bill.PawnRestriction.LabelShortCap;
 			string button_label;
+			// Someone was having issues with this method not being in their game. This will stop them getting errors. It can probably be removed eventually.
+			bool non_mech = false;
+			try {
+				non_mech = bill.NonMechsOnly;
+			}
+			catch {}
+
 			if (bill.PawnRestriction != null)
 				button_label = bill.PawnRestriction.LabelShortCap;
 			else if (ModsConfig.IdeologyActive && bill.SlavesOnly)
@@ -277,7 +284,7 @@ namespace CrunchyDuck.Math {
 				button_label = "AnyMechanitor".Translate();
 			else if (ModsConfig.BiotechActive && bill.MechsOnly)
 				button_label = "AnyMech".Translate();
-			else if (ModsConfig.BiotechActive && bill.NonMechsOnly)
+			else if (ModsConfig.BiotechActive && non_mech)
 				button_label = "AnyNonMech".Translate();
 			else
 				button_label = "AnyWorker".Translate();
@@ -500,13 +507,18 @@ namespace CrunchyDuck.Math {
 					}),
 					payload = null
 				};
-				yield return new Widgets.DropdownMenuElement<Pawn> {
-					option = new FloatMenuOption("AnyNonMech".Translate(), delegate
-					{
-						bill.SetAnyNonMechRestriction();
-					}),
-					payload = null
-				};
+					
+				try {
+					var val = new Widgets.DropdownMenuElement<Pawn> {
+						option = new FloatMenuOption("AnyNonMech".Translate(), delegate {
+							bill.SetAnyNonMechRestriction();
+						}),
+						payload = null
+					};
+				}
+				catch { }
+				if (val != null)
+					yield return val;
 			}
 			// Pawns
 			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {
