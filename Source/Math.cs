@@ -27,6 +27,7 @@ namespace CrunchyDuck.Math {
 	// Access individual pawns as pawn group. 
 	// TODO: When updating the mod, make the info card cycle colours until first clicked, to draw attention to it.
 	// TODO: Searching buildings like "simple research bench" doesn't work.
+	// TODO: Saving and loading bills, menu similar to infocard/variable card.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -36,7 +37,6 @@ namespace CrunchyDuck.Math {
 
 		private static Regex parameterNames = new Regex("(?:(\")(.+?)(\"))|([a-zA-Z0-9]+)", RegexOptions.Compiled);
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
-		public static Dictionary<string, ThingCategoryDef> searchableCategories = new Dictionary<string, ThingCategoryDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
 		public static Dictionary<string, (TraitDef traitDef, int index)> searchableTraits = new Dictionary<string, (TraitDef, int)>();
 
@@ -46,7 +46,7 @@ namespace CrunchyDuck.Math {
 			// I checked, this does run after all defs are loaded :)
 			// Code taken from DebugThingPlaceHelper.TryPlaceOptionsForStackCount
 			IndexDefs(searchableStats);
-			IndexDefs(searchableCategories);
+			IndexDefs(MathFilters.CategoryFilter.searchableCategories);
 			IndexDefs(searchableThings);
 			// The trait system is stupid. Why all this degrees nonsense? Just to mark incompatible traits? Needless.
 			foreach (TraitDef traitdef in DefDatabase<TraitDef>.AllDefs) {
@@ -57,6 +57,12 @@ namespace CrunchyDuck.Math {
 						continue;
 					searchableTraits[stupid_degree_nonsense.label.ToParameter()] = (traitdef, i);
 				}
+			}
+
+			// Make counter methods.
+			foreach (StatDef stat in searchableStats.Values) {
+				Func<Thing, float> method = t => t.GetStatValue(stat) * t.stackCount;
+				MathFilters.ThingFilter.counterMethods[stat.label.ToParameter()] = method;
 			}
 		}
 
@@ -186,7 +192,7 @@ namespace CrunchyDuck.Math {
 
 			foreach (string parameter in parameter_list) {
 				float count;
-				if (cache.SearchForResource(parameter, field.bc, out count)) {
+				if (cache.SearchVariable(parameter, field.bc, out count)) {
 					e.Parameters[parameter] = count;
 				}
 			}

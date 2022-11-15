@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+using CrunchyDuck.Math.MathFilters;
 
 namespace CrunchyDuck.Math {
 	// TODO: Add in checking against pawn skills, like "get all pawns with shooting > 3"
@@ -15,6 +16,7 @@ namespace CrunchyDuck.Math {
 		private static Regex getStatDef = new Regex(@"(?:(?<isIndividual>o|own|owned) )?(?<statDef>.+)?", RegexOptions.Compiled);
 		private static Regex getTraitDef = new Regex(@"(?:traits.)(?<traitDef>.+)?", RegexOptions.Compiled);
 		private static Regex checkCategory = new Regex(@"(c|cat|category) (?<target>.+)", RegexOptions.Compiled);
+
 		// This codebase is getting to be messy.
 		private static Dictionary<string, Func<Thing, float>> customThingCounters = new Dictionary<string, Func<Thing, float>> {
 			{ "male", CountMalePawns },
@@ -158,6 +160,53 @@ namespace CrunchyDuck.Math {
 			return 0;
 		}
 
+		public bool SearchVariable(string input, BillComponent bc, out float count) {
+			count = 0;
+			string[] commands = input.Split('.');
+			MathFilter filter = null;
+			for (int i = 0; i < commands.Length; i++) {
+				string command = commands[i];
+				// Initialize a filter.
+				if (filter == null) {
+					if (Math.searchableThings.ContainsKey(command)) {
+						filter = new MathFilters.ThingFilter(bc, command);
+						continue;
+					}
+					else if (command == "categories") {
+						if (i + 1 < commands.Length && CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value)) {
+							filter = new MathFilters.ThingFilter(bc, value);
+							continue;
+						}
+						else
+							return false;
+					}
+
+					// Can't find filter.
+					return false;
+				}
+
+				// Parse input
+				ReturnType type = filter.Parse(command, out object result);
+				switch (type) {
+					case ReturnType.Count:
+						count = (float)result;
+						return true;
+					case ReturnType.Null:
+						return false;
+					default:
+						filter = (MathFilter)result;
+						break;
+				}
+			}
+
+			if (filter.CanCount) {
+				count = filter.Count();
+				return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// Search for a resource, a category of resources, with an optional statdef modifier.
 		/// </summary>
@@ -165,7 +214,7 @@ namespace CrunchyDuck.Math {
 		/// <param name="bc">Recipe component to search with.</param>
 		/// <param name="count">How much of the searched thing there is</param>
 		/// <returns>true if search was valid and count was filled.</returns>
-		public bool SearchForResource(string parameter, BillComponent bc, out float count) {
+		public bool SearchForResource_old(string parameter, BillComponent bc, out float count) {
 			// TODO: Clean up this code. Please.
 			count = 0;
 			if (parameter.NullOrEmpty())
@@ -256,7 +305,7 @@ namespace CrunchyDuck.Math {
 			if (category_split.Success) {
 				// Is the category valid?
 				ThingCategoryDef cat;
-				if (!Math.searchableCategories.TryGetValue(category_split.Groups["target"].Value.ToParameter(), out cat))
+				if (!CategoryFilter.searchableCategories.TryGetValue(category_split.Groups["target"].Value.ToParameter(), out cat))
 					return false;
 				// Search things in category.
 				foreach (ThingDef cat_thingdef in cat.childThingDefs) {

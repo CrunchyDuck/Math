@@ -51,6 +51,9 @@
     <Compile Include="BillComponent.cs" />
     <Compile Include="BillManager.cs" />
     <Compile Include="CachedMapData.cs" />
+    <Compile Include="MathFilters\CategoryFilter.cs" />
+    <Compile Include="MathFilters\MathFilter.cs" />
+    <Compile Include="MathFilters\ThingFilter.cs" />
     <Compile Include="Patches\Bill_Production_DoConfigInterface_Patch.cs" />
     <Compile Include="Patches\CountProducts_Patch.cs" />
     <Compile Include="Dialog_MathBillConfig.cs" />

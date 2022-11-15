@@ -507,9 +507,9 @@ namespace CrunchyDuck.Math {
 					}),
 					payload = null
 				};
-					
+				Widgets.DropdownMenuElement<Pawn>? val = null;
 				try {
-					var val = new Widgets.DropdownMenuElement<Pawn> {
+					val = new Widgets.DropdownMenuElement<Pawn> {
 						option = new FloatMenuOption("AnyNonMech".Translate(), delegate {
 							bill.SetAnyNonMechRestriction();
 						}),
@@ -517,8 +517,9 @@ namespace CrunchyDuck.Math {
 					};
 				}
 				catch { }
+
 				if (val != null)
-					yield return val;
+					yield return (Widgets.DropdownMenuElement<Pawn>)val;
 			}
 			// Pawns
 			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {
