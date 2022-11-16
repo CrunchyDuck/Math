@@ -112,16 +112,6 @@ namespace CrunchyDuck.Math {
 		// TODO: Remove val too?
 		/// <returns>True if sequence is valid.</returns>
 		public static bool DoMath(string str, ref int val, InputField field) {
-			if (str.NullOrEmpty())
-				return false;
-
-			if (DoMath_new(str, ref val, field)) {
-				return true;
-			}
-			return false;
-		}
-
-		public static bool DoMath_new(string str, ref int val, InputField field) {
 			List<string> parameter_list = new List<string>();
 			foreach (Match match in parameterNames.Matches(str)) {
 				// Matched single word.
@@ -198,8 +188,7 @@ namespace CrunchyDuck.Math {
 			}
 
 			foreach (string parameter in parameter_list) {
-				float count;
-				if (cache.SearchVariable(parameter, field.bc, out count)) {
+				if (cache.SearchVariable(parameter, field.bc, out float count)) {
 					e.Parameters[parameter] = count;
 				}
 			}

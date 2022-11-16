@@ -14,8 +14,8 @@ namespace CrunchyDuck.Math.MathFilters {
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
 			{ "pawns", p => !p.AnimalOrWildMan() },
 			
-			{ "colonists", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger()},
-			{ "col", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger()},
+			{ "colonists", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger() && !p.AnimalOrWildMan()},
+			{ "col", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger() && !p.AnimalOrWildMan()},
 
 			{ "mechanitors", p => p.mechanitor != null },
 			{ "mech", p => p.mechanitor != null },
@@ -35,13 +35,14 @@ namespace CrunchyDuck.Math.MathFilters {
 
 			{ "babies", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
 			{ "bab", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
+
+			{ "male", IsMalePawn },
+			{ "female", IsFemalePawn },
 		};
 
 		public static Dictionary<string, Func<Pawn, float>> counterMethods = new Dictionary<string, Func<Pawn, float>>() {
-			{ "bandwidth", CachedMapData.CountBandwidth },
-			{ "male", CachedMapData.CountMalePawns },
-			{ "female", CachedMapData.CountFemalePawns },
-			{ "intake", CachedMapData.CountIntake },
+			{ "bandwidth", GetBandwidth },
+			{ "intake", GetIntake },
 		};
 
 		public PawnFilter(BillComponent bc) {
@@ -115,14 +116,48 @@ namespace CrunchyDuck.Math.MathFilters {
 
 			return ReturnType.Null;
 		}
-	
-		public static bool HasTrait(Pawn p, string trait_name) {
-			var trait_dat = Math.searchableTraits[trait_name];
-			var trait_def = trait_dat.traitDef;
-			var trait_degree = trait_def.degreeDatas[trait_dat.index].degree;
-			if (p.story.traits.HasTrait(trait_def, trait_degree))
+
+		// Filters
+		private static bool HasTrait(Pawn p, string trait_name) {
+			var (traitDef, index) = Math.searchableTraits[trait_name];
+			var trait_degree = traitDef.degreeDatas[index].degree;
+			if (p.story.traits.HasTrait(traitDef, trait_degree))
 				return true;
 			return false;
 		}
+
+		private static bool IsMalePawn(Pawn pawn) {
+			return pawn.gender == Gender.Male;
+		}
+
+		private static bool IsFemalePawn(Pawn pawn) {
+			return pawn.gender == Gender.Female;
+		}
+
+		// Counters
+		private static float GetIntake(Pawn pawn) {
+			float intake = 0;
+			// This whole thing feels absurd, but I don't know how else I'm meant to get the hunger rate.
+			// I searched everywhere but it does seem like the stats menu is the only location it's displayed with all modifiers.
+#if v1_3
+			Match match = v13_getIntake.Match(RaceProperties.NutritionEatenPerDayExplanation(p, showCalculations: true));
+			if (match.Success) {
+				intake += float.Parse(match.Groups[1].Value);
+			}
+			//intake += float.Parse(RaceProperties.NutritionEatenPerDayExplanation(p, showCalculations: true));
+#elif v1_4
+			// See: Need_Food.BaseHungerRate
+			intake += float.Parse(RaceProperties.NutritionEatenPerDay(pawn));
+#endif
+			return intake;
+		}
+
+		private static float GetBandwidth(Pawn pawn) {
+			var mechanitor = pawn.mechanitor;
+			if (mechanitor != null)
+				return mechanitor.TotalBandwidth - mechanitor.UsedBandwidth;
+			return 0;
+		}
+
 	}
 }

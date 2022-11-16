@@ -36,13 +36,44 @@ namespace CrunchyDuck.Math {
 		public override QuickSearchWidget CommonSearchWidget => StatsReportUtility.QuickSearchWidget;
 		public override void Notify_CommonSearchChanged() => StatsReportUtility.Notify_QuickSearchChanged();
 
+		private Dictionary<string, float> valueCache = new Dictionary<string, float>();
+
+
 		// TODO: Add X in top right.
-		public Dialog_MathInfoCard(BillComponent bill) {
+		public Dialog_MathInfoCard(BillComponent bc) {
 			if (MathSettings.settings.lastVersionInfocardChecked != Math.version) {
 				MathSettings.settings.lastVersionInfocardChecked = Math.version;
 				MathSettings.settings.Write();
 			}
-			attachedBill = bill;
+			attachedBill = bc;
+			// Get a cache of current values. I'll clean this up some other time.
+			valueCache["pawns"] = bc.Cache.humanPawns.Count();
+			object r;
+
+			new MathFilters.PawnFilter(bc).Parse("colonists", out r);
+			valueCache["colonists"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("mechanitors", out r);
+			valueCache["mechanitors"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("slaves", out r);
+			valueCache["slaves"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("prisoners", out r);
+			valueCache["prisoners"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("guests", out r);
+			valueCache["guests"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("animals", out r);
+			valueCache["animals"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("babies", out r);
+			valueCache["babies"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("kids", out r);
+			valueCache["kids"] = ((MathFilters.MathFilter)r).Count();
+
 			statEntries = GetBasicEntries();
 			// If these values aren't reset you get some corruption nonsense because the system is jank.
 #if v1_4
@@ -128,8 +159,8 @@ namespace CrunchyDuck.Math {
 			cat = catTraits;
 			var traits_sorted = Math.searchableTraits.Values.OrderByDescending(t => t.traitDef.degreeDatas[t.index].label);
 			int i = 0;
-			foreach (var trait_container in traits_sorted) {
-				var trait_dat = trait_container.traitDef.degreeDatas[trait_container.index];
+			foreach (var (traitDef, index) in traits_sorted) {
+				var trait_dat = traitDef.degreeDatas[index];
 				stats.Add(new StatDrawEntry(cat, "​" + trait_dat.label.ToParameter(), "", trait_dat.description, i++));
 			}
 
@@ -170,16 +201,16 @@ namespace CrunchyDuck.Math {
 			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
 
 			cat = catPawns;
-			stats.Add(new StatDrawEntry(cat, "​" + "pawns", attachedBill.Cache.human_pawns.Count().ToString(), "CD_M_pawn_group_pawns_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "colonists", attachedBill.Cache.colonists.Count().ToString(), "CD_M_pawn_group_colonists_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", attachedBill.Cache.mechanitors.Count().ToString(), "CD_M_pawn_group_mechanitors_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "slaves", attachedBill.Cache.slaves.Count().ToString(), "CD_M_pawn_group_slaves_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", attachedBill.Cache.prisoners.Count().ToString(), "CD_M_pawn_group_prisoners_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "guests", attachedBill.Cache.prisoners.Count().ToString(), "CD_M_pawn_group_guests_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "animals", attachedBill.Cache.ownedAnimals.Count().ToString(), "CD_M_pawn_group_animals_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "pawns", valueCache["pawns"].ToString(), "CD_M_pawn_group_pawns_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "colonists", valueCache["colonists"].ToString(), "CD_M_pawn_group_colonists_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", valueCache["mechanitors"].ToString(), "CD_M_pawn_group_mechanitors_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "slaves", valueCache["slaves"].ToString(), "CD_M_pawn_group_slaves_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", valueCache["prisoners"].ToString(), "CD_M_pawn_group_prisoners_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "guests", valueCache["guests"].ToString(), "CD_M_pawn_group_guests_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "animals", valueCache["animals"].ToString(), "CD_M_pawn_group_animals_description".Translate(), display_priority--));
 #if v1_4
-			stats.Add(new StatDrawEntry(cat, "​" + "babies", attachedBill.Cache.babies.Count().ToString(), "CD_M_pawn_group_babies_description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "kids", attachedBill.Cache.kids.Count().ToString(), "CD_M_pawn_group_kids_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "babies", valueCache["babies"].ToString(), "CD_M_pawn_group_babies_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "kids", valueCache["kids"].ToString(), "CD_M_pawn_group_kids_description".Translate(), display_priority--));
 #endif
 
 			return stats;

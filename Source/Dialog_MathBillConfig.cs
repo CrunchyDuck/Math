@@ -390,7 +390,7 @@ namespace CrunchyDuck.Math {
 
 		private static void MathBillEntry(InputField field, Listing_Standard ls, int multiplier = 1) {
 			Rect rect = ls.GetRect(24f);
-			// TODO: Not sure what this if check does.
+			// Not sure what this if check does.
 			if (!ls.BoundingRectCached.HasValue || rect.Overlaps(ls.BoundingRectCached.Value)) {
 				// Buttons
 				int num = Mathf.Min(40, (int)rect.width / 5);
@@ -448,8 +448,7 @@ namespace CrunchyDuck.Math {
 			int i = 0;
 			while (i < groupCount) {
 				SlotGroup slotGroup = groupList[i];
-				Zone_Stockpile stockpile = slotGroup.parent as Zone_Stockpile;
-				if (stockpile != null) {
+				if (slotGroup.parent is Zone_Stockpile stockpile) {
 					if (!bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, stockpile)) {
 						yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
 							option = new FloatMenuOption(string.Format("{0} ({1})", "IncludeSpecific".Translate(slotGroup.parent.SlotYielderLabel()), "IncompatibleLower".Translate()), null),
@@ -458,8 +457,7 @@ namespace CrunchyDuck.Math {
 					}
 					else {
 						yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
-							option = new FloatMenuOption("IncludeSpecific".Translate(slotGroup.parent.SlotYielderLabel()), delegate
-							{
+							option = new FloatMenuOption("IncludeSpecific".Translate(slotGroup.parent.SlotYielderLabel()), delegate {
 								bill.includeFromZone = stockpile;
 							}),
 							payload = stockpile
