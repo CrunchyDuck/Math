@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CrunchyDuck.Math.MathFilters {
 	class PawnFilter : MathFilter {
-		List<Pawn> contains = new List<Pawn>();
+		Dictionary<string, Pawn> contains = new Dictionary<string, Pawn>();
 		public override bool CanCount { get { return true; } }
 
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
@@ -44,7 +44,7 @@ namespace CrunchyDuck.Math.MathFilters {
 
 		public PawnFilter(BillComponent bc) {
 			// TODO: Cache + performance test this.
-			contains = bc.targetBill.Map.mapPawns.PawnsInFaction(Faction.OfPlayer);
+			contains = bc.Cache.pawns_dict;
 		}
 
 		public override float Count() {
@@ -53,12 +53,21 @@ namespace CrunchyDuck.Math.MathFilters {
 
 		public override ReturnType Parse(string command, out object result) {
 			result = null;
+			// Search pawn.
+			if (contains.ContainsKey(command)) {
+				contains = new Dictionary<string, Pawn>() {
+					{ command, contains[command] }
+				};
+				result = this;
+				return ReturnType.PawnFilter;
+			}
+			
 			if (filterMethods.ContainsKey(command)) {
 				var method = filterMethods[command];
-				List<Pawn> filtered_pawns = new List<Pawn>();
-				foreach(Pawn pawn in contains) {
-					if (method.Invoke(pawn)) {
-						filtered_pawns.Add(pawn);
+				Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
+				foreach(KeyValuePair<string, Pawn> entry in contains) {
+					if (method.Invoke(entry.Value)) {
+						filtered_pawns[entry.Key] = entry.Value;
 					}
 				}
 				contains = filtered_pawns;
@@ -69,7 +78,7 @@ namespace CrunchyDuck.Math.MathFilters {
 			if (counterMethods.ContainsKey(command)) {
 				var method = counterMethods[command];
 				float count = 0;
-				foreach (Pawn p in contains) {
+				foreach (Pawn p in contains.Values) {
 					count += method.Invoke(p);
 				}
 				result = count;

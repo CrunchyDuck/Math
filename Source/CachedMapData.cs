@@ -31,8 +31,8 @@ namespace CrunchyDuck.Math {
 			{ "col", cmd => cmd.colonists },
 			{ "colonists", cmd => cmd.colonists },
 
-			{ "pwn", cmd => cmd.pawns },
-			{ "pawns", cmd => cmd.pawns },
+			{ "pwn", cmd => cmd.human_pawns },
+			{ "pawns", cmd => cmd.human_pawns },
 
 			{ "slv", cmd => cmd.slaves },
 			{ "slaves", cmd => cmd.slaves },
@@ -55,7 +55,8 @@ namespace CrunchyDuck.Math {
 			{ "guests", cmd => cmd.guests },
 		};
 
-		public List<Thing> pawns = new List<Thing>();
+		public Dictionary<string, Pawn> pawns_dict = new Dictionary<string, Pawn>();
+		public List<Thing> human_pawns = new List<Thing>();
 		public List<Thing> mechanitors = new List<Thing>();
 		public int mechanitorsAvailableBandwidth = 0;
 		public List<Thing> colonists = new List<Thing>();
@@ -78,13 +79,21 @@ namespace CrunchyDuck.Math {
 		public CachedMapData(Map map) {
 			this.map = map;
 
-			pawns = map.mapPawns.FreeColonistsAndPrisoners.Cast<Thing>().ToList();
-			guests = pawns.Where(p => ((Pawn)p).IsQuestLodger()).Cast<Thing>().ToList();
+			foreach(Pawn p in map.mapPawns.PawnsInFaction(Faction.OfPlayer)) {
+				pawns_dict[p.LabelShort.ToParameter()] = p;
+				if (p.AnimalOrWildMan())
+					ownedAnimals.Add(p);
+				else
+					human_pawns.Add(p);
+			}
+
+			//human_pawns = map.mapPawns.FreeColonistsAndPrisoners.Cast<Thing>().ToList();
+			guests = human_pawns.Where(p => ((Pawn)p).IsQuestLodger()).Cast<Thing>().ToList();
 			slaves = map.mapPawns.SlavesOfColonySpawned.Cast<Thing>().ToList();
 			colonists = map.mapPawns.FreeColonists.Except(slaves).Except(guests).Cast<Thing>().ToList();
 			prisoners = map.mapPawns.PrisonersOfColony.Cast<Thing>().ToList();
 			// stolen from MainTabWindow_Animals.Pawns :)
-			ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).Cast<Thing>().ToList();
+			//ownedAnimals = map.mapPawns.PawnsInFaction(Faction.OfPlayer).Where(p => p.RaceProps.Animal).Cast<Thing>().ToList();
 
 #if v1_4
 			mechanitors = colonists.Where(p => ((Pawn)p).mechanitor != null).Cast<Thing>().ToList();
@@ -181,7 +190,7 @@ namespace CrunchyDuck.Math {
 						else
 							return false;
 					}
-					else if (PawnFilter.filterMethods.ContainsKey(command)) {
+					else if (PawnFilter.filterMethods.ContainsKey(command) || pawns_dict.ContainsKey(command)) {
 						filter = new PawnFilter(bc);
 					}
 					// Can't find filter.

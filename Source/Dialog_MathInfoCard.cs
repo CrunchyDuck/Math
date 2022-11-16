@@ -155,7 +155,7 @@ namespace CrunchyDuck.Math {
 			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
 
 			cat = catPawns;
-			stats.Add(new StatDrawEntry(cat, "​" + "pawns", attachedBill.Cache.pawns.Count().ToString(), "CD_M_pawn_group_pawns_description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "pawns", attachedBill.Cache.human_pawns.Count().ToString(), "CD_M_pawn_group_pawns_description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "colonists", attachedBill.Cache.colonists.Count().ToString(), "CD_M_pawn_group_colonists_description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", attachedBill.Cache.mechanitors.Count().ToString(), "CD_M_pawn_group_mechanitors_description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "slaves", attachedBill.Cache.slaves.Count().ToString(), "CD_M_pawn_group_slaves_description".Translate(), display_priority--));
