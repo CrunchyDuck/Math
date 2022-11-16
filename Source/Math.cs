@@ -32,6 +32,8 @@ namespace CrunchyDuck.Math {
 	// TODO: Next/previous buttons on bill details.
 	[StaticConstructorOnStartup]
 	class Math {
+		public static string version = "1.2.0";
+
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
 

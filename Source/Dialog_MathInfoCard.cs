@@ -62,6 +62,7 @@ namespace CrunchyDuck.Math {
 			Rect label_area = new Rect(inRect);
 			label_area = label_area.ContractedBy(18f);
 			label_area.height = 34f;
+			label_area.xMax -= 34f;
 
 			//draw_area.height = 34f;
 			label_area.x += 34f;
@@ -93,6 +94,14 @@ namespace CrunchyDuck.Math {
 			// Draw image in top left.
 			Rect card_image = new Rect(inRect.x + 9f, label_area.y, 34f, 34f);
 			Widgets.ButtonImage(card_image, Resources.infoButtonImage, GUI.color);
+
+			// Draw version number
+			//Rect version_pos = new Rect(inRect.xMax - 9f, label_area.y, 200f, 34f);
+			var anch = Text.Anchor;
+			Text.Anchor = TextAnchor.MiddleRight;
+			Widgets.Label(label_area, "v" + Math.version);
+			Text.Anchor = anch;
+
 			//if (this.thing != null)
 			//	Widgets.ThingIcon(rect2, this.thing);
 			//else
