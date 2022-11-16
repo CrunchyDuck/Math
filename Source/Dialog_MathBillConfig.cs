@@ -25,8 +25,8 @@ namespace CrunchyDuck.Math {
         [TweakValue("Interface", 0.0f, 400f)]
         private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
-        public override Vector2 InitialSize => new Vector2(800f + Settings.textInputAreaBonus, 634f + 100f);
-		private float extraPanelAllocation = Settings.textInputAreaBonus / 3;
+        public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
+		private float extraPanelAllocation = MathSettings.settings.textInputAreaBonus / 3;
 
 		private float infoHoverHue = 0;
 		private float hueSpeed = 1f / (60f * 5f);
@@ -108,7 +108,11 @@ namespace CrunchyDuck.Math {
 			// math info button.
 			Rect rect_math_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
-			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, GUI.color, Color.HSVToRGB(infoHoverHue, 1, 1))) {
+			Color gay_color = Color.HSVToRGB(infoHoverHue, 1, 1);
+			Color color = GUI.color;
+			if (Math.version != MathSettings.settings.lastVersionInfocardChecked)
+				color = gay_color;
+			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, color, gay_color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
 			BillMenuData.Unassign();
@@ -507,19 +511,12 @@ namespace CrunchyDuck.Math {
 					}),
 					payload = null
 				};
-				Widgets.DropdownMenuElement<Pawn>? val = null;
-				try {
-					val = new Widgets.DropdownMenuElement<Pawn> {
-						option = new FloatMenuOption("AnyNonMech".Translate(), delegate {
-							bill.SetAnyNonMechRestriction();
-						}),
-						payload = null
-					};
-				}
-				catch { }
-
-				if (val != null)
-					yield return (Widgets.DropdownMenuElement<Pawn>)val;
+				yield return new Widgets.DropdownMenuElement<Pawn> {
+					option = new FloatMenuOption("AnyNonMech".Translate(), delegate {
+						bill.SetAnyNonMechRestriction();
+					}),
+					payload = null
+				};
 			}
 			// Pawns
 			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {

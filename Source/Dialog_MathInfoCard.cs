@@ -38,6 +38,10 @@ namespace CrunchyDuck.Math {
 
 		// TODO: Add X in top right.
 		public Dialog_MathInfoCard(BillComponent bill) {
+			if (MathSettings.settings.lastVersionInfocardChecked != Math.version) {
+				MathSettings.settings.lastVersionInfocardChecked = Math.version;
+				MathSettings.settings.Write();
+			}
 			attachedBill = bill;
 			statEntries = GetBasicEntries();
 			// If these values aren't reset you get some corruption nonsense because the system is jank.
