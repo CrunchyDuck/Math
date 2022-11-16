@@ -40,18 +40,6 @@ namespace CrunchyDuck.Math {
 			bc = null;
 		}
 
-		public static void AssignCurrentlyRenderingField(int value) {
-			if (RenderingRepeat) {
-				bc.doXTimes.SetAll(value);
-			}
-			else if (RenderingTarget) {
-				bc.doUntilX.SetAll(value);
-			}
-			else {
-				bc.unpause.SetAll(value);
-			}
-		}
-
 		public static InputField GetCurrentlyRenderingField() {
 			if (RenderingRepeat) {
 				return bc.doXTimes;
@@ -128,7 +116,7 @@ namespace CrunchyDuck.Math {
 			i *= increment ? 1 : -1;
 
 			InputField f = BillMenuData.GetCurrentlyRenderingField();
-			f.SetAll(f.CurrentValue + i);
+			f.SetAll(UnityEngine.Mathf.CeilToInt(f.CurrentValue) + i);
 			SoundDefOf.DragSlider.PlayOneShotOnCamera();
 		}
 	}

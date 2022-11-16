@@ -97,7 +97,6 @@ namespace CrunchyDuck.Math {
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {
-			// TODO: Sometime make a patch interface.
 			var prefix = type.GetMethod("Prefix") != null ? new HarmonyMethod(type, "Prefix") : null;
 			var postfix = type.GetMethod("Postfix") != null ? new HarmonyMethod(type, "Postfix") : null;
 			var trans = type.GetMethod("Transpiler") != null ? new HarmonyMethod(type, "Transpiler") : null;
@@ -108,10 +107,11 @@ namespace CrunchyDuck.Math {
 			cachedMaps = new Dictionary<Map, CachedMapData>();
 		}
 
-		// TODO: remove str from variable here.
-		// TODO: Remove val too?
 		/// <returns>True if sequence is valid.</returns>
-		public static bool DoMath(string str, ref int val, InputField field) {
+		public static bool DoMath(string str, InputField field) {
+			if (str.NullOrEmpty())
+				return false;
+
 			List<string> parameter_list = new List<string>();
 			foreach (Match match in parameterNames.Matches(str)) {
 				// Matched single word.
@@ -151,13 +151,13 @@ namespace CrunchyDuck.Math {
 			if (!accepted_types.Contains(type))
 				return false;
 
-			// this is dumb but necessary
 			try {
-				val = (int)Convert.ChangeType(Convert.ChangeType(result, type), typeof(int));
+				// this is dumb but necessary
+				field.CurrentValue = (int)Convert.ChangeType(Convert.ChangeType(result, type), typeof(int));
 			}
 			// Divide by 0, mostly.
 			catch (OverflowException) {
-				val = 999999;
+				field.CurrentValue = 999999;
 			}
 			return true;
 		}

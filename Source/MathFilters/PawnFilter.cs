@@ -46,7 +46,6 @@ namespace CrunchyDuck.Math.MathFilters {
 		};
 
 		public PawnFilter(BillComponent bc) {
-			// TODO: Cache + performance test this.
 			contains = bc.Cache.pawns_dict;
 		}
 

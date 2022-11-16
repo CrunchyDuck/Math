@@ -18,7 +18,8 @@ namespace CrunchyDuck.Math {
 				return true;
 
 			// TODO: Last valid result.
-			Math.DoMath(bc.itemsToCount.lastValid, ref __result, bc.itemsToCount);
+			Math.DoMath(bc.itemsToCount.lastValid, bc.itemsToCount);
+			__result = UnityEngine.Mathf.CeilToInt(bc.itemsToCount.CurrentValue);
 			return false;
 		}
 	}

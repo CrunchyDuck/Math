@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using Verse;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace CrunchyDuck.Math {
 	class BillComponent {
@@ -29,6 +30,7 @@ namespace CrunchyDuck.Math {
 			doUntilX = new InputField(bill, InputField.Field.DoUntilX, this);
 			unpause = new InputField(bill, InputField.Field.Unpause, this, 5);
 
+			// Default value for itemsToCount
 			itemsToCount = new InputField(bill, InputField.Field.itemsToCount, this);
 			if (bill.recipe.ProducedThingDef != null) {
 				itemsToCount.SetAll("\"" + bill.recipe.ProducedThingDef.label.ToParameter() + "\"");
@@ -78,7 +80,9 @@ namespace CrunchyDuck.Math {
 		public Field field;
 		public string lastValid = "";
 		public string buffer = "";
-		public int CurrentValue {
+		// TODO: Work through the logic of this more.
+		private float calculatedValue = 0;
+		public float CurrentValue {
 			get {
 				switch (field) {
 					case Field.DoUntilX:
@@ -88,22 +92,23 @@ namespace CrunchyDuck.Math {
 					case Field.Unpause:
 						return bill.unpauseWhenYouHave;
 					default:
-						return 0;
+						return calculatedValue;
 				}
 			}
 			set {
 				switch (field) {
 					case Field.DoUntilX:
-						bill.targetCount = value;
+						bill.targetCount = Mathf.CeilToInt(value);
 						break;
 					case Field.DoXTimes:
-						bill.repeatCount = value;
+						bill.repeatCount = Mathf.CeilToInt(value);
 						break;
 					case Field.Unpause:
-						bill.unpauseWhenYouHave = value;
+						bill.unpauseWhenYouHave = Mathf.CeilToInt(value);
 						break;
 					default:
 						// itemsToCount works differently, see CountProducts_Patch
+						calculatedValue = value;
 						break;
 				}
 			}
@@ -122,7 +127,7 @@ namespace CrunchyDuck.Math {
 			CurrentValue = value;
 		}
 
-		public void SetAll(string str, int value) {
+		public void SetAll(string str, float value) {
 			buffer = str;
 			lastValid = str;
 			CurrentValue = value;

@@ -395,19 +395,19 @@ namespace CrunchyDuck.Math {
 				// Buttons
 				int num = Mathf.Min(40, (int)rect.width / 5);
 				if (Widgets.ButtonText(new Rect(rect.xMin, rect.yMin, num, rect.height), (-10 * multiplier).ToStringCached())) {
-					field.SetAll(field.CurrentValue - 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
+					field.SetAll(Mathf.CeilToInt(field.CurrentValue) - 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
 					SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
 				}
 				if (Widgets.ButtonText(new Rect(rect.xMin + num, rect.yMin, num, rect.height), (-1 * multiplier).ToStringCached())) {
-					field.SetAll(field.CurrentValue - multiplier * GenUI.CurrentAdjustmentMultiplier());
+					field.SetAll(Mathf.CeilToInt(field.CurrentValue) - multiplier * GenUI.CurrentAdjustmentMultiplier());
 					SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera();
 				}
 				if (Widgets.ButtonText(new Rect(rect.xMax - num, rect.yMin, num, rect.height), "+" + (10 * multiplier).ToStringCached())) {
-					field.SetAll(field.CurrentValue + 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
+					field.SetAll(Mathf.CeilToInt(field.CurrentValue) + 10 * multiplier * GenUI.CurrentAdjustmentMultiplier());
 					SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 				}
 				if (Widgets.ButtonText(new Rect(rect.xMax - num * 2, rect.yMin, num, rect.height), "+" + multiplier.ToStringCached())) {
-					field.SetAll(field.CurrentValue + multiplier * GenUI.CurrentAdjustmentMultiplier());
+					field.SetAll(Mathf.CeilToInt(field.CurrentValue) + multiplier * GenUI.CurrentAdjustmentMultiplier());
 					SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera();
 				}
 				// Text field
@@ -419,14 +419,13 @@ namespace CrunchyDuck.Math {
 		}
 
 		private static void MathTextField(InputField field, Rect area) {
-			// Was input invalid?
 			Color original_col = GUI.color;
-			int test_val = 0;
-			if (!Math.DoMath(field.buffer, ref test_val, field))
+			// Invalid input.
+			if (!Math.DoMath(field.buffer, field))
 				GUI.color = new Color(1, 0, 0, 0.8f);
-			else {
-				field.SetAll(field.buffer, test_val);
-			}
+			// Valid input.
+			else
+				field.SetAll(field.buffer, field.CurrentValue);
 			field.buffer = Widgets.TextField(area, field.buffer);
 			GUI.color = original_col;
 		}

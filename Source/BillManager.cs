@@ -44,7 +44,7 @@ namespace CrunchyDuck.Math {
 				foreach (BillComponent bc in bt_copy.Values) {
 					UpdateBill(bc);
 					// TODO: This is a rough fix for doXTimes being messy with Math. Find a more reliable way to update the doXTimes buffer.
-					bc.doXTimes.SetAll(bc.doXTimes.CurrentValue);
+					bc.doXTimes.SetAll(UnityEngine.Mathf.CeilToInt(bc.doXTimes.CurrentValue));
 				}
 
 				Math.ClearCacheMaps();
@@ -52,12 +52,10 @@ namespace CrunchyDuck.Math {
 		}
 
 		public static void UpdateBill(BillComponent bc) {
-			Math.DoMath(bc.doUntilX.lastValid, ref bc.targetBill.targetCount, bc.doUntilX);
+			Math.DoMath(bc.doUntilX.lastValid, bc.doUntilX);
 			//Math.DoMath(item.repeat_count_last_valid, ref item.targetBill.repeatCount, item);
-			Math.DoMath(bc.unpause.lastValid, ref bc.targetBill.unpauseWhenYouHave, bc.unpause);
-
-			int i = 0;
-			Math.DoMath(bc.itemsToCount.lastValid, ref i, bc.itemsToCount);
+			Math.DoMath(bc.unpause.lastValid, bc.unpause);
+			Math.DoMath(bc.itemsToCount.lastValid, bc.itemsToCount);
 		}
 
 		public void RemoveBillComponent(BillComponent bc) {
