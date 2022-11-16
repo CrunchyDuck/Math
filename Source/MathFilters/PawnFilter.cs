@@ -7,7 +7,9 @@ using System.Linq;
 namespace CrunchyDuck.Math.MathFilters {
 	class PawnFilter : MathFilter {
 		Dictionary<string, Pawn> contains = new Dictionary<string, Pawn>();
-		public override bool CanCount { get { return true; } }
+		private bool primedForTrait = false;
+		private bool canCount = true;
+		public override bool CanCount { get { return canCount; } }
 
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
 			{ "pawns", p => !p.AnimalOrWildMan() },
@@ -53,6 +55,32 @@ namespace CrunchyDuck.Math.MathFilters {
 
 		public override ReturnType Parse(string command, out object result) {
 			result = null;
+			// We were expecting a trait.
+			if (primedForTrait) {
+				if (!Math.searchableTraits.ContainsKey(command)) {
+					return ReturnType.Null;
+				}
+				primedForTrait = false;
+				canCount = true;
+
+				Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
+				foreach (KeyValuePair<string, Pawn> entry in contains) {
+					if (HasTrait(entry.Value, command)) {
+						filtered_pawns[entry.Key] = entry.Value;
+					}
+				}
+				contains = filtered_pawns;
+				result = this;
+				return ReturnType.PawnFilter;
+			}
+			if (command == "traits") {
+				primedForTrait = true;
+				result = this;
+				canCount = false;
+				return ReturnType.PawnFilter;
+			}
+
+
 			// Search pawn.
 			if (contains.ContainsKey(command)) {
 				contains = new Dictionary<string, Pawn>() {
@@ -86,6 +114,15 @@ namespace CrunchyDuck.Math.MathFilters {
 			}
 
 			return ReturnType.Null;
+		}
+	
+		public static bool HasTrait(Pawn p, string trait_name) {
+			var trait_dat = Math.searchableTraits[trait_name];
+			var trait_def = trait_dat.traitDef;
+			var trait_degree = trait_def.degreeDatas[trait_dat.index].degree;
+			if (p.story.traits.HasTrait(trait_def, trait_degree))
+				return true;
+			return false;
 		}
 	}
 }

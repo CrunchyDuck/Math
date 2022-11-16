@@ -37,8 +37,6 @@ namespace CrunchyDuck.Math {
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
 
-		private static Regex parameterNames_old = new Regex(@"(\w+)", RegexOptions.Compiled);
-
 		private static Regex parameterNames = new Regex("(?:(\")(.+?)(\"))|([a-zA-Z0-9]+)", RegexOptions.Compiled);
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
