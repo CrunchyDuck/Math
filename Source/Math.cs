@@ -16,11 +16,9 @@ namespace CrunchyDuck.Math {
 	// TODO: Clothing rules/restriction variable.
 	// TODO: Add pop up window for inputting larger bills.
 	// TODO: Update "look everywhere" to ACTUALLY look everywhere, not just in stockpiles.
-	// TODO: Market value slider.
 	// TODO: Expanded view with the ability to make variables.
 	// TODO: Copy and link bills together (BWM)
 	// TODO: Drag to rearrange bills (BWM)
-	// TODO: Set up translation files.
 	// TODO: Change "Unpause field" to accept booleans rather than thresholds.
 	// TODO: Language support for core variables. For example, changing my regex to support "ninos" instead of "kids"
 	// TODO: Rework pawn groups. Add a tab, allow searching specific pawns, make pawn group filtering better (filter modifiers like prisoner, guest, child)

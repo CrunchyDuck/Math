@@ -1,9 +1,11 @@
 ﻿using RimWorld;
 using Verse;
+using System.Text.RegularExpressions;
 
 namespace CrunchyDuck.Math {
 	class BillComponent {
 		public Bill_Production targetBill;
+		private Regex oldCategory = new Regex(@"((?:c|cat|category) )(.+?)", RegexOptions.Compiled);
 		public CachedMapData Cache {
 			get {
 				return Math.GetCachedMap(targetBill);
@@ -58,6 +60,11 @@ namespace CrunchyDuck.Math {
 			itemsToCount.buffer = itemsToCount.lastValid;
 			Scribe_Values.Look(ref this.customItemsToCount, "itemsToCountBool");
 
+			// Back compatibility.
+			itemsToCount.buffer = oldCategory.Replace(itemsToCount.buffer, m => "categories." + m.Groups[2]);
+			doXTimes.buffer = oldCategory.Replace(doXTimes.buffer, m => "categories." + m.Groups[2]);
+			doUntilX.buffer = oldCategory.Replace(doUntilX.buffer, m => "categories." + m.Groups[2]);
+			unpause.buffer = oldCategory.Replace(unpause.buffer, m => "categories." + m.Groups[2]);
 
 			Scribe_Values.Look(ref targetBill.targetCount, "target_count_last_result");
 			Scribe_Values.Look(ref targetBill.repeatCount, "doXTimesLastResult");
