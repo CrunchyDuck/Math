@@ -25,10 +25,9 @@ namespace CrunchyDuck.Math {
 	// TODO: Language support for core variables. For example, changing my regex to support "ninos" instead of "kids"
 	// TODO: Rework pawn groups. Add a tab, allow searching specific pawns, make pawn group filtering better (filter modifiers like prisoner, guest, child)
 	// Access individual pawns as pawn group. 
-	// TODO: When updating the mod, make the info card cycle colours until first clicked, to draw attention to it.
-	// TODO: Searching buildings like "simple research bench" doesn't work.
+	// TODO BUG: Searching buildings like "simple research bench" doesn't work.
 	// TODO: Saving and loading bills, menu similar to infocard/variable card.
-	// TODO BUG: Input fields save invalid input.
+	// TODO BUG: Input fields keep invalid input.
 	// TODO: Next/previous buttons on bill details.
 	[StaticConstructorOnStartup]
 	class Math {

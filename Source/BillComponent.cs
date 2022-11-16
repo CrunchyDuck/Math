@@ -46,39 +46,16 @@ namespace CrunchyDuck.Math {
 		}
 
 		public void ExposeData() {
-			// TODO: Remove this in a couple days after back compatibility has filtered through.
-			System.Collections.Generic.Dictionary<string, string> variable_compat = new System.Collections.Generic.Dictionary<string, string>();
-			variable_compat["pwn in"] = variable_compat["pawns intake"] = "pawns.intake";
-			variable_compat["col in"] = variable_compat["colonists intake"] = "colonists.intake";
-			variable_compat["slv in"] = variable_compat["slaves intake"] = "slaves.intake";
-			variable_compat["pri in"] = variable_compat["prisoners intake"] = "prisoners.intake";
-			variable_compat["anim in"] = variable_compat["animals intake"] = "animals.intake";
-			variable_compat["kid in"] = variable_compat["kids intake"] = "kids.intake";
-			variable_compat["bab in"] = variable_compat["babies intake"] = "babies.intake";
-			variable_compat["mechanitors in"] = variable_compat["mechanitors intake"] = "mechanitors.intake";
-
 			// I wanna change these but that'd break peoples' saves lmao
 			Scribe_Values.Look(ref name, "billName", targetBill.Label.CapitalizeFirst());
 			Scribe_Values.Look(ref doXTimes.lastValid, "repeat_count_last_valid");
 			doXTimes.buffer = doXTimes.lastValid;
-			if (variable_compat.ContainsKey(doXTimes.buffer)) {
-				doXTimes.buffer = variable_compat[doXTimes.buffer];
-			}
 			Scribe_Values.Look(ref doUntilX.lastValid, "target_count_last_valid");
 			doUntilX.buffer = doUntilX.lastValid;
-			if (variable_compat.ContainsKey(doUntilX.buffer)) {
-				doUntilX.buffer = variable_compat[doUntilX.buffer];
-			}
 			Scribe_Values.Look(ref unpause.lastValid, "unpause_last_valid");
 			unpause.buffer = unpause.lastValid;
-			if (variable_compat.ContainsKey(unpause.buffer)) {
-				unpause.buffer = variable_compat[unpause.buffer];
-			}
 			Scribe_Values.Look(ref itemsToCount.lastValid, "itemsToCountLastValid");
 			itemsToCount.buffer = itemsToCount.lastValid;
-			if (variable_compat.ContainsKey(itemsToCount.buffer)) {
-				itemsToCount.buffer = variable_compat[itemsToCount.buffer];
-			}
 			Scribe_Values.Look(ref this.customItemsToCount, "itemsToCountBool");
 
 

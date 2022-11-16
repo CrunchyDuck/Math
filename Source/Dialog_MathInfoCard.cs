@@ -56,6 +56,8 @@ namespace CrunchyDuck.Math {
 		}
 
 		public override void DoWindowContents(Rect inRect) {
+			// BIG TODO: Change log.
+			// BIG TODO: Update documentation for 1.2.0
 			List<TabRecord> tabs = new List<TabRecord>();
 
 			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
