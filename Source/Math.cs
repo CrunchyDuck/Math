@@ -29,6 +29,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Searching buildings like "simple research bench" doesn't work.
 	// TODO: Saving and loading bills, menu similar to infocard/variable card.
 	// TODO BUG: Input fields save invalid input.
+	// TODO: Next/previous buttons on bill details.
 	[StaticConstructorOnStartup]
 	class Math {
 		// Cached variables
@@ -62,12 +63,16 @@ namespace CrunchyDuck.Math {
 
 			// Make counter methods.
 			foreach (StatDef stat in searchableStats.Values) {
+				string label = stat.label.ToParameter();
 				// Thing methods
 				Func<Thing, float> t_method = t => t.GetStatValue(stat) * t.stackCount;
-				MathFilters.ThingFilter.counterMethods[stat.label.ToParameter()] = t_method;
+				MathFilters.ThingFilter.counterMethods[label] = t_method;
+				// Pawn methods
+				Func<Pawn, float> p_method = p => p.GetStatValueForPawn(stat, p);
+				MathFilters.PawnFilter.counterMethods[label] = p_method;
 				// Thingdef methods
 				Func<ThingDef, float> td_method = t => t.GetStatValueAbstract(stat);
-				MathFilters.ThingDefFilter.counterMethods[stat.label.ToParameter()] = td_method;
+				MathFilters.ThingDefFilter.counterMethods[label] = td_method;
 			}
 		}
 

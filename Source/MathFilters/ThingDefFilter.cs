@@ -11,7 +11,7 @@ namespace CrunchyDuck.Math.MathFilters {
 
 		};
 		public static Dictionary<string, Func<ThingDef, float>> counterMethods = new Dictionary<string, Func<ThingDef, float>>() {
-			//{ "stack limit", t => t.def.stackLimit }
+			{ "stack limit", t => t.stackLimit }
 		};
 
 		public override bool CanCount { get { return true; } }
@@ -24,17 +24,17 @@ namespace CrunchyDuck.Math.MathFilters {
 			contains = thingdefs;
 		}
 
-		public ThingDefFilter(BillComponent bc, ThingCategoryDef category) {
-			foreach (ThingDef cat_thingdef in category.childThingDefs) {
-				contains.Add(Math.searchableThings[cat_thingdef.label.ToParameter()]);
-			}
+		//public ThingDefFilter(BillComponent bc, ThingCategoryDef category) {
+		//	foreach (ThingDef cat_thingdef in category.childThingDefs) {
+		//		contains.Add(Math.searchableThings[cat_thingdef.label.ToParameter()]);
+		//	}
 
-			foreach (ThingCategoryDef catdef in category.childCategories) {
-				foreach (ThingDef cat_thingdef in catdef.childThingDefs) {
-					contains.Add(Math.searchableThings[cat_thingdef.label.ToParameter()]);
-				}
-			}
-		}
+		//	foreach (ThingCategoryDef catdef in category.childCategories) {
+		//		foreach (ThingDef cat_thingdef in catdef.childThingDefs) {
+		//			contains.Add(Math.searchableThings[cat_thingdef.label.ToParameter()]);
+		//		}
+		//	}
+		//}
 
 		public override float Count() {
 			return contains.Count;
