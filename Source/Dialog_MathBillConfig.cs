@@ -31,7 +31,6 @@ namespace CrunchyDuck.Math {
 		private float infoHoverHue = 0;
 		private float hueSpeed = 1f / (60f * 5f);
 
-
 		private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
 		private static IEnumerable<SpecialThingFilterDef> HiddenSpecialThingFilters {
 			get {
@@ -48,10 +47,16 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
+
 		public Dialog_MathBillConfig(Bill_Production bill, IntVec3 billGiverPos) {
 			this.billGiverPos = billGiverPos;
 			this.bill = bill;
 			bc = BillManager.instance.AddGetBillComponent(bill);
+			// I was pretty sure that buffer was set to lastValid *somewhere else*, but I can't find it anywhere in the code. Bad sign for my cleanliness.
+			bc.doUntilX.buffer = bc.doUntilX.lastValid;
+			bc.unpause.buffer = bc.unpause.lastValid;
+			bc.doXTimes.buffer = bc.doXTimes.lastValid;
+			bc.itemsToCount.buffer = bc.itemsToCount.lastValid;
 
 			forcePause = true;
 			doCloseX = true;
