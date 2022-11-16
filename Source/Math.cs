@@ -62,8 +62,12 @@ namespace CrunchyDuck.Math {
 
 			// Make counter methods.
 			foreach (StatDef stat in searchableStats.Values) {
-				Func<Thing, float> method = t => t.GetStatValue(stat) * t.stackCount;
-				MathFilters.ThingFilter.counterMethods[stat.label.ToParameter()] = method;
+				// Thing methods
+				Func<Thing, float> t_method = t => t.GetStatValue(stat) * t.stackCount;
+				MathFilters.ThingFilter.counterMethods[stat.label.ToParameter()] = t_method;
+				// Thingdef methods
+				Func<ThingDef, float> td_method = t => t.GetStatValueAbstract(stat);
+				MathFilters.ThingDefFilter.counterMethods[stat.label.ToParameter()] = td_method;
 			}
 		}
 

@@ -178,11 +178,14 @@ namespace CrunchyDuck.Math {
 				string command = commands[i];
 				// Initialize a filter.
 				if (filter == null) {
+					// thing
 					if (Math.searchableThings.ContainsKey(command)) {
 						filter = new MathFilters.ThingFilter(bc, command);
 						continue;
 					}
+					// category
 					else if (CategoryFilter.names.Contains(command)) {
+						// TODO: Allow prefab searching from a category.
 						if (i + 1 < commands.Length && CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value)) {
 							filter = new MathFilters.ThingFilter(bc, value);
 							continue;
@@ -190,6 +193,16 @@ namespace CrunchyDuck.Math {
 						else
 							return false;
 					}
+					// thingdef
+					else if (ThingDefFilter.names.Contains(command)) {
+						if (i + 1 < commands.Length && Math.searchableThings.TryGetValue(commands[++i], out ThingDef value)) {
+							filter = new ThingDefFilter(value);
+							continue;
+						}
+						else
+							return false;
+					}
+					// pawn
 					else if (PawnFilter.filterMethods.ContainsKey(command) || pawns_dict.ContainsKey(command)) {
 						filter = new PawnFilter(bc);
 					}

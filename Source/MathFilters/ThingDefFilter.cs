@@ -4,51 +4,44 @@ using Verse;
 using RimWorld;
 
 namespace CrunchyDuck.Math.MathFilters {
-	class ThingFilter : MathFilter {
-		public List<Thing> contains = new List<Thing>();
+	class ThingDefFilter : MathFilter {
+		public static HashSet<string> names = new HashSet<string> { "prefab", "p", "thingdef", "t" };
+		public HashSet<ThingDef> contains = new HashSet<ThingDef>();
 		Dictionary<string, Func<object>> filterMethods = new Dictionary<string, Func<object>>() {
-			
+
 		};
-		public static Dictionary<string, Func<Thing, float>> counterMethods = new Dictionary<string, Func<Thing, float>>() {
+		public static Dictionary<string, Func<ThingDef, float>> counterMethods = new Dictionary<string, Func<ThingDef, float>>() {
 			//{ "stack limit", t => t.def.stackLimit }
 		};
 
 		public override bool CanCount { get { return true; } }
 
-		public ThingFilter(BillComponent bc, string thing_name) {
-			contains = bc.Cache.GetThings(thing_name, bc);
+		public ThingDefFilter(ThingDef td) {
+			contains = new HashSet<ThingDef>() { td };
 		}
 
-		public ThingFilter(BillComponent bc, ThingCategoryDef category) {
+		public ThingDefFilter(HashSet<ThingDef> thingdefs) {
+			contains = thingdefs;
+		}
+
+		public ThingDefFilter(BillComponent bc, ThingCategoryDef category) {
 			foreach (ThingDef cat_thingdef in category.childThingDefs) {
-				contains.AddRange(bc.Cache.GetThings(cat_thingdef.label.ToParameter(), bc));
+				contains.Add(Math.searchableThings[cat_thingdef.label.ToParameter()]);
 			}
 
 			foreach (ThingCategoryDef catdef in category.childCategories) {
 				foreach (ThingDef cat_thingdef in catdef.childThingDefs) {
-					contains.AddRange(bc.Cache.GetThings(cat_thingdef.label.ToParameter(), bc));
+					contains.Add(Math.searchableThings[cat_thingdef.label.ToParameter()]);
 				}
 			}
 		}
 
 		public override float Count() {
-			float count = 0;
-			foreach (Thing thing in contains) {
-				count += thing.stackCount;
-			}
-			return count;
+			return contains.Count;
 		}
 
 		public override ReturnType Parse(string command, out object result) {
 			result = null;
-			//if (command == "prefab") {
-			//	HashSet<ThingDef> tds = new HashSet<ThingDef>();
-			//	foreach(Thing thing in contains) {
-			//		tds.Add(thing.def);
-			//	}
-			//	result = new ThingDefFilter(tds);
-			//	return ReturnType.ThingDefFilter;
-			//}
 			if (filterMethods.ContainsKey(command)) {
 				filterMethods[command].Invoke();
 				result = this;
@@ -56,7 +49,7 @@ namespace CrunchyDuck.Math.MathFilters {
 			}
 			if (counterMethods.TryGetValue(command, out var method)) {
 				float count = 0;
-				foreach (Thing thing in contains) {
+				foreach (ThingDef thing in contains) {
 					count += method.Invoke(thing);
 				}
 				result = count;

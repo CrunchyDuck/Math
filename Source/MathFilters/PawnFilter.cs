@@ -61,7 +61,7 @@ namespace CrunchyDuck.Math.MathFilters {
 				result = this;
 				return ReturnType.PawnFilter;
 			}
-			
+			// Search filter.
 			if (filterMethods.ContainsKey(command)) {
 				var method = filterMethods[command];
 				Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
@@ -74,7 +74,7 @@ namespace CrunchyDuck.Math.MathFilters {
 				result = this;
 				return ReturnType.PawnFilter;
 			}
-
+			// Search counter.
 			if (counterMethods.ContainsKey(command)) {
 				var method = counterMethods[command];
 				float count = 0;

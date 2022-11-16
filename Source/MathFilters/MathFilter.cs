@@ -9,6 +9,7 @@
 	enum ReturnType {
 		Null,
 		ThingFilter,
+		ThingDefFilter,
 		PawnFilter,
 		Count,
 	}
