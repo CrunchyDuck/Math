@@ -41,8 +41,10 @@ namespace CrunchyDuck.Math {
 				// It would be more elegant to throw and catch an error to make this object handle the billTable,
 				// But I use Math.DoMath in a lot of places outside of here that I don't want erroring.
 				Dictionary<int, BillComponent> bt_copy = billTable.ToDictionary(entry => entry.Key, entry => entry.Value);
-				foreach (BillComponent item in bt_copy.Values) {
-					UpdateBill(item);
+				foreach (BillComponent bc in bt_copy.Values) {
+					UpdateBill(bc);
+					// TODO: This is a rough fix for doXTimes being messy with Math. Find a more reliable way to update the doXTimes buffer.
+					bc.doXTimes.SetAll(bc.doXTimes.CurrentValue);
 				}
 
 				Math.ClearCacheMaps();
