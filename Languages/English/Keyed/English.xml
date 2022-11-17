@@ -116,10 +116,40 @@ Click on a row to get an explanation.</CD.M.infocard.statdefs.description>
 	<!-- Traits info card tab -->
 	<CD.M.infocard.traits.description>Here you can see the list of all traits available to search on pawn groups.</CD.M.infocard.traits.description>
 	
-	<!-- Pawn groups info card tab -->
-	<CD.M.infocard.pawngroups.description>A pawn group is just what it says - A group of pawns.</CD.M.infocard.pawngroups.description>
+	<!-- Pawn info card tab -->
+	<CD.M.infocard.pawns>Pawns</CD.M.infocard.pawns>
+	<CD.M.infocard.pawns.description>You can search groups of pawns (pawn groups), or individual pawns. Pawns have stats that other things don't, like gender, or bandwidth.</CD.M.infocard.pawns.description>
 
-	<CD.M.infocard.pawngroups.pawns>Any non-animal pawns that belong to your colony - Colonists, guests, slaves, prisoners.</CD.M.infocard.pawngroups.pawns>
-	<CD.M.infocard.pawngroups.colonists>A colonist is someone who isn't a slave or a guest or prisoner or an animal. You have full ownership over them.</CD.M.infocard.pawngroups.colonists>
-	<CD.M.infocard.pawngroups.guests>A guest includes people who stay with you temporarily as part of a quest, and visitors in mod Hospitality.</CD.M.infocard.pawngroups.guests>
+	<CD.M.infocard.pawns.tutorials.searching_pawns>Searching pawns</CD.M.infocard.pawns.tutorials.searching_pawns>
+	<CD.M.infocard.pawns.tutorials.searching_pawns.description>You can search the nickname of any pawn in your colony. For example: "john"</CD.M.infocard.pawns.tutorials.searching_pawns.description>
+	<CD.M.infocard.pawns.tutorials.searching_pawn_stats>Searching pawn stats</CD.M.infocard.pawns.tutorials.searching_pawn_stats>
+	<CD.M.infocard.pawns.tutorials.searching_pawn_stats.description>You can search any StatDef on a pawn like you can any other thing, such as "prisoners.market value".
+	
+Pawns have access to special stats that other things don't, like "colonists.male". They can all be see in the StatDefs tab.</CD.M.infocard.pawns.tutorials.searching_pawn_stats.description>
+	<CD.M.infocard.pawns.tutorials.searching_pawn_traits>Searching pawn traits</CD.M.infocard.pawns.tutorials.searching_pawn_traits>
+	<CD.M.infocard.pawns.tutorials.searching_pawn_traits.description>You can search which traits pawns or pawn groups have, for example: "colonists.fast walker"
+	
+The full list of traits can be seen at the bottom of this tab.</CD.M.infocard.pawns.tutorials.searching_pawn_traits.description>
+	<CD.M.infocard.pawns.tutorials.filtering>Filtering pawn groups</CD.M.infocard.pawns.tutorials.filtering>
+	<CD.M.infocard.pawns.tutorials.filtering.description>You can chain pawn groups together to filter them down. For example, "prisoners.mechanitors" will get all of the mechanitors you have imprisoned.</CD.M.infocard.pawns.tutorials.filtering.description>
+
+	<CD.M.infocard.pawns.examples.pawngroup>"colonists" * 2</CD.M.infocard.pawns.examples.pawngroup>
+	<CD.M.infocard.pawns.examples.pawngroup.description>If you have 4 colonists, "colonists" * 2 would return 8.</CD.M.infocard.pawns.examples.pawngroup.description>
+	<CD.M.infocard.pawns.examples.individual_pawn>"john.meat amount"</CD.M.infocard.pawns.examples.individual_pawn>
+	<CD.M.infocard.pawns.examples.individual_pawn.description>How much MEAT would JOHN give if we CUT HIM UP</CD.M.infocard.pawns.examples.individual_pawn.description>
+	<CD.M.infocard.pawns.examples.trait_searching>"colonists" - "colonists.traits.nudist"</CD.M.infocard.pawns.examples.trait_searching>
+	<CD.M.infocard.pawns.examples.trait_searching.description>Counts how many colonists you have that aren't nudists. Useful for clothing production.</CD.M.infocard.pawns.examples.trait_searching.description>
+	<CD.M.infocard.pawns.examples.pawngroup_filtering>"colonists.mechanitors"</CD.M.infocard.pawns.examples.pawngroup_filtering>
+	<CD.M.infocard.pawns.examples.pawngroup_filtering.description>How many colonists in our colony are mechanitors?</CD.M.infocard.pawns.examples.pawngroup_filtering.description>
+	
+	<CD.M.infocard.pawns.animals.description>A player-owned tamed animal.</CD.M.infocard.pawns.animals.description>
+	<CD.M.infocard.pawns.pawns.description>A non-animal pawn that belong to your colony - Colonists, guests, slaves, prisoners.</CD.M.infocard.pawns.pawns.description>
+	<CD.M.infocard.pawns.colonists.description>A colonist is someone who isn't a slave or a guest or prisoner or an animal. You have full ownership over them.</CD.M.infocard.pawns.colonists.description>
+	<CD.M.infocard.pawns.guests.description>A guest includes people who stay with you temporarily as part of a quest, and visitors in mod Hospitality.</CD.M.infocard.pawns.guests.description>
+	<CD.M.infocard.pawns.prisoners.description>A player-owned prisoner.</CD.M.infocard.pawns.prisoners.description>
+	<CD.M.infocard.pawns.slaves.description>A player-owned slave.</CD.M.infocard.pawns.slaves.description>
+	<CD.M.infocard.pawns.babies.description>A player-owned newborn or baby.</CD.M.infocard.pawns.babies.description>
+	<CD.M.infocard.pawns.kids.description>A player-owned child.</CD.M.infocard.pawns.kids.description>
+	<CD.M.infocard.pawns.mechanitors.description>A player-owned mechanitor.</CD.M.infocard.pawns.mechanitors.description>
+
 </LanguageData>

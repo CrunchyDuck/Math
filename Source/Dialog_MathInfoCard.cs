@@ -15,8 +15,9 @@ namespace CrunchyDuck.Math {
 		public List<StatDrawEntry> statEntries;
 		public BillComponent attachedBill;
 		public StatCategoryDef catIntroduction = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDIntroduction");
-		public StatCategoryDef catPawns = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDPawns");
+		public StatCategoryDef catPawnGroups = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDPawnGroups");
 		public StatCategoryDef catModifiers = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDModifiers");
+		public StatCategoryDef catTutorials = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDTutorials");
 		public StatCategoryDef catExamples = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDExamples");
 		public StatCategoryDef catFunctions = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDFunctions");
 		public StatCategoryDef catBasics = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDBasics");
@@ -93,6 +94,7 @@ namespace CrunchyDuck.Math {
 
 			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
 			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
+			tabs.Add(new TabRecord("CD.M.infocard.pawns".Translate(), () => tab = InfoCardTab.Pawns, tab == InfoCardTab.Pawns));
 			tabs.Add(new TabRecord("Traits", () => tab = InfoCardTab.Traits, tab == InfoCardTab.Traits));
 			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
 
@@ -115,8 +117,10 @@ namespace CrunchyDuck.Math {
 			// By default you need to pass in Defs to get Window to show entries. This gets around that.
 			if (tab == InfoCardTab.Basic)
 				statEntries = GetBasicEntries();
+			else if (tab == InfoCardTab.Pawns)
+				statEntries = GetPawnsEntries();
 			else if (tab == InfoCardTab.StatDefs)
-				statEntries = GetStatDefEntries();
+				statEntries = GetStatDefsEntries();
 			else if (tab == InfoCardTab.Traits)
 				statEntries = GetTraitEntries();
 			statsCacheValues.SetValue(null, new List<string>());
@@ -200,7 +204,7 @@ namespace CrunchyDuck.Math {
 			// TODO: This was being cropped for too long.
 			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
 
-			cat = catPawns;
+			cat = catPawnGroups;
 			stats.Add(new StatDrawEntry(cat, "​" + "pawns", valueCache["pawns"].ToString(), "CD.M.pawn.group.pawns.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "colonists", valueCache["colonists"].ToString(), "CD.M.pawn.group.colonists.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", valueCache["mechanitors"].ToString(), "CD.M.pawn.group.mechanitors.description".Translate(), display_priority--));
@@ -216,7 +220,7 @@ namespace CrunchyDuck.Math {
 			return stats;
 		}
 
-		private List<StatDrawEntry> GetStatDefEntries() {
+		private List<StatDrawEntry> GetStatDefsEntries() {
 			var stats = new List<StatDrawEntry>();
 			int display_priority = 10000;
 
@@ -244,13 +248,34 @@ namespace CrunchyDuck.Math {
 			return stats;
 		}
 
-		private List<StatDrawEntry> GetPawnGroupEntries() {
+		private List<StatDrawEntry> GetPawnsEntries() {
 			var stats = new List<StatDrawEntry>();
 			int display_priority = 10000;
 
 			var cat = catIntroduction;
-			stats.Add(new StatDrawEntry(cat, "Description".Translate(), "", "CD.M.infocard.pawngroups.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "Description".Translate(), "", "CD.M.infocard.pawns.description".Translate(), display_priority--));
 
+			cat = catTutorials;
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawns".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawns.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawn_stats".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawn_stats.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.filtering".Translate(), "", "CD.M.infocard.pawns.tutorials.filtering.description".Translate(), display_priority--));
+
+			cat = catExamples;
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.individual_pawn".Translate(), "", "CD.M.infocard.pawns.examples.individual_pawn.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.trait_searching".Translate(), "", "CD.M.infocard.pawns.examples.trait_searching.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup_filtering".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup_filtering.description".Translate(), display_priority--));
+
+			cat = catPawnGroups;
+			stats.Add(new StatDrawEntry(cat, "​" + "animals", "", "CD.M.infocard.pawns.animals.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "pawns", "", "CD.M.infocard.pawns.pawns.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "colonists", "", "CD.M.infocard.pawns.colonists.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "guests", "", "CD.M.infocard.pawns.guests.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", "", "CD.M.infocard.pawns.prisoners.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "slaves", "", "CD.M.infocard.pawns.slaves.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "babies", "", "CD.M.infocard.pawns.babies.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "kids", "", "CD.M.infocard.pawns.kids.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", "", "CD.M.infocard.pawns.mechanitors.description".Translate(), display_priority--));
 
 			return stats;
 		}
@@ -258,7 +283,7 @@ namespace CrunchyDuck.Math {
 
 	public enum InfoCardTab {
 		Basic,
-		PawnGroups,
+		Pawns,
 		Traits,
 		StatDefs,
 	}
