@@ -4,6 +4,7 @@ using Verse;
 using RimWorld;
 
 namespace CrunchyDuck.Math.MathFilters {
+	// BIG TODO: Describe how to handle naming collisions - e.g., if there are multiple "armored" categories, you can do "head.armored" or "body.armored"
 	// For now, this isn't used. I don't have enough advanced logic with categories to justify an object - Instead I just cast the user's category into a ThingFilter.
 	class CategoryFilter : MathFilter {
 		public static HashSet<string> names = new HashSet<string> { "categories", "c" };

@@ -27,6 +27,8 @@ namespace CrunchyDuck.Math {
 	// TODO: Saving and loading bills, menu similar to infocard/variable card.
 	// TODO BUG: Input fields keep invalid input.
 	// TODO: Next/previous buttons on bill details.
+	// TODO: add a button for infocard somewhere easier to access than a bill.
+	// TODO: Bill menu opens by default on clicking bench.
 	[StaticConstructorOnStartup]
 	class Math {
 		public static string version = "1.2.0";

@@ -14,19 +14,19 @@ namespace CrunchyDuck.Math.MathFilters {
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
 			{ "pawns", p => !p.AnimalOrWildMan() },
 			
-			{ "colonists", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger() && !p.AnimalOrWildMan()},
-			{ "col", p => !p.IsSlave && !p.IsPrisoner && !p.IsQuestLodger() && !p.AnimalOrWildMan()},
+			{ "colonists", p => IsColonist(p) },
+			{ "col", p => IsColonist(p) },
 
 			{ "mechanitors", p => p.mechanitor != null },
 			{ "mech", p => p.mechanitor != null },
 
-			{ "prisoners", p => p.IsPrisoner},
-			{ "pri", p => p.IsPrisoner},
+			{ "prisoners", p => p.IsPrisonerOfColony },
+			{ "pri", p => p.IsPrisonerOfColony },
 
-			{ "slaves", p => p.IsSlave},
-			{ "slv", p => p.IsSlave},
+			{ "slaves", p => p.IsSlaveOfColony },
+			{ "slv", p => p.IsSlaveOfColony },
 
-			{ "guests", p => p.IsQuestLodger()},
+			{ "guests", p => IsGuest(p) },
 
 			{ "animals", p => p.AnimalOrWildMan()},
 			{ "anim", p => p.AnimalOrWildMan()},
@@ -131,6 +131,23 @@ namespace CrunchyDuck.Math.MathFilters {
 
 		private static bool IsFemalePawn(Pawn pawn) {
 			return pawn.gender == Gender.Female;
+		}
+
+		/// <summary>
+		/// The base game defines a colonist as anyone who appears in the colonist bar at the top of the screen. This includes slaves and quest loders.
+		/// My definition does not include them.
+		/// </summary>
+		private static bool IsColonist(Pawn p) {
+			return !p.AnimalOrWildMan() && !p.IsPrisoner && !p.IsSlave && !IsGuest(p);
+		}
+
+		/// <summary>
+		/// Guests include quest lodgers (from Royalty) and visitors (from Hospitality)
+		/// </summary>
+		private static bool IsGuest(Pawn p) {
+			// Hospitality doesn't seem to use p.GuestStatus.
+			// Game also considers slaves and prisoners as guests. lol.
+			return (!p.IsSlave && !p.IsPrisoner) && (p.IsQuestLodger() || p.guest?.HostFaction == Faction.OfPlayer);
 		}
 
 		// Counters

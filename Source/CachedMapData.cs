@@ -20,12 +20,21 @@ namespace CrunchyDuck.Math {
 		public CachedMapData(Map map) {
 			this.map = map;
 
-			foreach(Pawn p in map.mapPawns.PawnsInFaction(Faction.OfPlayer)) {
-				pawns_dict[p.LabelShort.ToParameter()] = p;
-				if (p.AnimalOrWildMan())
+			foreach(Pawn p in map.mapPawns.AllPawns) {
+				bool in_faction = p.Faction == Faction.OfPlayer;
+				bool animal = p.AnimalOrWildMan();
+				bool guest = p.IsQuestLodger() || p.guest?.HostFaction == Faction.OfPlayer;
+				bool prisoner = p.IsPrisonerOfColony;
+				bool slave = p.IsSlaveOfColony;
+
+				if (animal && in_faction)
 					ownedAnimals.Add(p);
-				else
-					humanPawns.Add(p);
+				else {
+					if (in_faction || guest || prisoner || slave) {
+						humanPawns.Add(p);
+						pawns_dict[p.LabelShort.ToParameter()] = p;
+					}
+				}
 			}
 		}
 
