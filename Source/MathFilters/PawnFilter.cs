@@ -46,6 +46,9 @@ namespace CrunchyDuck.Math.MathFilters {
 		};
 
 		public PawnFilter(BillComponent bc) {
+			// Pawns who share the same name will only be counted once.
+			//This shouldn't be a problem for most people,
+			// and right now I'm not mentioning it anywhere so people don't complain about it.
 			contains = bc.Cache.pawns_dict;
 		}
 

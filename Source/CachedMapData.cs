@@ -27,8 +27,10 @@ namespace CrunchyDuck.Math {
 				bool prisoner = p.IsPrisonerOfColony;
 				bool slave = p.IsSlaveOfColony;
 
-				if (animal && in_faction)
+				if (animal && in_faction) {
 					ownedAnimals.Add(p);
+					pawns_dict[p.LabelShort.ToParameter()] = p;
+				}
 				else {
 					if (in_faction || guest || prisoner || slave) {
 						humanPawns.Add(p);
