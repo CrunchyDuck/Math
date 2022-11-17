@@ -39,7 +39,7 @@
   <StatCategoryDef>
     <defName>CDTraits</defName>
     <label>Traits</label>
-    <displayOrder>20</displayOrder>
+    <displayOrder>100</displayOrder>
   </StatCategoryDef>
   
   <StatCategoryDef>

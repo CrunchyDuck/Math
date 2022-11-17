@@ -87,6 +87,7 @@ namespace CrunchyDuck.Math {
 			base.Close(doCloseSound);
 		}
 
+		// TODO: It would be nice if you could collapse categorydefs by clicking on them. Maybe add this later.
 		public override void DoWindowContents(Rect inRect) {
 			// BIG TODO: Change log.
 			// BIG TODO: Update documentation for 1.2.0
@@ -95,7 +96,6 @@ namespace CrunchyDuck.Math {
 			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
 			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
 			tabs.Add(new TabRecord("CD.M.infocard.pawns".Translate(), () => tab = InfoCardTab.Pawns, tab == InfoCardTab.Pawns));
-			tabs.Add(new TabRecord("Traits", () => tab = InfoCardTab.Traits, tab == InfoCardTab.Traits));
 			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
 
 			Rect label_area = new Rect(inRect);
@@ -121,8 +121,6 @@ namespace CrunchyDuck.Math {
 				statEntries = GetPawnsEntries();
 			else if (tab == InfoCardTab.StatDefs)
 				statEntries = GetStatDefsEntries();
-			else if (tab == InfoCardTab.Traits)
-				statEntries = GetTraitEntries();
 			statsCacheValues.SetValue(null, new List<string>());
 			statsCache.SetValue(null, statEntries);
 			StatsFinalize.Invoke(null, new object[] { statsCache.GetValue(null) });
@@ -149,26 +147,6 @@ namespace CrunchyDuck.Math {
 			//	Widgets.DefIcon(rect2, this.def, this.stuff, drawPlaceholder: true);
 
 			StatsWorker.Invoke(null, new object[] { stats_area.ContractedBy(18f), null, null });
-		}
-
-		private List<StatDrawEntry> GetTraitEntries() {
-			var stats = new List<StatDrawEntry>();
-			StatDrawEntry stat;
-
-			var cat = catIntroduction;
-			stat = new StatDrawEntry(cat, "Description".Translate(), "", "CD.M.infocard.traits.description".Translate(),
-				10000);
-			stats.Add(stat);
-
-			cat = catTraits;
-			var traits_sorted = Math.searchableTraits.Values.OrderByDescending(t => t.traitDef.degreeDatas[t.index].label);
-			int i = 0;
-			foreach (var (traitDef, index) in traits_sorted) {
-				var trait_dat = traitDef.degreeDatas[index];
-				stats.Add(new StatDrawEntry(cat, "​" + trait_dat.label.ToParameter(), "", trait_dat.description, i++));
-			}
-
-			return stats;
 		}
 
 		private List<StatDrawEntry> GetBasicEntries() {
@@ -277,6 +255,16 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​" + "kids", "", "CD.M.infocard.pawns.kids.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", "", "CD.M.infocard.pawns.mechanitors.description".Translate(), display_priority--));
 
+			// Order traits alphabetically
+			cat = catTraits;
+			var traits_sorted = Math.searchableTraits.Values.OrderByDescending(t => t.traitDef.degreeDatas[t.index].label);
+			int i = 0;
+			// Display traits
+			foreach (var (traitDef, index) in traits_sorted) {
+				var trait_dat = traitDef.degreeDatas[index];
+				stats.Add(new StatDrawEntry(cat, "​" + trait_dat.label.ToParameter(), "", trait_dat.description, i++));
+			}
+
 			return stats;
 		}
 	}
@@ -284,7 +272,6 @@ namespace CrunchyDuck.Math {
 	public enum InfoCardTab {
 		Basic,
 		Pawns,
-		Traits,
 		StatDefs,
 	}
 }
