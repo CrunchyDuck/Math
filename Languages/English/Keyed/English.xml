@@ -3,18 +3,39 @@
 	<!-- Info card -->
 	<CD.M.infocard.introduction.description>This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
 	
-The left column is the variable name, the right column is the current value.
+Each tab covers a different usage of Math!. This tab covers fundamental or general information.
 
 Click on a row to get an explanation.</CD.M.infocard.introduction.description>
 
 	<!-- Info card tutorials -->
-	<CD.M.tutorial.item.count>Using new item count field</CD.M.tutorial.item.count>
-	<CD.M.tutorial.item.count.description>You'll notice that there's a new checkbox on "Do until you have X" bills called "Custom item count".
+	<CD.M.infocard.basic.tutorials.variable_names>Variable names</CD.M.infocard.basic.tutorials.variable_names>
+	<CD.M.infocard.basic.tutorials.variable_names.description>You can use variables in your equations, like how many colonists you have, how many of an item you have, or how many of a category of items you have.
+
+To do any of this, you need to convert the name of what you want to search, like "Uranium mace (legendary)", into a variable. It's simple to do!
+First, make it lowercase, and wrap it in speech marks.
+Item quality, material and stack count should also be omitted from the name.
+If it has speech marks or full stops in its name, replace them with an underscore: _
+Singular words like ostrich don't always need speechmarks - it's up to you.
+
+Let's look at some examples:
+Medicine x5 -> "medicine"
+Go-juice -> "go-juice"
+Uranium mace (legendary) -> mace</CD.M.infocard.basic.tutorials.variable_names.description>
+	<CD.M.infocard.basic.tutorials.itemcount>Using "Custom item count"</CD.M.infocard.basic.tutorials.itemcount>
+	<CD.M.infocard.basic.tutorials.itemcount.description>You'll notice that there's a new checkbox on "Do until you have X" bills called "Custom item count".
 Turning this on, you can customize what the recipe counts to check how much of something it has.
 For example, if you type in "category meals", it will count "simple meal", "fine meal", "packaged survival meal", etc.
 
-Leaving "Custom item count" off will use the default counting logic.</CD.M.tutorial.item.count.description>
+Leaving "Custom item count" off will use the default counting logic.</CD.M.infocard.basic.tutorials.itemcount.description>
 
+	<CD.M.infocard.basic.examples.pawns>"colonists" * 2</CD.M.infocard.basic.examples.pawns>
+	<CD.M.infocard.basic.examples.pawns.description>Get the number of colonists you have, times two. Useful for things like clothing or weapon production.</CD.M.infocard.basic.examples.pawns.description>
+	<CD.M.infocard.basic.examples.intake>"pawns.intake" * 5</CD.M.infocard.basic.examples.intake>
+	<CD.M.infocard.basic.examples.intake.description>The amount of nutritional intake all pawns in your colony need for 5 days. Meals have 0.9 nutrition, so this is rough estimate for how many meals you need.</CD.M.infocard.basic.examples.intake.description>
+	<CD.M.infocard.basic.examples.meals>"categories.meals"</CD.M.infocard.basic.examples.meals>
+	<CD.M.infocard.basic.examples.meals.description>How many meals your colony has - simple, fine, luxury, packaged... Useful in the "Custom item count" field.</CD.M.infocard.basic.examples.meals.description>
+
+	
 	<CD.M.tutorial.searching.things>Searching Things</CD.M.tutorial.searching.things>
 	<CD.M.tutorial.searching.things.description>You can search any Thing in the game such as "slate blocks", ostriches, "compacted steel", etc.
 The count you get back will not include forbidden items, and will take into account the recipe's settings. E.G. if an item has 40% hitpoints but recipe requires 50%, it won't be counted.
@@ -57,19 +78,6 @@ Eggs (unfert.) -> "cat eggs (unfert_)"</CD.M.tutorial.searching.categories.descr
 	<CD.M.tutorial.searching.traits>Searching traits</CD.M.tutorial.searching.traits>
 	<CD.M.tutorial.searching.traits.description>You can search any trait on any pawn group, such as "pawns.traits.jogger", "colonists.traits.nudist", "colonists.traits.gay"</CD.M.tutorial.searching.traits.description>
 
-	<CD.M.tutorial.example.intake>"pawns.intake" * 5</CD.M.tutorial.example.intake>
-	<CD.M.tutorial.example.intake.description>Calculates how much nutrition your pawns need for 5 days.
-A meal provides 0.9 nutrition, so this roughly gives you how many simple meals you'll need to cook to have 5 days of food.</CD.M.tutorial.example.intake.description>
-
-	<CD.M.tutorial.example.colonists>col * 2</CD.M.tutorial.example.colonists>
-	<CD.M.tutorial.example.colonists.description>Create 2 of something for each pawn that you have. Good for medicine, clothing, weapons, etc.</CD.M.tutorial.example.colonists.description>
-
-	<CD.M.tutorial.example.clothing.production>colonists - "colonists.nudist"</CD.M.tutorial.example.clothing.production>
-	<CD.M.tutorial.example.clothing.production.description>Clothing production! Counts all colonists, except nudists.</CD.M.tutorial.example.clothing.production.description>
-
-	<CD.M.tutorial.example.if>if ("slate blocks" > 200, 50, 0)</CD.M.tutorial.example.if>
-	<CD.M.tutorial.example.if.description>Check if we have more than 200 slate blocks. If we do, produce up to 50 of this thing. If not, produce 0 of this thing.</CD.M.tutorial.example.if.description>
-
 	<!-- Pawn groups -->
 	<CD.M.pawn.group.pawns.description>Alias: pwn
 Number of owned pawns on the map the bill is contained in.</CD.M.pawn.group.pawns.description>
@@ -98,24 +106,23 @@ Number of owned babies on the map the bill is contained in.</CD.M.pawn.group.bab
 Number of owned children on the map the bill is contained in.</CD.M.pawn.group.kids.description>
 
 	<!-- Statdefs info card tab. -->
-	<CD.M.infocard.statdefs.description>Here you can see all StatDefs in the game. This is meant to be used as a reference to look up something you're not sure how to search.
+	<CD.M.infocard.statdefs.description>Here you can see all StatDefs in the game.
 
 Click on a row to get an explanation.</CD.M.infocard.statdefs.description>
 
+	<CD.M.infocard.statdefs.examples.pawn>"animals.intake"</CD.M.infocard.statdefs.examples.pawn>
+	<CD.M.infocard.statdefs.examples.pawn.description>The total nutritional intake of all animals you own.</CD.M.infocard.statdefs.examples.pawn.description>
+	<CD.M.infocard.statdefs.examples.nutrition>"prefab.kibble.nutrition"</CD.M.infocard.statdefs.examples.nutrition>
+	<CD.M.infocard.statdefs.examples.nutrition.description>How much nutrition a normal piece of kibble has.</CD.M.infocard.statdefs.examples.nutrition.description>
+	
+	
 	<!-- Special stat counters -->
 	<CD.M.counters.male.description>Whether a pawn is male.</CD.M.counters.male.description>
-
 	<CD.M.counters.female.description>Whether a pawn is female.</CD.M.counters.female.description>
-
 	<CD.M.counters.intake.description>How much food a pawn requires per day.</CD.M.counters.intake.description>
-
 	<CD.M.counters.bandwidth.description>How much bandwidth a pawn has.</CD.M.counters.bandwidth.description>
-
 	<CD.M.counters.stack.limit.description>The maximum amount of this item that can be stacked.</CD.M.counters.stack.limit.description>
 
-	<!-- Traits info card tab -->
-	<CD.M.infocard.traits.description>Here you can see the list of all traits available to search on pawn groups.</CD.M.infocard.traits.description>
-	
 	<!-- Pawn info card tab -->
 	<CD.M.infocard.pawns>Pawns</CD.M.infocard.pawns>
 	<CD.M.infocard.pawns.description>You can search groups of pawns (pawn groups), or individual pawns. Pawns have stats that other things don't, like gender, or bandwidth.</CD.M.infocard.pawns.description>
@@ -127,7 +134,7 @@ Click on a row to get an explanation.</CD.M.infocard.statdefs.description>
 	
 Pawns have access to special stats that other things don't, like "colonists.male". They can all be see in the StatDefs tab.</CD.M.infocard.pawns.tutorials.searching_pawn_stats.description>
 	<CD.M.infocard.pawns.tutorials.searching_pawn_traits>Searching pawn traits</CD.M.infocard.pawns.tutorials.searching_pawn_traits>
-	<CD.M.infocard.pawns.tutorials.searching_pawn_traits.description>You can search which traits pawns or pawn groups have, for example: "colonists.fast walker"
+	<CD.M.infocard.pawns.tutorials.searching_pawn_traits.description>You can search which traits pawns or pawn groups have, for example: "colonists.fast walker", "colonists.gay"
 	
 The full list of traits can be seen at the bottom of this tab.</CD.M.infocard.pawns.tutorials.searching_pawn_traits.description>
 	<CD.M.infocard.pawns.tutorials.filtering>Filtering pawn groups</CD.M.infocard.pawns.tutorials.filtering>
@@ -151,5 +158,9 @@ The full list of traits can be seen at the bottom of this tab.</CD.M.infocard.pa
 	<CD.M.infocard.pawns.babies.description>A player-owned newborn or baby.</CD.M.infocard.pawns.babies.description>
 	<CD.M.infocard.pawns.kids.description>A player-owned child.</CD.M.infocard.pawns.kids.description>
 	<CD.M.infocard.pawns.mechanitors.description>A player-owned mechanitor.</CD.M.infocard.pawns.mechanitors.description>
-
+	
+	<!-- Category infocard tab -->
+	<CD.M.infocard.categories>Categories</CD.M.infocard.categories>
+	<CD.M.infocard.categories.description>You can search any category of things in game, such as "categories.raw food", "categories.textiles", "c.meals", etc. Categories can be seen in any stockpile or bill menu.</CD.M.infocard.categories.description>
+	
 </LanguageData>

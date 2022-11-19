@@ -39,7 +39,6 @@ namespace CrunchyDuck.Math {
 
 		private Dictionary<string, float> valueCache = new Dictionary<string, float>();
 
-
 		// TODO: Add X in top right.
 		public Dialog_MathInfoCard(BillComponent bc) {
 			if (MathSettings.settings.lastVersionInfocardChecked != Math.version) {
@@ -96,6 +95,7 @@ namespace CrunchyDuck.Math {
 			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
 			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
 			tabs.Add(new TabRecord("CD.M.infocard.pawns".Translate(), () => tab = InfoCardTab.Pawns, tab == InfoCardTab.Pawns));
+			tabs.Add(new TabRecord("CD.M.infocard.categories".Translate(), () => tab = InfoCardTab.Categories, tab == InfoCardTab.Categories));
 			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
 
 			Rect label_area = new Rect(inRect);
@@ -117,6 +117,8 @@ namespace CrunchyDuck.Math {
 			// By default you need to pass in Defs to get Window to show entries. This gets around that.
 			if (tab == InfoCardTab.Basic)
 				statEntries = GetBasicEntries();
+			else if (tab == InfoCardTab.Categories)
+				statEntries = GetCategoriesEntries();
 			else if (tab == InfoCardTab.Pawns)
 				statEntries = GetPawnsEntries();
 			else if (tab == InfoCardTab.StatDefs)
@@ -159,41 +161,24 @@ namespace CrunchyDuck.Math {
 				display_priority--);
 			stats.Add(stat);
 
-			stats.Add(new StatDrawEntry(cat, "CD.M.tutorial.item.count".Translate(), "", "CD.M.tutorial.item.count.description".Translate(), display_priority--));
 
-			stats.Add(new StatDrawEntry(cat, "CD.M.tutorial.searching.things".Translate(), "", "CD.M.tutorial.searching.things.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "CD.M.tutorial.searching.stats".Translate(), "", "CD.M.tutorial.searching.stats.description".Translate(), display_priority--));
-
-			stats.Add(new StatDrawEntry(cat, "CD.M.tutorial.searching.categories".Translate(), "", "CD.M.tutorial.searching.categories.description".Translate(), display_priority--));
-
-			stats.Add(new StatDrawEntry(cat, "CD.M.tutorial.searching.traits".Translate(), "", "CD.M.tutorial.searching.traits.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.variable_names".Translate(), "", "CD.M.infocard.basic.tutorials.variable_names.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.itemcount".Translate(), "", "CD.M.infocard.basic.tutorials.itemcount.description".Translate(), display_priority--));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
 			// This is done to force the variables to be lowercase in menus.
 			// nice thinking oken
 			// BEWARE THE HIDDEN HORRORS.
-			// TODO: Fill these in with their in-game values.
 			cat = catExamples;
-			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.intake".Translate(), "", "CD.M.tutorial.example.intake.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.colonists".Translate(), "", "CD.M.tutorial.example.colonists.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.clothing.production".Translate(), "", "CD.M.tutorial.example.clothing.production.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.if".Translate(), "", "CD.M.tutorial.example.if.description".Translate(), 2950));
-			// TODO: This was being cropped for too long.
-			//stats.Add(new StatDrawEntry(cat, "​if(\"c meat\" > 200, \"animals.intake\" * 20 * 15, 0)", "", "My kibble production equation! If we have more than 200 meat, create 15 days worth of kibble for our animals.\n\n\"animals.intake\" is the intake of all of your animals, for 1 day.\n\nThe *20 accounts for kibble's 0.05 nutritional intake. In the future, this can value will be added to the mod itself.\n\nThe *15 determines the number of days.", 2998));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.pawns".Translate(), "", "CD.M.infocard.basic.examples.pawns.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.intake".Translate(), "", "CD.M.infocard.basic.examples.intake.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.meals".Translate(), "", "CD.M.infocard.basic.examples.meals.description".Translate(), display_priority--));
 
-			cat = catPawnGroups;
-			stats.Add(new StatDrawEntry(cat, "​" + "pawns", valueCache["pawns"].ToString(), "CD.M.pawn.group.pawns.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "colonists", valueCache["colonists"].ToString(), "CD.M.pawn.group.colonists.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", valueCache["mechanitors"].ToString(), "CD.M.pawn.group.mechanitors.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "slaves", valueCache["slaves"].ToString(), "CD.M.pawn.group.slaves.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", valueCache["prisoners"].ToString(), "CD.M.pawn.group.prisoners.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "guests", valueCache["guests"].ToString(), "CD.M.pawn.group.guests.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "animals", valueCache["animals"].ToString(), "CD.M.pawn.group.animals.description".Translate(), display_priority--));
-#if v1_4
-			stats.Add(new StatDrawEntry(cat, "​" + "babies", valueCache["babies"].ToString(), "CD.M.pawn.group.babies.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "kids", valueCache["kids"].ToString(), "CD.M.pawn.group.kids.description".Translate(), display_priority--));
-#endif
+			//stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.intake".Translate(), "", "CD.M.tutorial.example.intake.description".Translate(), display_priority--));
+			//stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.colonists".Translate(), "", "CD.M.tutorial.example.colonists.description".Translate(), display_priority--));
+			//stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.clothing.production".Translate(), "", "CD.M.tutorial.example.clothing.production.description".Translate(), display_priority--));
+			//stats.Add(new StatDrawEntry(cat, "​" + "CD.M.tutorial.example.if".Translate(), "", "CD.M.tutorial.example.if.description".Translate(), 2950));
 
 			return stats;
 		}
@@ -205,11 +190,11 @@ namespace CrunchyDuck.Math {
 			var cat = catIntroduction;
 			stats.Add(new StatDrawEntry(cat, "Description".Translate(), "", "CD.M.infocard.statdefs.description".Translate(), display_priority--));
 
-			// Add specially added stats first.
+			cat = catExamples;
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.statdefs.examples.pawn".Translate(), "", "CD.M.infocard.statdefs.examples.pawn.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.statdefs.examples.nutrition".Translate(), "", "CD.M.infocard.statdefs.examples.nutrition.description".Translate(), display_priority--));
+
 			cat = catModifiers;
-			//			stats.Add(new StatDrawEntry(cat, "Description", "",
-			//@"These are ""StatDefs"" that aren't inherantly searchable, so I've added them manually. Search these the same as you would any other StatDef.",
-			//				10000));
 			stats.Add(new StatDrawEntry(cat, "​" + "male", "", "CD.M.counters.male.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "female", "", "CD.M.counters.female.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "intake", "", "CD.M.counters.intake.description".Translate(), display_priority--));
@@ -217,10 +202,27 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​" + "stack limit", "", "CD.M.counters.stack.limit.description".Translate(), display_priority--));
 
 			cat = catBasics;
-			var stats_sorted = Math.searchableStats.Values.OrderByDescending(t => t.label);
+			var stats_sorted = Math.searchableStats.Values.OrderBy(t => t.label);
 			int i = 0;
 			foreach (StatDef statdef in stats_sorted) {
-				stats.Add(new StatDrawEntry(cat, "​" + statdef.label.ToParameter(), "", statdef.description ?? "", i++));
+				stats.Add(new StatDrawEntry(cat, "​" + statdef.label.ToParameter(), "", statdef.description ?? "", display_priority--));
+			}
+
+			return stats;
+		}
+
+		private List<StatDrawEntry> GetCategoriesEntries() {
+			var stats = new List<StatDrawEntry>();
+			int display_priority = 10000;
+
+			var cat = catIntroduction;
+			stats.Add(new StatDrawEntry(cat, "Description".Translate(), "", "CD.M.infocard.categories.description".Translate(), display_priority--));
+
+			cat = catBasics;
+			var cats_sorted = MathFilters.CategoryFilter.searchableCategories.Values.OrderBy(t => t.label);
+			int i = 0;
+			foreach (ThingCategoryDef catdef in cats_sorted) {
+				stats.Add(new StatDrawEntry(cat, "​" + catdef.label.ToParameter(), "", catdef.description ?? "", display_priority--));
 			}
 
 			return stats;
@@ -236,6 +238,7 @@ namespace CrunchyDuck.Math {
 			cat = catTutorials;
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawns".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawns.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawn_stats".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawn_stats.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawn_traits".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawn_traits.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.filtering".Translate(), "", "CD.M.infocard.pawns.tutorials.filtering.description".Translate(), display_priority--));
 
 			cat = catExamples;
@@ -272,6 +275,7 @@ namespace CrunchyDuck.Math {
 	public enum InfoCardTab {
 		Basic,
 		Pawns,
+		Categories,
 		StatDefs,
 	}
 }
