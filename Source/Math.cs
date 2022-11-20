@@ -31,7 +31,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Bill menu opens by default on clicking bench.
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.2.0";
+		public static string version = "1.2.2";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
@@ -73,6 +73,15 @@ namespace CrunchyDuck.Math {
 				Func<ThingDef, float> td_method = t => t.GetStatValueAbstract(stat);
 				MathFilters.ThingDefFilter.counterMethods[label] = td_method;
 			}
+		}
+
+		/// <summary>
+		/// This ignores the package version, because tiny updates don't matter.
+		/// </summary>
+		public static bool IsNewImportantVersion(string version_to_check) {
+			var x = version.Split('.');
+			var y = version_to_check.Split('.');
+			return x[0] != y[0] || x[1] != y[1];
 		}
 
 		private static void IndexDefs<T>(Dictionary<string, T> dict) where T : Def {

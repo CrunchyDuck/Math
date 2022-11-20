@@ -117,7 +117,7 @@ namespace CrunchyDuck.Math {
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
 			Color gay_color = Color.HSVToRGB(infoHoverHue, 1, 1);
 			Color color = GUI.color;
-			if (Math.version != MathSettings.settings.lastVersionInfocardChecked)
+			if (Math.IsNewImportantVersion(MathSettings.settings.lastVersionInfocardChecked))
 				color = gay_color;
 			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, color, gay_color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
