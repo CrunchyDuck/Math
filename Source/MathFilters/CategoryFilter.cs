@@ -39,5 +39,9 @@ namespace CrunchyDuck.Math.MathFilters {
 		public override ReturnType Parse(string command, out object result) {
 			throw new NotImplementedException();
 		}
+
+		//public override ReturnType ParseType(string command) {
+		//	throw new NotImplementedException();
+		//}
 	}
 }

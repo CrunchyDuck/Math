@@ -189,4 +189,15 @@ namespace CrunchyDuck.Math {
 			return things;
 		}
 	}
+
+	//public struct SearchVariableReturn {
+	//	public bool success;
+	//	public float count;
+	//	public ReturnType type;
+
+	//	public SearchVariableReturn(ReturnType type, bool success) {
+	//		this.type = type;
+	//		this.success = success;
+	//	}
+	//}
 }

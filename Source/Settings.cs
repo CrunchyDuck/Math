@@ -1,14 +1,23 @@
 ﻿using Verse;
+using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
 	public class Settings : ModSettings {
         public float textInputAreaBonus = 200f;
+
         public string lastVersionInfocardChecked = "";
+		public List<UserVariable> userVariables = new List<UserVariable>();
 
         public override void ExposeData() {
             base.ExposeData();
             Scribe_Values.Look(ref textInputAreaBonus, "CDtextInputAreaBonus", 200f);
+
             Scribe_Values.Look(ref lastVersionInfocardChecked, "CDlastVersionInfocardChecked", "");
+			Scribe_Deep.Look(ref userVariables, "userVariables", new List<UserVariable>());
+			userVariables = new List<UserVariable>();
+			for (int i = 0; i < 50; i++) {
+				userVariables.Add(new UserVariable());
+			}
         }
 
         // Pete's slider code.

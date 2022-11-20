@@ -51,6 +51,7 @@
     <Compile Include="BillComponent.cs" />
     <Compile Include="BillManager.cs" />
     <Compile Include="CachedMapData.cs" />
+    <Compile Include="Dialogs\Dialog_VariableList.cs" />
     <Compile Include="MathFilters\CategoryFilter.cs" />
     <Compile Include="MathFilters\MathFilter.cs" />
     <Compile Include="MathFilters\PawnFilter.cs" />
@@ -58,11 +59,13 @@
     <Compile Include="MathFilters\ThingFilter.cs" />
     <Compile Include="Patches\Bill_Production_DoConfigInterface_Patch.cs" />
     <Compile Include="Patches\CountProducts_Patch.cs" />
-    <Compile Include="Dialog_MathBillConfig.cs" />
-    <Compile Include="Dialog_MathInfoCard.cs" />
+    <Compile Include="Dialogs\Dialog_MathBillConfig.cs" />
+    <Compile Include="Dialogs\Dialog_MathInfoCard.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Math.cs" />
+    <Compile Include="Patches\Patch_BillStack_DoListing.cs" />
+    <Compile Include="Patches\Patch_Bill_DoInterface.cs" />
     <Compile Include="Patches\Patch_Bill_LabelCap.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Settings.cs" />
@@ -71,6 +74,7 @@
     <Compile Include="Patches\BillMenu_Patch.cs" />
     <Compile Include="Patches\PatchExposeData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserVariable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

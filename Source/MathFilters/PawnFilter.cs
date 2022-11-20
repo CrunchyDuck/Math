@@ -119,6 +119,20 @@ namespace CrunchyDuck.Math.MathFilters {
 			return ReturnType.Null;
 		}
 
+		//public override ReturnType ParseType(string command) {
+		//	if (primedForTrait) {
+		//		if (!Math.searchableTraits.ContainsKey(command)) {
+		//			return ReturnType.Null;
+		//		}
+		//		return ReturnType.Count;
+		//	}
+
+
+
+		//	// If we can't find anything else, they have to be attempting to search for a pawn or something invalid.
+		//	return ReturnType.PawnFilter;
+		//}
+
 		// Filters
 		private static bool HasTrait(Pawn p, string trait_name) {
 			var (traitDef, index) = Math.searchableTraits[trait_name];

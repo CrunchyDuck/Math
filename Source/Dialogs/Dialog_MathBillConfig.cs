@@ -112,8 +112,15 @@ namespace CrunchyDuck.Math {
 				Widgets.InfoCardButton(rect_left.x, rect_right.y, thingDef, GenStuff.DefaultStuffFor(thingDef));
 			}
 
+			// Variables button
+			Rect rect_variable_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
+			//if (Widgets.ButtonImage(rect_variable_button, Resources.variablesButtonImage, Color.white)) {
+			//	Find.WindowStack.Add(new Dialog_VariableList(bc));
+			//}
+
 			// math info button.
-			Rect rect_math_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
+			Rect rect_math_button = rect_variable_button;
+			rect_math_button.x += 30;
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
 			Color gay_color = Color.HSVToRGB(infoHoverHue, 1, 1);
 			Color color = GUI.color;
