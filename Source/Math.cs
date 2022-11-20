@@ -178,7 +178,13 @@ namespace CrunchyDuck.Math {
 		public static CachedMapData GetCachedMap(Bill_Production bp) {
 			if (bp == null)
 				return null;
-			return GetCachedMap(bp.Map);
+			try {
+				Map map = bp.Map;
+				return GetCachedMap(bp.Map);
+			}
+			catch (NullReferenceException) {
+				return null;
+			}
 		}
 
 		public static CachedMapData GetCachedMap(Map map) {
