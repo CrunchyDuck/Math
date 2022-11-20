@@ -80,6 +80,12 @@ namespace CrunchyDuck.Math {
 			statsCacheValues.SetValue(null, new List<string>());
 #endif
 			tab = InfoCardTab.Basic;
+
+			forcePause = true;
+			doCloseX = true;
+			doCloseButton = true;
+			absorbInputAroundWindow = true;
+			closeOnClickedOutside = true;
 		}
 
 		public override void Close(bool doCloseSound = true) {
