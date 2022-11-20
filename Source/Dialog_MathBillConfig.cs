@@ -65,6 +65,8 @@ namespace CrunchyDuck.Math {
 			closeOnClickedOutside = true;
 		}
 
+		public override void WindowUpdate() => bill.TryDrawIngredientSearchRadiusOnMap(billGiverPos);
+
 		protected override void LateWindowOnGUI(Rect inRect) {
 			Rect rect = new Rect(inRect.x, inRect.y, 34f, 34f);
 			ThingStyleDef thingStyleDef = null;
