@@ -66,6 +66,7 @@ namespace CrunchyDuck.Math {
 				float y = row_size.y * i;
 				var uv = uvs[i];
 				Rect row_rect = new Rect(0.0f, y, row_size.x, row_size.y);
+
 				ReorderableWidget.Reorderable(reorderableGroup, row_rect);
 
 				// Draw alternating backgrounds to help visually distinguish rows.
@@ -73,6 +74,14 @@ namespace CrunchyDuck.Math {
 					Widgets.DrawAltRect(row_rect);
 
 				Widgets.BeginGroup(row_rect);
+				// Delete button
+				Rect delete_button_rect = new Rect(row_rect.width - DeleteButSize, (row_rect.height - DeleteButSize) / 2f, DeleteButSize, DeleteButSize);
+				if (Widgets.ButtonImage(delete_button_rect, TexButton.DeleteX, Color.white, GenUI.SubtleMouseoverColor)) {
+					uvs.RemoveAt(i);
+					i--;
+					continue;
+				}
+
 				float left_pos = 5;
 
 				// Variable name
@@ -83,12 +92,6 @@ namespace CrunchyDuck.Math {
 				// Equation
 				var variable_equation_rect = new Rect(left_pos, 0, 350, row_rect.height - 2);
 				uv.equation = Widgets.TextField(variable_equation_rect, uv.equation);
-
-				// Delete button
-				Rect delete_button_rect = new Rect(row_rect.width - DeleteButSize, (row_rect.height - DeleteButSize) / 2f, DeleteButSize, DeleteButSize);
-				if (Widgets.ButtonImage(delete_button_rect, TexButton.DeleteX, Color.white, GenUI.SubtleMouseoverColor)) {
-
-				}
 
 				Widgets.EndGroup();
 			}
