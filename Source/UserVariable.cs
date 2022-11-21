@@ -6,6 +6,14 @@ using System.Linq;
 using System;
 
 namespace CrunchyDuck.Math {
+	//// Will move this somewhere more appropriate when I know what it'll be used for.
+	//public class UserVariableContainer : IExposable {
+	//	public List<>
+	//	public void ExposeData() {
+	//		throw new NotImplementedException();
+	//	}
+	//}
+
 	public class UserVariable : IExposable {
 		public string name = "nya";
 		public string equation = "x * 10";

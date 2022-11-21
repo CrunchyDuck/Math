@@ -19,8 +19,8 @@ namespace CrunchyDuck.Math {
 			forcePause = true;
 			doCloseX = true;
 			doCloseButton = true;
-			//absorbInputAroundWindow = true;
-			//closeOnClickedOutside = true;
+			absorbInputAroundWindow = true;
+			closeOnClickedOutside = true;
 		}
 
 		public override void Close(bool doCloseSound = true) {
@@ -40,24 +40,32 @@ namespace CrunchyDuck.Math {
 		}
 
 		public override void DoWindowContents(Rect inRect) {
+			Text.Font = GameFont.Small;
 			var uvs = MathSettings.settings.userVariables;
 
+			Vector2 row_size = new Vector2(inRect.width - 16f, EntryHeight);
+			float scroll_area_display_height = inRect.height - CloseButSize.y - 50f - 18f;
+			Rect scroll_area_display = inRect.TopPartPixels(scroll_area_display_height);
+			float scroll_area_total_height = uvs.Count * row_size.y;
 
-			Vector2 vector2 = new Vector2(inRect.width - 16f, EntryHeight);
-			float height1 = uvs.Count * vector2.y;
-			Rect view_rect = new Rect(0.0f, 0.0f, inRect.width - 16f, height1);
-			float height2 = inRect.height - CloseButSize.y - 50f - 18f;
-			Rect out_rect = inRect.TopPartPixels(height2);
+			// Add variable button.
+			Rect controls_rect = new Rect(scroll_area_display.x, scroll_area_display.yMax + 18f, scroll_area_display.width, 50f);
+			if (Widgets.ButtonText(controls_rect, "Add variable")) {
+				uvs.Add(new UserVariable());
+				scroll_area_total_height += row_size.y;
+				scrollPosition.y = scroll_area_total_height;
+			}
 
-			// Draw variables.
-			Widgets.BeginScrollView(out_rect, ref scrollPosition, view_rect);
+			// Draw scroll area.
+			Rect scroll_area = new Rect(0.0f, 0.0f, inRect.width - 16f, scroll_area_total_height);
+			Widgets.BeginScrollView(scroll_area_display, ref scrollPosition, scroll_area);
 			if (Event.current.type == EventType.Repaint)
-				reorderableGroup = ReorderableWidget.NewGroup((from, to) => ReorderVariable(uvs, from, to), ReorderableDirection.Vertical, out_rect);
+				reorderableGroup = ReorderableWidget.NewGroup((from, to) => ReorderVariable(uvs, from, to), ReorderableDirection.Vertical, scroll_area_display);
 
 			for (int i = 0; i < uvs.Count; i++) {
-				float y = vector2.y * i;
+				float y = row_size.y * i;
 				var uv = uvs[i];
-				Rect row_rect = new Rect(0.0f, y, vector2.x, vector2.y);
+				Rect row_rect = new Rect(0.0f, y, row_size.x, row_size.y);
 				ReorderableWidget.Reorderable(reorderableGroup, row_rect);
 
 				// Draw alternating backgrounds to help visually distinguish rows.
