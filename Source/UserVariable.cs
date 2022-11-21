@@ -6,14 +6,8 @@ using System.Linq;
 using System;
 
 namespace CrunchyDuck.Math {
-	// Will move this somewhere more appropriate when I know what it'll be used for.
-	//public class UserVariableContainer : IExposable {
-	//	public List<UserVariable> variables = new List<UserVariable>();
-	//	public void ExposeData() {
-	//		Scribe_Collections.Look(variables);
-	//	}
-	//}
-
+	// This is its own object to make it easier to expand in the future.
+	// I'm not certain *how* I want to expand it yet, but I probably will.
 	public class UserVariable : IExposable {
 		public string name = "variable name";
 		public string equation = "";

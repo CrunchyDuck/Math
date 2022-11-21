@@ -9,7 +9,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Finish this.
 	class Dialog_VariableList : Window {
 		private Vector2 scrollPosition = Vector2.zero;
-		public override Vector2 InitialSize => new Vector2(900f, 700f);
+		public override Vector2 InitialSize => new Vector2(700f, 700f);
 
 		private const float EntryHeight = 30f;
 		protected const float DeleteButSize = EntryHeight - 2;
@@ -71,6 +71,7 @@ namespace CrunchyDuck.Math {
 				var uv = uvs[i];
 				Rect row_rect = new Rect(0.0f, y, row_size.x, row_size.y);
 
+				// Register this row as a reorderable segment.
 				ReorderableWidget.Reorderable(reorderableGroup, row_rect);
 
 				// Draw alternating backgrounds to help visually distinguish rows.
@@ -95,13 +96,17 @@ namespace CrunchyDuck.Math {
 				GUI.DrawTexture(rect2, Resources.DragHash);
 				left_pos += 24 + HorizontalPadding;
 
+				float fields_width = row_rect.width - DeleteButSize - left_pos - HorizontalPadding;
+
 				// Variable name
-				var variable_name_rect = new Rect(left_pos, 0, 150, row_rect.height - 2);
+				float name_width = fields_width * 0.3f;
+				var variable_name_rect = new Rect(left_pos, 0, name_width, row_rect.height - 2);
 				uv.name = Widgets.TextField(variable_name_rect, uv.name);
-				left_pos += 150 + HorizontalPadding;
+				left_pos += name_width + HorizontalPadding;
 
 				// Equation
-				var variable_equation_rect = new Rect(left_pos, 0, 350, row_rect.height - 2);
+				float equation_width = fields_width * 0.7f;
+				var variable_equation_rect = new Rect(left_pos, 0, equation_width, row_rect.height - 2);
 				uv.equation = Widgets.TextField(variable_equation_rect, uv.equation);
 
 				Widgets.EndGroup();
