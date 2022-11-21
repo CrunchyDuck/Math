@@ -27,7 +27,11 @@ Turning this on, you can customize what the recipe counts to check how much of s
 For example, if you type in "category meals", it will count "simple meal", "fine meal", "packaged survival meal", etc.
 
 Leaving "Custom item count" off will use the default counting logic.</CD.M.infocard.basic.tutorials.itemcount.description>
-
+	<CD.M.infocard.basic.tutorials.doXTimes>Equations in "Do X Times" bills</CD.M.infocard.basic.tutorials.doXTimes>
+	<CD.M.infocard.basic.tutorials.doXTimes.description>Any equations you put into "Do X Times" will be resolved down into a number, rather than remembered like in "Do Until X".
+	
+This is done so you can make one-time calculations in the field, like colonists * 3, without the bill running forever.</CD.M.infocard.basic.tutorials.doXTimes.description>
+	
 	<CD.M.infocard.basic.examples.pawns>"colonists" * 2</CD.M.infocard.basic.examples.pawns>
 	<CD.M.infocard.basic.examples.pawns.description>Get the number of colonists you have, times two. Useful for things like clothing or weapon production.</CD.M.infocard.basic.examples.pawns.description>
 	<CD.M.infocard.basic.examples.intake>"pawns.intake" * 5</CD.M.infocard.basic.examples.intake>
