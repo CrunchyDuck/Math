@@ -20,15 +20,16 @@ namespace CrunchyDuck.Math {
 		}
 
 		private static void ReorderBillInStack(BillStack stack, int from, int to) {
+			// For some reason, it counts the element that you're trying to move when it determines the new position. So "0 -> 1" becomes "0 -> 2".
+			if (to > from)
+				to -= 1;
 			if (to >= stack.Count)
 				to = stack.Count - 1;
 			if (from == to)
 				return;
+
 			Bill bill = stack[from];
 			int offset = to - from;
-			// I'm not sure why, but when moving bills down, they would always move 1 more than they should.
-			if (offset > 0)
-				offset -= 1;
 			stack.Reorder(bill, offset);
 		}
 	}

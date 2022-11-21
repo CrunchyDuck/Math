@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
+	<!-- Tooltips -->
+	<CD.M.tooltips.user_variables>User variables</CD.M.tooltips.user_variables>
+	
 	<!-- Info card -->
 	<CD.M.infocard.introduction.description>This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
 	
@@ -27,6 +30,20 @@ Turning this on, you can customize what the recipe counts to check how much of s
 For example, if you type in "category meals", it will count "simple meal", "fine meal", "packaged survival meal", etc.
 
 Leaving "Custom item count" off will use the default counting logic.</CD.M.infocard.basic.tutorials.itemcount.description>
+	<CD.M.infocard.basic.tutorials.user_variables>Making a custom variable</CD.M.infocard.basic.tutorials.user_variables>
+	<CD.M.infocard.basic.tutorials.user_variables.description>In bill menus there's a new button in the top left that looks like "{x}". Clicking on this will open up a new window that allows you to name and assign equations!
+
+Once you've created a variable, you can use it in any input field by typing "variables.name" or "v.name", where "name" is what you called your variable.
+For example, you might have the following variable:
+meals = "c.meals" - "packaged survival meal"
+You could then use this variable in an input field by typing:
+"v.meals"
+
+Variables work by directly pasting what you typed into the place of your variable, and surrounding it with brackets. For example:
+"v.meals" * 2 -> ("c.meals" - "packaged survival meal") * 2
+
+A variable should be named the same way parameters are - lowercase, no . or " in the name.</CD.M.infocard.basic.tutorials.user_variables.description>
+
 	<CD.M.infocard.basic.tutorials.doXTimes>Equations in "Do X Times" bills</CD.M.infocard.basic.tutorials.doXTimes>
 	<CD.M.infocard.basic.tutorials.doXTimes.description>Any equations you put into "Do X Times" will be resolved down into a number, rather than remembered like in "Do Until X".
 	

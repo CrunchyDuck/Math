@@ -94,7 +94,6 @@ namespace CrunchyDuck.Math {
 
 			Text.Font = GameFont.Medium;
 			bc.name = Widgets.TextField(new Rect(40f, 0.0f, 400f, 34f), bc.name);
-			//Widgets.Label(new Rect(40f, 0.0f, 400f, 34f), this.bill.LabelCap);
 			Text.Font = GameFont.Small;
 
 			// Middle panel.
@@ -116,9 +115,11 @@ namespace CrunchyDuck.Math {
 
 			Rect button_rect = new Rect(buttons_x, rect_right.y, 24, 24);
 			// Variables button
-			//if (Widgets.ButtonImage(rect_variable_button, Resources.variablesButtonImage, Color.white)) {
-			//	Find.WindowStack.Add(new Dialog_VariableList(bc));
-			//}
+			TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.user_variables".Translate());
+			if (Widgets.ButtonImage(button_rect, Resources.variablesButtonImage, Color.white)) {
+				Find.WindowStack.Add(new Dialog_VariableList(bc));
+			}
+			button_rect.x += 24 + 4;
 
 			// math info button.
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
@@ -129,6 +130,8 @@ namespace CrunchyDuck.Math {
 			if (Widgets.ButtonImage(button_rect, Resources.infoButtonImage, color, gay_color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
+			button_rect.x += 24 + 4;
+
 			BillMenuData.Unassign();
 		}
 
