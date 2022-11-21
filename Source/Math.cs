@@ -219,8 +219,8 @@ namespace CrunchyDuck.Math {
 		public static bool ParseUserVariables(ref string str, int recursion_level = 0) {
 			if (recursion_level >= 5)
 				throw new InfiniteRecursionException();
-
-			foreach (Match match in variableNames.Matches(str)) {
+			Match match = variableNames.Match(str, 0);
+			while (match.Success) {
 				string variable_name = match.Groups[1].Value;
 				if (!MathSettings.settings.userVariablesDict.TryGetValue(variable_name, out UserVariable uv)){
 					return false;
@@ -233,7 +233,9 @@ namespace CrunchyDuck.Math {
 
 				// Ensures things are parsed in a logical way.
 				equation = "(" + equation + ")";
-				str = str.Remove(match.Groups[0].Index, match.Groups[0].Length).Insert(match.Groups[0].Index, equation);
+				str = str.Remove(match.Index, match.Length).Insert(match.Index, equation);
+
+				match = variableNames.Match(str, match.Index + equation.Length);
 			}
 			return true;
 		}
