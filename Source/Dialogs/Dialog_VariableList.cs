@@ -119,12 +119,22 @@ namespace CrunchyDuck.Math {
 				GUI.color = original_col;
 				left_pos += name_width + HorizontalPadding;
 
+				// Equals sign.
+				var ta = Text.Anchor;
+				Text.Font = GameFont.Medium;
+				Text.Anchor = TextAnchor.MiddleCenter;
+				Widgets.Label(new Rect(left_pos, 0, DeleteButSize, DeleteButSize), "=");
+				
+				left_pos += DeleteButSize + HorizontalPadding;
+				Text.Font = GameFont.Small;
+				Text.Anchor = ta;
+
 				// Equation
 				// Check if the provided equation is valid.
 				float math_result = 0;
 				if (!Math.DoMath(uv.equation, bc, ref math_result))
 					GUI.color = new Color(1, 0, 0, 0.8f);
-				float equation_width = fields_width * 0.7f;
+				float equation_width = fields_width * 0.7f - DeleteButSize - HorizontalPadding;
 				var variable_equation_rect = new Rect(left_pos, 0, equation_width, row_rect.height - 2);
 				uv.equation = Widgets.TextField(variable_equation_rect, uv.equation);
 				GUI.color = original_col;
