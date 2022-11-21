@@ -28,7 +28,8 @@ namespace CrunchyDuck.Math {
 		public void UpdateUserVariables() {
 			userVariablesDict = new Dictionary<string, UserVariable>();
 			foreach (UserVariable uv in userVariables) {
-				userVariablesDict[uv.name] = uv;
+				if (!userVariablesDict.ContainsKey(uv.name))
+					userVariablesDict[uv.name] = uv;
 			}
 		}
 

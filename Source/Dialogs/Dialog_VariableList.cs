@@ -16,12 +16,16 @@ namespace CrunchyDuck.Math {
 		private const float HorizontalPadding = 5;
 		private int reorderableGroup = -1;
 
+		private BillComponent bc;
+
 		public Dialog_VariableList(BillComponent bill) {
 			forcePause = true;
 			doCloseX = true;
 			doCloseButton = true;
 			absorbInputAroundWindow = true;
 			closeOnClickedOutside = true;
+
+			bc = bill;
 		}
 
 		public override void Close(bool doCloseSound = true) {
@@ -44,6 +48,7 @@ namespace CrunchyDuck.Math {
 		public override void DoWindowContents(Rect inRect) {
 			Text.Font = GameFont.Small;
 			var uvs = MathSettings.settings.userVariables;
+			var uvs_dict = new Dictionary<string, UserVariable>();
 			bool uvs_changed = false;
 
 			Vector2 row_size = new Vector2(inRect.width - 16f, EntryHeight);
@@ -96,26 +101,39 @@ namespace CrunchyDuck.Math {
 				GUI.DrawTexture(rect2, Resources.DragHash);
 				left_pos += 24 + HorizontalPadding;
 
+				Color original_col = GUI.color;
 				float fields_width = row_rect.width - DeleteButSize - left_pos - HorizontalPadding;
 
 				// Variable name
 				float name_width = fields_width * 0.3f;
 				var variable_name_rect = new Rect(left_pos, 0, name_width, row_rect.height - 2);
+				// These are separate if checks so that the item is still pushed into the dictionary if the name is invalid.
+				// This makes sure that behaviour is consistent.
+				if(!uv.name.IsParameter())
+					GUI.color = new Color(1, 0, 0, 0.8f);
+				if (uvs_dict.ContainsKey(uv.name))
+					GUI.color = new Color(1, 0, 0, 0.8f);
+				else
+					uvs_dict[uv.name] = uv;
 				uv.name = Widgets.TextField(variable_name_rect, uv.name);
+				GUI.color = original_col;
 				left_pos += name_width + HorizontalPadding;
 
 				// Equation
+				// Check if the provided equation is valid.
+				float math_result = 0;
+				if (!Math.DoMath(uv.equation, bc, ref math_result))
+					GUI.color = new Color(1, 0, 0, 0.8f);
 				float equation_width = fields_width * 0.7f;
 				var variable_equation_rect = new Rect(left_pos, 0, equation_width, row_rect.height - 2);
 				uv.equation = Widgets.TextField(variable_equation_rect, uv.equation);
+				GUI.color = original_col;
 
 				Widgets.EndGroup();
 			}
 
 			Widgets.EndScrollView();
-
-			if (uvs_changed)
-				MathSettings.settings.UpdateUserVariables();
+			MathSettings.settings.userVariablesDict = uvs_dict;
 		}
 	}
 }
