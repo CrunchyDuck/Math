@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
+	<!-- Tooltips -->
+	<CD.M.tooltips.user_variables>User variables</CD.M.tooltips.user_variables>
+	
 	<!-- Info card -->
 	<CD.M.infocard.introduction.description>This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
 	

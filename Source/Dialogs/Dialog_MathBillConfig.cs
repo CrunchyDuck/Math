@@ -115,6 +115,7 @@ namespace CrunchyDuck.Math {
 
 			Rect button_rect = new Rect(buttons_x, rect_right.y, 24, 24);
 			// Variables button
+			TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.user_variables".Translate());
 			if (Widgets.ButtonImage(button_rect, Resources.variablesButtonImage, Color.white)) {
 				Find.WindowStack.Add(new Dialog_VariableList(bc));
 			}
