@@ -2,11 +2,14 @@
 using Verse;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
 	class BillComponent {
 		public Bill_Production targetBill;
-		private Regex oldCategory = new Regex(@"((?:c|cat|category) )(.+?)", RegexOptions.Compiled);
+		public BillLinkTracker linkTracker;
+
+		private static Regex oldCategory = new Regex(@"((?:c|cat|category) )(.+?)", RegexOptions.Compiled);
 		public CachedMapData Cache {
 			get {
 				return Math.GetCachedMap(targetBill);
@@ -47,6 +50,8 @@ namespace CrunchyDuck.Math {
 					}
 				}
 			}
+
+			linkTracker = new BillLinkTracker(this);
 		}
 
 		public void ExposeData() {
@@ -121,7 +126,7 @@ namespace CrunchyDuck.Math {
 			SetAll(default_value);
 		}
 
-		public void SetAll(int value) {
+		public void SetAll(float value) {
 			buffer = value.ToString();
 			lastValid = value.ToString();
 			CurrentValue = value;

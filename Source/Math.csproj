@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BillComponent.cs" />
+    <Compile Include="BillLinkTracker.cs" />
     <Compile Include="BillManager.cs" />
     <Compile Include="CachedMapData.cs" />
     <Compile Include="Dialogs\Dialog_VariableList.cs" />

@@ -55,7 +55,6 @@ namespace CrunchyDuck.Math {
 					}
 					// category
 					else if (CategoryFilter.names.Contains(command)) {
-						// TODO: Allow prefab searching from a category.
 						if (i + 1 < commands.Length && CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value)) {
 							filter = new MathFilters.ThingFilter(bc, value);
 							continue;
