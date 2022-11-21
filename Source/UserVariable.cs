@@ -15,8 +15,8 @@ namespace CrunchyDuck.Math {
 	//}
 
 	public class UserVariable : IExposable {
-		public string name = "nya";
-		public string equation = "x * 10";
+		public string name = "variable name";
+		public string equation = "";
 
 		public UserVariable(string name, string equation) {
 			this.name = name;

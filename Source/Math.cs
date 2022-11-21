@@ -36,6 +36,7 @@ namespace CrunchyDuck.Math {
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
 
+		private static Regex variableNames = new Regex(@"(?:""(?:v|variables)\.)(.+?)(?:"")", RegexOptions.Compiled);
 		private static Regex parameterNames = new Regex("(?:(\")(.+?)(\"))|([a-zA-Z0-9]+)", RegexOptions.Compiled);
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
@@ -125,6 +126,14 @@ namespace CrunchyDuck.Math {
 			if (str.NullOrEmpty())
 				return false;
 
+			try {
+				if (!ParseUserVariables(ref str))
+					return false;
+			}
+			// TODO: Some way of notifying the user that they performed infinite recursion.
+			catch (InfiniteRecursionException) {
+				return false;
+			}
 			List<string> parameter_list = new List<string>();
 			foreach (Match match in parameterNames.Matches(str)) {
 				// Matched single word.
@@ -199,6 +208,28 @@ namespace CrunchyDuck.Math {
 			return cache;
 		}
 
+		public static bool ParseUserVariables(ref string str, int recursion_level = 0) {
+			if (recursion_level >= 5)
+				throw new InfiniteRecursionException();
+
+			foreach (Match match in variableNames.Matches(str)) {
+				string variable_name = match.Groups[1].Value;
+				if (!MathSettings.settings.userVariablesDict.TryGetValue(variable_name, out UserVariable uv)){
+					return false;
+				}
+				string equation = uv.equation;
+
+				// Resolve any references this equation has.
+				if (!ParseUserVariables(ref equation, recursion_level + 1))
+					return false;
+
+				// Ensures things are parsed in a logical way.
+				equation = "(" + equation + ")";
+				str = str.Remove(match.Groups[0].Index, match.Groups[0].Length).Insert(match.Groups[0].Index, equation);
+			}
+			return true;
+		}
+
 		public static void AddParameters(Expression e, InputField field, List<string> parameter_list) {
 			CachedMapData cache = field.bc.Cache;
 			if (cache == null) {
@@ -213,4 +244,6 @@ namespace CrunchyDuck.Math {
 			}
 		}
 	}
+
+	public class InfiniteRecursionException : Exception {}
 }

@@ -44,6 +44,7 @@ namespace CrunchyDuck.Math {
 		public override void DoWindowContents(Rect inRect) {
 			Text.Font = GameFont.Small;
 			var uvs = MathSettings.settings.userVariables;
+			bool uvs_changed = false;
 
 			Vector2 row_size = new Vector2(inRect.width - 16f, EntryHeight);
 			float scroll_area_display_height = inRect.height - CloseButSize.y - 50f - 18f;
@@ -54,6 +55,7 @@ namespace CrunchyDuck.Math {
 			Rect controls_rect = new Rect(scroll_area_display.x, scroll_area_display.yMax + 18f, scroll_area_display.width, 50f);
 			if (Widgets.ButtonText(controls_rect, "Add variable")) {
 				uvs.Add(new UserVariable());
+				uvs_changed = true;
 				scroll_area_total_height += row_size.y;
 				scrollPosition.y = scroll_area_total_height;
 			}
@@ -80,6 +82,7 @@ namespace CrunchyDuck.Math {
 				Rect delete_button_rect = new Rect(row_rect.width - DeleteButSize, (row_rect.height - DeleteButSize) / 2f, DeleteButSize, DeleteButSize);
 				if (Widgets.ButtonImage(delete_button_rect, TexButton.DeleteX, Color.white, GenUI.SubtleMouseoverColor)) {
 					uvs.RemoveAt(i);
+					uvs_changed = true;
 					i--;
 					continue;
 				}
@@ -105,6 +108,9 @@ namespace CrunchyDuck.Math {
 			}
 
 			Widgets.EndScrollView();
+
+			if (uvs_changed)
+				MathSettings.settings.UpdateUserVariables();
 		}
 	}
 }
