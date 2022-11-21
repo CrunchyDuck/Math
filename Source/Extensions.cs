@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using Verse;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace CrunchyDuck.Math {
 	public static class Extensions {
@@ -39,6 +40,44 @@ namespace CrunchyDuck.Math {
 			T item = list[from];
 			list.RemoveAt(from);
 			list.Insert(to, item);
+		}
+	}
+
+	public static class RectExtensions {
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectLeft(ref this Rect rect, float percent) {
+			Rect chunk = rect.LeftPart(percent);
+			rect.xMin += chunk.width;
+			return chunk;
+		}
+
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectLeft(ref this Rect rect, int pixels) {
+			Rect chunk = rect.LeftPartPixels(pixels);
+			rect.xMin += chunk.width;
+			return chunk;
+		}
+
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectRight(ref this Rect rect, float percent) {
+			Rect chunk = rect.RightPart(percent);
+			rect.xMax -= chunk.width;
+			return chunk;
+		}
+
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectRight(ref this Rect rect, int pixels) {
+			Rect chunk = rect.RightPartPixels(pixels);
+			rect.xMax -= chunk.width;
+			return chunk;
 		}
 	}
 }
