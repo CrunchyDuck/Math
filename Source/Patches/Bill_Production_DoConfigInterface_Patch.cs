@@ -3,6 +3,7 @@ using System.Reflection;
 using RimWorld;
 using Verse;
 using UnityEngine;
+using Verse.Sound;
 using System;
 
 namespace CrunchyDuck.Math {
@@ -11,7 +12,6 @@ namespace CrunchyDuck.Math {
 			return AccessTools.Method(typeof(Bill_Production), "DoConfigInterface");
 		}
 
-        // TODO: Add sfx on button press.
 		public static void Postfix(Bill_Production __instance, Rect baseRect, Color baseColor) {
             var storeModeImage = Resources.bestStockpileImage;
             var nextStoreMode = BillStoreModeDefOf.DropOnFloor;
@@ -24,19 +24,20 @@ namespace CrunchyDuck.Math {
                 //var tip = "IW.ClickToDropTip".Translate();
                 tip = "Currently dropping output on floor. Click to take to stockpile.";
             }
-            var buttonRect = new Rect(baseRect.xMax - 110f, baseRect.y, 24f, 24f);
+            var buttonRect = new Rect(baseRect.xMax - (24 + 4) * 4, baseRect.y, 24f, 24f);
 
             //var extendedBillDataStorage = Main.Instance.GetExtendedBillDataStorage();
             if (Widgets.ButtonImage(buttonRect, storeModeImage, baseColor)) {
+                SoundDefOf.DragSlider.PlayOneShotOnCamera();
                 __instance.SetStoreMode(nextStoreMode);
             }
             TooltipHandler.TipRegion(buttonRect, tip);
 
             // Bill linking
-            buttonRect.xMax -= 30f;
+            buttonRect.x -= 24 + 4;
             if (Widgets.ButtonImage(buttonRect, Resources.linkImage, baseColor)) {
-
-			}
+                SoundDefOf.DragSlider.PlayOneShotOnCamera();
+            }
 
         }
 	}
