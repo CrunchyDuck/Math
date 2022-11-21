@@ -13,11 +13,11 @@ namespace CrunchyDuck.Math {
             Scribe_Values.Look(ref textInputAreaBonus, "CDtextInputAreaBonus", 200f);
 
             Scribe_Values.Look(ref lastVersionInfocardChecked, "CDlastVersionInfocardChecked", "");
-			Scribe_Deep.Look(ref userVariables, "userVariables", new List<UserVariable>());
-			userVariables = new List<UserVariable>();
-			for (int i = 0; i < 50; i++) {
-				userVariables.Add(new UserVariable());
-			}
+			//Scribe_Deep.Look(ref userVariables, "userVariables", new List<UserVariable>());
+			//userVariables = new List<UserVariable>();
+			//for (int i = 0; i < 50; i++) {
+			//	userVariables.Add(new UserVariable());
+			//}
         }
 
         // Pete's slider code.

@@ -12,8 +12,8 @@ namespace CrunchyDuck.Math.MathFilters {
 		public override bool CanCount { get { return canCount; } }
 
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
-			{ "pawns", p => !p.AnimalOrWildMan() },
-			
+			{ "pawns", p => !p.AnimalOrWildMan() && !p.IsColonyMech },
+
 			{ "colonists", p => IsColonist(p) },
 			{ "col", p => IsColonist(p) },
 
@@ -35,6 +35,8 @@ namespace CrunchyDuck.Math.MathFilters {
 
 			{ "babies", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
 			{ "bab", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
+
+			{ "mechanoids", p => p.IsColonyMech },
 
 			{ "male", IsMalePawn },
 			{ "female", IsFemalePawn },
@@ -155,7 +157,7 @@ namespace CrunchyDuck.Math.MathFilters {
 		/// My definition does not include them.
 		/// </summary>
 		private static bool IsColonist(Pawn p) {
-			return !p.AnimalOrWildMan() && !p.IsPrisoner && !p.IsSlave && !IsGuest(p);
+			return !p.AnimalOrWildMan() && !p.IsPrisoner && !p.IsSlave && !IsGuest(p) && !p.IsColonyMech;
 		}
 
 		/// <summary>

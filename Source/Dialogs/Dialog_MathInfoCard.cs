@@ -39,7 +39,6 @@ namespace CrunchyDuck.Math {
 
 		private Dictionary<string, float> valueCache = new Dictionary<string, float>();
 
-		// TODO: Add X in top right.
 		public Dialog_MathInfoCard(BillComponent bc) {
 			if (MathSettings.settings.lastVersionInfocardChecked != Math.version) {
 				MathSettings.settings.lastVersionInfocardChecked = Math.version;
@@ -256,6 +255,7 @@ namespace CrunchyDuck.Math {
 			cat = catPawnGroups;
 			stats.Add(new StatDrawEntry(cat, "​" + "animals", "", "CD.M.infocard.pawns.animals.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "pawns", "", "CD.M.infocard.pawns.pawns.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "mechanoids", "", "CD.M.infocard.pawns.mechanoids.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "colonists", "", "CD.M.infocard.pawns.colonists.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "guests", "", "CD.M.infocard.pawns.guests.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", "", "CD.M.infocard.pawns.prisoners.description".Translate(), display_priority--));

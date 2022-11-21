@@ -106,27 +106,27 @@ namespace CrunchyDuck.Math {
 			// Bill info panel.
 			RenderBillInfo(rect_left);
 
+			var buttons_x = rect_left.x;
 			// infocard button.
 			if (bill.recipe.products.Count == 1) {
 				ThingDef thingDef = bill.recipe.products[0].thingDef;
-				Widgets.InfoCardButton(rect_left.x, rect_right.y, thingDef, GenStuff.DefaultStuffFor(thingDef));
+				Widgets.InfoCardButton(buttons_x, rect_right.y, thingDef, GenStuff.DefaultStuffFor(thingDef));
+				buttons_x += 24 + 4;
 			}
 
+			Rect button_rect = new Rect(buttons_x, rect_right.y, 24, 24);
 			// Variables button
-			Rect rect_variable_button = new Rect(rect_left.x + 24 + 4, rect_right.y, 24, 24);
 			//if (Widgets.ButtonImage(rect_variable_button, Resources.variablesButtonImage, Color.white)) {
 			//	Find.WindowStack.Add(new Dialog_VariableList(bc));
 			//}
 
 			// math info button.
-			Rect rect_math_button = rect_variable_button;
-			rect_math_button.x += 30;
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
 			Color gay_color = Color.HSVToRGB(infoHoverHue, 1, 1);
 			Color color = GUI.color;
 			if (Math.IsNewImportantVersion(MathSettings.settings.lastVersionInfocardChecked))
 				color = gay_color;
-			if (Widgets.ButtonImage(rect_math_button, Resources.infoButtonImage, color, gay_color)) {
+			if (Widgets.ButtonImage(button_rect, Resources.infoButtonImage, color, gay_color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
 			BillMenuData.Unassign();

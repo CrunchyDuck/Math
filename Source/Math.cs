@@ -31,7 +31,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Bill menu opens by default on clicking bench.
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.2.2";
+		public static string version = "1.2.3";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
