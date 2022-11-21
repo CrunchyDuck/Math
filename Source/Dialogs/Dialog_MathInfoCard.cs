@@ -169,6 +169,7 @@ namespace CrunchyDuck.Math {
 
 			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.variable_names".Translate(), "", "CD.M.infocard.basic.tutorials.variable_names.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.itemcount".Translate(), "", "CD.M.infocard.basic.tutorials.itemcount.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.user_variables".Translate(), "", "CD.M.infocard.basic.tutorials.user_variables.description".Translate(), display_priority--));
 
 			// !!! BIG WARNING !!!
 			// the label/second variable in these all have a zero-width space placed at the start.
