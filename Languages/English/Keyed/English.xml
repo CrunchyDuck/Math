@@ -3,6 +3,12 @@
 	<!-- Tooltips -->
 	<CD.M.tooltips.user_variables>User variables</CD.M.tooltips.user_variables>
 	
+	<!-- Update logs -->
+	<CD.M.updates.1.3>User variables
+
+minor changes
+</CD.M.updates.1.3>
+	
 	<!-- Info card -->
 	<CD.M.infocard.introduction.description>This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
 	

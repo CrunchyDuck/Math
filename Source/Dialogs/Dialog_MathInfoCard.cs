@@ -93,8 +93,6 @@ namespace CrunchyDuck.Math {
 
 		// TODO: It would be nice if you could collapse categorydefs by clicking on them. Maybe add this later.
 		public override void DoWindowContents(Rect inRect) {
-			// BIG TODO: Change log.
-			// BIG TODO: Update documentation for 1.2.0
 			List<TabRecord> tabs = new List<TabRecord>();
 
 			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
@@ -108,7 +106,6 @@ namespace CrunchyDuck.Math {
 			label_area.height = 34f;
 			label_area.xMax -= 34f;
 
-			//draw_area.height = 34f;
 			label_area.x += 34f;
 			Text.Font = GameFont.Medium;
 			Widgets.Label(label_area, "Math");
@@ -132,26 +129,16 @@ namespace CrunchyDuck.Math {
 			statsCache.SetValue(null, statEntries);
 			StatsFinalize.Invoke(null, new object[] { statsCache.GetValue(null) });
 
-			//Rect rect1 = new Rect(inRect).ContractedBy(18f) with
-			//{
-			//	height = 34f
-			//};
-
 			// Draw image in top left.
 			Rect card_image = new Rect(inRect.x + 9f, label_area.y, 34f, 34f);
 			Widgets.ButtonImage(card_image, Resources.infoButtonImage, GUI.color);
 
 			// Draw version number
-			//Rect version_pos = new Rect(inRect.xMax - 9f, label_area.y, 200f, 34f);
-			var anch = Text.Anchor;
-			Text.Anchor = TextAnchor.MiddleRight;
-			Widgets.Label(label_area, "v" + Math.version);
-			Text.Anchor = anch;
-
-			//if (this.thing != null)
-			//	Widgets.ThingIcon(rect2, this.thing);
-			//else
-			//	Widgets.DefIcon(rect2, this.def, this.stuff, drawPlaceholder: true);
+			Rect version_butt = label_area.RightPartPixels(70);
+			version_butt.xMax -= 15;
+			if (Widgets.ButtonText(version_butt, "v" + Math.version)) {
+				Find.WindowStack.Add(new Dialog_Updates());
+			}
 
 			StatsWorker.Invoke(null, new object[] { stats_area.ContractedBy(18f), null, null });
 		}
