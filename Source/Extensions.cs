@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using Verse;
+using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
 	public static class Extensions {
@@ -24,6 +25,12 @@ namespace CrunchyDuck.Math {
 				return true;
 			}
 			return false;
+		}
+
+		public static void Move<T>(this IList<T> list, int from, int to) {
+			T item = list[from];
+			list.RemoveAt(from);
+			list.Insert(to, item);
 		}
 	}
 }

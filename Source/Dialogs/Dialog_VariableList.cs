@@ -13,6 +13,7 @@ namespace CrunchyDuck.Math {
 
 		private const float EntryHeight = 30f;
 		protected const float DeleteButSize = EntryHeight - 2;
+		private const float HorizontalPadding = 5;
 		private int reorderableGroup = -1;
 
 		public Dialog_VariableList(BillComponent bill) {
@@ -29,14 +30,15 @@ namespace CrunchyDuck.Math {
 		}
 
 		private static void ReorderVariable(List<UserVariable> uvs, int from, int to) {
+			// For some reason, it counts the element that you're trying to move when it determines the new position. So "0 -> 1" becomes "0 -> 2".
+			if (to > from)
+				to -= 1;
 			if (to >= uvs.Count)
 				to = uvs.Count - 1;
 			if (from == to)
 				return;
 
-			UserVariable uv = uvs[from];
-			uvs.RemoveAt(from);
-			uvs.Insert(to, uv);
+			uvs.Move(from, to);
 		}
 
 		public override void DoWindowContents(Rect inRect) {
@@ -82,12 +84,18 @@ namespace CrunchyDuck.Math {
 					continue;
 				}
 
-				float left_pos = 5;
+				float left_pos = HorizontalPadding;
+
+				// Drag symbol
+				Rect rect2 = new Rect(left_pos, 3, 24f, 24f);
+				TooltipHandler.TipRegion(rect2, "DragToReorder".Translate());
+				GUI.DrawTexture(rect2, Resources.DragHash);
+				left_pos += 24 + HorizontalPadding;
 
 				// Variable name
 				var variable_name_rect = new Rect(left_pos, 0, 150, row_rect.height - 2);
 				uv.name = Widgets.TextField(variable_name_rect, uv.name);
-				left_pos += 150 + 5;
+				left_pos += 150 + HorizontalPadding;
 
 				// Equation
 				var variable_equation_rect = new Rect(left_pos, 0, 350, row_rect.height - 2);
