@@ -16,7 +16,6 @@ namespace CrunchyDuck.Math {
 		public static void Prefix(BillStack __instance) {
 			if (Event.current.type == EventType.Repaint) {
 				Patch_Bill_DoInterface.reorderGroup = ReorderableWidget.NewGroup((from, to) => ReorderBillInStack(__instance, from, to), ReorderableDirection.Vertical, new Rect(0.0f, 0.0f, UI.screenWidth, UI.screenHeight));
-				Log.Message(Patch_Bill_DoInterface.reorderGroup.ToString());
 			}
 		}
 
