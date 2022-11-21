@@ -7,21 +7,47 @@ using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
 	class BillLinkTracker {
+		public static BillLinkTracker currentlyCopied;
+
 		public BillComponent bc;
-
 		public bool isMasterBC = false;
-		private List<BillComponent> childBCs = new List<BillComponent>();
+		private HashSet<BillLinkTracker> childBCs = new HashSet<BillLinkTracker>();
 
-		private BillComponent parentBC = null;
+		public BillLinkTracker parent = null;
 		public bool ingredientsCompatible = false;
 
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
 		}
 
+		public void AddChild(BillLinkTracker blt) {
+			isMasterBC = true;
+			Log.Message("here");
+			blt.parent = this;
+			blt.ingredientsCompatible = IsIngredientsCompatible(blt.bc);
+			childBCs.Add(blt);
+		}
+
+		/// <summary>
+		/// Break the link with a parent, from the child.
+		/// </summary>
+		public void BreakLink() {
+			parent.childBCs.Remove(this);
+			parent = null;
+		}
+
+		/// <summary>
+		/// Break the link with a child, from the parent.
+		/// </summary>
+		public void BreakLink(BillLinkTracker child) {
+			childBCs.Remove(child);
+			parent = null;
+		}
+
 		public void UpdateLinkedBills() {
 			// TODO: Link more fields.
-			foreach (BillComponent other in childBCs) {
+			foreach (BillLinkTracker blt in childBCs) {
+				var other = blt.bc;
 				// Since these are references, perhaps this only needs to be assgined once, when the link is first made.
 				other.itemsToCount = bc.itemsToCount;
 				other.doXTimes = bc.doXTimes;

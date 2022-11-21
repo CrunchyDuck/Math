@@ -42,6 +42,7 @@ namespace CrunchyDuck.Math {
 			return codes.AsEnumerable();
 		}
 
+		// Add dragging to reorder.
 		public static void Postfix(ref Bill __instance, float x, float y, float width) {
 			Rect rect1 = new Rect(x, y, width, 53f);
 			if (__instance is Bill_Production bp) {

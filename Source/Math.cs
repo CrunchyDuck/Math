@@ -107,6 +107,7 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(Patch_Bill_LabelCap));
 			AddPatch(harmony, typeof(Patch_Bill_DoInterface));
 			AddPatch(harmony, typeof(Patch_BillStack_DoListing));
+			AddPatch(harmony, typeof(Patch_BillCopying));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {
