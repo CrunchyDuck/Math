@@ -40,10 +40,6 @@ namespace CrunchyDuck.Math {
 		private Dictionary<string, float> valueCache = new Dictionary<string, float>();
 
 		public Dialog_MathInfoCard(BillComponent bc) {
-			if (MathSettings.settings.lastVersionInfocardChecked != Math.version) {
-				MathSettings.settings.lastVersionInfocardChecked = Math.version;
-				MathSettings.settings.Write();
-			}
 			attachedBill = bc;
 			// Get a cache of current values. I'll clean this up some other time.
 			valueCache["pawns"] = bc.Cache.humanPawns.Count();
@@ -93,6 +89,13 @@ namespace CrunchyDuck.Math {
 
 		// TODO: It would be nice if you could collapse categorydefs by clicking on them. Maybe add this later.
 		public override void DoWindowContents(Rect inRect) {
+			if (Math.IsNewImportantVersion()) {
+				Find.WindowStack.Add(new Dialog_Updates());
+			}
+			if (MathSettings.settings.lastVersionInfocardChecked != Math.version) {
+				MathSettings.settings.lastVersionInfocardChecked = Math.version;
+				MathSettings.settings.Write();
+			}
 			List<TabRecord> tabs = new List<TabRecord>();
 
 			// TODO: More tabs, such as for categorydefs and maybe pawn groups?

@@ -85,6 +85,10 @@ namespace CrunchyDuck.Math {
 			return x[0] != y[0] || x[1] != y[1];
 		}
 
+		public static bool IsNewImportantVersion() {
+			return IsNewImportantVersion(MathSettings.settings.lastVersionInfocardChecked);
+		}
+
 		private static void IndexDefs<T>(Dictionary<string, T> dict) where T : Def {
 			var thing_list = DefDatabase<T>.AllDefs;
 

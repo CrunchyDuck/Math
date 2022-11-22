@@ -27,22 +27,24 @@ namespace CrunchyDuck.Math {
 			base.Close(doCloseSound);
 		}
 
+		// TODO: Allow people to browse update history with > and <
 		public override void DoWindowContents(Rect inRect) {
 			UpdateLog u = updates[i];
+			var ta = Text.Anchor;
 
-			Rect label_area = new Rect(inRect);
-			label_area = label_area.ContractedBy(18f);
-			label_area.height = 34f;
-			label_area.xMax -= 34f;
-
-			label_area.x += 34f;
 			Text.Font = GameFont.Medium;
-			Widgets.Label(label_area, "v" + u.version);
+			Text.Anchor = TextAnchor.UpperCenter;
+			Rect title_area = new Rect(inRect.x, inRect.y + 10, inRect.width, 34);
+			Widgets.Label(title_area, "v" + u.version);
 
-			float scroll_area_display_height = inRect.height - CloseButSize.y - label_area.height - 10;// - 18f;
+			Text.Font = GameFont.Small;
+			Text.Anchor = TextAnchor.UpperLeft;
+			float scroll_area_display_height = inRect.height - CloseButSize.y - title_area.height - 10;// - 18f;
 			Rect scroll_area_display = inRect.TopPartPixels(scroll_area_display_height);
-			scroll_area_display.y += label_area.height + 10;
-			Widgets.TextAreaScrollable(scroll_area_display, u.log, ref scrollPosition, readOnly: true);
+			scroll_area_display.y += title_area.height + 10;
+			Widgets.LabelScrollable(scroll_area_display, u.log, ref scrollPosition);
+			
+			Text.Anchor = ta;
 		}
 	}
 
