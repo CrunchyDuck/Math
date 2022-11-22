@@ -36,6 +36,7 @@ namespace CrunchyDuck.Math {
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
 
+		private static Regex variableNames = new Regex(@"(?:""(?:v|variables)\.)(.+?)(?:"")", RegexOptions.Compiled);
 		private static Regex parameterNames = new Regex("(?:(\")(.+?)(\"))|([a-zA-Z0-9]+)", RegexOptions.Compiled);
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
@@ -84,6 +85,10 @@ namespace CrunchyDuck.Math {
 			return x[0] != y[0] || x[1] != y[1];
 		}
 
+		public static bool IsNewImportantVersion() {
+			return IsNewImportantVersion(MathSettings.settings.lastVersionInfocardChecked);
+		}
+
 		private static void IndexDefs<T>(Dictionary<string, T> dict) where T : Def {
 			var thing_list = DefDatabase<T>.AllDefs;
 
@@ -121,13 +126,29 @@ namespace CrunchyDuck.Math {
 			cachedMaps = new Dictionary<Map, CachedMapData>();
 		}
 
-		/// <returns>True if sequence is valid.</returns>
-		public static bool DoMath(string str, InputField field) {
-			if (str.NullOrEmpty())
+		public static bool DoMath(string equation, InputField field) {
+			float res = 0;
+			if (!DoMath(equation, field.bc, ref res))
+				return false;
+			field.CurrentValue = res;
+			return true;
+		}
+
+			/// <returns>True if sequence is valid.</returns>
+		public static bool DoMath(string equation, BillComponent bc, ref float result) {
+			if (equation.NullOrEmpty())
 				return false;
 
+			try {
+				if (!ParseUserVariables(ref equation))
+					return false;
+			}
+			// TODO: Some way of notifying the user that they performed infinite recursion.
+			catch (InfiniteRecursionException) {
+				return false;
+			}
 			List<string> parameter_list = new List<string>();
-			foreach (Match match in parameterNames.Matches(str)) {
+			foreach (Match match in parameterNames.Matches(equation)) {
 				// Matched single word.
 				if (match.Groups[4].Success) {
 					parameter_list.Add(match.Groups[4].Value);
@@ -140,38 +161,38 @@ namespace CrunchyDuck.Math {
 				// Spanish people aren't allowed to program.
 				int i = match.Index;
 				int i2 = match.Index + match.Length - 1;
-				str = str.Remove(i, 1).Insert(i, "[");
-				str = str.Remove(i2, 1).Insert(i2, "]");
+				equation = equation.Remove(i, 1).Insert(i, "[");
+				equation = equation.Remove(i2, 1).Insert(i2, "]");
 
 				string str2 = match.Groups[2].Value;
 				parameter_list.Add(str2);
 			}
-			Expression e = new Expression(str);
-			AddParameters(e, field, parameter_list);
+			Expression e = new Expression(equation);
+			AddParameters(e, bc, parameter_list);
 			// KNOWN BUG: `if` equations don't properly update. This is an ncalc issue - it evaluates the current path and ignores the other.
 			if (e.HasErrors())
 				return false;
-			object result;
+			object ncalc_result;
 			try {
-				result = e.Evaluate();
+				ncalc_result = e.Evaluate();
 			}
 			// For some reason, HasErrors() doesn't check if parameters are valid.
 			catch (ArgumentException) {
 				return false;
 			}
 
-			Type type = result.GetType();
+			Type type = ncalc_result.GetType();
 			Type[] accepted_types = new Type[] { typeof(int), typeof(decimal), typeof(double), typeof(float) };
 			if (!accepted_types.Contains(type))
 				return false;
 
 			try {
 				// this is dumb but necessary
-				field.CurrentValue = (int)Convert.ChangeType(Convert.ChangeType(result, type), typeof(int));
+				result = (int)Convert.ChangeType(Convert.ChangeType(ncalc_result, type), typeof(int));
 			}
 			// Divide by 0, mostly.
 			catch (OverflowException) {
-				field.CurrentValue = 999999;
+				result = 999999;
 			}
 			return true;
 		}
@@ -200,18 +221,44 @@ namespace CrunchyDuck.Math {
 			return cache;
 		}
 
-		public static void AddParameters(Expression e, InputField field, List<string> parameter_list) {
-			CachedMapData cache = field.bc.Cache;
+		public static bool ParseUserVariables(ref string str, int recursion_level = 0) {
+			if (recursion_level >= 5)
+				throw new InfiniteRecursionException();
+			Match match = variableNames.Match(str, 0);
+			while (match.Success) {
+				string variable_name = match.Groups[1].Value;
+				if (!MathSettings.settings.userVariablesDict.TryGetValue(variable_name, out UserVariable uv)){
+					return false;
+				}
+				string equation = uv.equation;
+
+				// Resolve any references this equation has.
+				if (!ParseUserVariables(ref equation, recursion_level + 1))
+					return false;
+
+				// Ensures things are parsed in a logical way.
+				equation = "(" + equation + ")";
+				str = str.Remove(match.Index, match.Length).Insert(match.Index, equation);
+
+				match = variableNames.Match(str, match.Index + equation.Length);
+			}
+			return true;
+		}
+
+		public static void AddParameters(Expression e, BillComponent bc, List<string> parameter_list) {
+			CachedMapData cache = bc.Cache;
 			if (cache == null) {
-				BillManager.instance.RemoveBillComponent(field.bc);
+				BillManager.instance.RemoveBillComponent(bc);
 				return;
 			}
 
 			foreach (string parameter in parameter_list) {
-				if (cache.SearchVariable(parameter, field.bc, out float count)) {
+				if (cache.SearchVariable(parameter, bc, out float count)) {
 					e.Parameters[parameter] = count;
 				}
 			}
 		}
 	}
+
+	public class InfiniteRecursionException : Exception {}
 }

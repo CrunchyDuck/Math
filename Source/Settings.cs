@@ -5,7 +5,8 @@ namespace CrunchyDuck.Math {
 	public class Settings : ModSettings {
         public float textInputAreaBonus = 200f;
 
-        public string lastVersionInfocardChecked = "";
+		public string lastVersionInfocardChecked = "";
+		public Dictionary<string, UserVariable> userVariablesDict = new Dictionary<string, UserVariable>();
 		public List<UserVariable> userVariables = new List<UserVariable>();
 
         public override void ExposeData() {
@@ -13,12 +14,24 @@ namespace CrunchyDuck.Math {
             Scribe_Values.Look(ref textInputAreaBonus, "CDtextInputAreaBonus", 200f);
 
             Scribe_Values.Look(ref lastVersionInfocardChecked, "CDlastVersionInfocardChecked", "");
-			//Scribe_Deep.Look(ref userVariables, "userVariables", new List<UserVariable>());
+			Scribe_Collections.Look(ref userVariables, "userVariables", LookMode.Deep);
+			// No idea why Collections doesn't seem to have an option for a default, or at least return an empty list.
+			if (userVariables == null)
+				userVariables = new List<UserVariable>();
+			UpdateUserVariables();
 			//userVariables = new List<UserVariable>();
-			//for (int i = 0; i < 50; i++) {
+			//for (int i = 0; i < 1; i++) {
 			//	userVariables.Add(new UserVariable());
 			//}
-        }
+		}
+
+		public void UpdateUserVariables() {
+			userVariablesDict = new Dictionary<string, UserVariable>();
+			foreach (UserVariable uv in userVariables) {
+				if (!userVariablesDict.ContainsKey(uv.name))
+					userVariablesDict[uv.name] = uv;
+			}
+		}
 
         // Pete's slider code.
         // https://github.com/PeteTimesSix/ResearchReinvented/blob/main/ResearchReinvented/Source/Utilities/ListingExtensions.cs

@@ -1,5 +1,7 @@
 ﻿using RimWorld;
 using Verse;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace CrunchyDuck.Math {
 	public static class Extensions {
@@ -8,6 +10,14 @@ namespace CrunchyDuck.Math {
 			str = str.Replace(".", "_");
 			str = str.ToLower();
 			return str;
+		}
+
+		public static bool IsParameter(this string str) {
+			foreach(char c in str) {
+				if (c == '"' || c == '.' || char.IsUpper(c))
+					return false;
+			}
+			return true;
 		}
 
 		public static bool HasMethod(this object objectToCheck, string methodName) {
@@ -24,6 +34,50 @@ namespace CrunchyDuck.Math {
 				return true;
 			}
 			return false;
+		}
+
+		public static void Move<T>(this IList<T> list, int from, int to) {
+			T item = list[from];
+			list.RemoveAt(from);
+			list.Insert(to, item);
+		}
+	}
+
+	public static class RectExtensions {
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectLeft(ref this Rect rect, float percent) {
+			Rect chunk = rect.LeftPart(percent);
+			rect.xMin += chunk.width;
+			return chunk;
+		}
+
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectLeft(ref this Rect rect, int pixels) {
+			Rect chunk = rect.LeftPartPixels(pixels);
+			rect.xMin += chunk.width;
+			return chunk;
+		}
+
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectRight(ref this Rect rect, float percent) {
+			Rect chunk = rect.RightPart(percent);
+			rect.xMax -= chunk.width;
+			return chunk;
+		}
+
+		/// <summary>
+		/// Remove a chunk from the rect and return it.
+		/// </summary>
+		public static Rect ChopRectRight(ref this Rect rect, int pixels) {
+			Rect chunk = rect.RightPartPixels(pixels);
+			rect.xMax -= chunk.width;
+			return chunk;
 		}
 	}
 }

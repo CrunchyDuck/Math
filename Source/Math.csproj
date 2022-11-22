@@ -52,6 +52,7 @@
     <Compile Include="BillLinkTracker.cs" />
     <Compile Include="BillManager.cs" />
     <Compile Include="CachedMapData.cs" />
+    <Compile Include="Dialogs\Dialog_Updates.cs" />
     <Compile Include="Dialogs\Dialog_VariableList.cs" />
     <Compile Include="MathFilters\CategoryFilter.cs" />
     <Compile Include="MathFilters\MathFilter.cs" />

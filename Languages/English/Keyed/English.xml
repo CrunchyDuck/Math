@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
+	<!-- Tooltips -->
+	<CD.M.tooltips.user_variables>User variables</CD.M.tooltips.user_variables>
+	
+	<!-- Update logs -->
+	<CD.M.updates.1.3>User variables:
+You can now create and save equations as variables! You type out an equation, give it a name, and then you can reuse that anywhere you want! More info can be found in the infocard at "Basic.Making a custom variable".
+User variables are remembered between saves, so once you type it out, you have it for as long as you want it. This can cut down on long equations quite a bit, allow for more complicated usage without becoming unwieldy, and reduce the amount of copying and pasting done.
+
+Future plans:
+Speaking of copying and pasting, that's next on the agenda: I'm working on an improvement to Better Workbench Management's Linking system. I'm really excited to get this done, expect it in the near future.
+I also want to make my mod compatible with Compositable Loadouts. It's been requested a few times, and it looks like a good mod.
+
+Minor changes:
+Added this window! I wanted to find a way to inform people on what's updated, but I don't like shoving something in someone's face the moment they start up the game.
+Added "mechanoids" pawn group, and stopped mechanoids being counted in "pawns"
+Added a close button to the infocard, at weirdly high request.
+Ingredient radius now properly renders.
+</CD.M.updates.1.3>
+	
 	<!-- Info card -->
 	<CD.M.infocard.introduction.description>This menu provides a reference for the Math! mod, its functions and variables, and some examples of what you can do with them.
 	
@@ -27,7 +46,26 @@ Turning this on, you can customize what the recipe counts to check how much of s
 For example, if you type in "category meals", it will count "simple meal", "fine meal", "packaged survival meal", etc.
 
 Leaving "Custom item count" off will use the default counting logic.</CD.M.infocard.basic.tutorials.itemcount.description>
+	<CD.M.infocard.basic.tutorials.user_variables>Making a custom variable</CD.M.infocard.basic.tutorials.user_variables>
+	<CD.M.infocard.basic.tutorials.user_variables.description>In bill menus there's a new button in the top left that looks like "{x}". Clicking on this will open up a new window that allows you to name and assign equations!
+User variables are remembered between save files, so you can reuse them wherever you like!
 
+Once you've created a variable, you can use it in any input field by typing "variables.name" or "v.name", where "name" is what you called your variable.
+For example, you might have the following variable:
+meals = "c.meals" - "packaged survival meal"
+You could then use this variable in an input field by typing:
+"v.meals"
+
+Variables work by directly pasting what you typed into the place of your variable, and surrounding it with brackets. For example:
+"v.meals" * 2 -> ("c.meals" - "packaged survival meal") * 2
+
+A variable should be named the same way parameters are - lowercase, no . or " in the name.</CD.M.infocard.basic.tutorials.user_variables.description>
+
+	<CD.M.infocard.basic.tutorials.doXTimes>Equations in "Do X Times" bills</CD.M.infocard.basic.tutorials.doXTimes>
+	<CD.M.infocard.basic.tutorials.doXTimes.description>Any equations you put into "Do X Times" will be resolved down into a number, rather than remembered like in "Do Until X".
+	
+This is done so you can make one-time calculations in the field, like colonists * 3, without the bill running forever.</CD.M.infocard.basic.tutorials.doXTimes.description>
+	
 	<CD.M.infocard.basic.examples.pawns>"colonists" * 2</CD.M.infocard.basic.examples.pawns>
 	<CD.M.infocard.basic.examples.pawns.description>Get the number of colonists you have, times two. Useful for things like clothing or weapon production.</CD.M.infocard.basic.examples.pawns.description>
 	<CD.M.infocard.basic.examples.intake>"pawns.intake" * 5</CD.M.infocard.basic.examples.intake>
