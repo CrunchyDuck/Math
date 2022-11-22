@@ -27,31 +27,54 @@ namespace CrunchyDuck.Math {
                 //var tip = "IW.ClickToDropTip".Translate();
                 tip = "Currently dropping output on floor. Click to take to stockpile.";
             }
-            var buttonRect = new Rect(baseRect.xMax - (24 + 4) * 4, baseRect.y, 24f, 24f);
+            var button_rect = new Rect(baseRect.xMax - (24 + 4) * 4 + 12, baseRect.y, 24f, 24f);
 
-            if (Widgets.ButtonImage(buttonRect, storeModeImage, baseColor)) {
+            if (Widgets.ButtonImage(button_rect, storeModeImage, baseColor)) {
                 SoundDefOf.DragSlider.PlayOneShotOnCamera();
                 __instance.SetStoreMode(nextStoreMode);
             }
-            TooltipHandler.TipRegion(buttonRect, tip);
+            TooltipHandler.TipRegion(button_rect, tip);
 
             // Paste bill as linked
-            buttonRect.x -= 24 + 4;
-            if (curr_copied != null && blt.parent != curr_copied && curr_copied != blt) {
-                if (Widgets.ButtonImage(buttonRect, Resources.linkImage, baseColor)) {
+            button_rect.width = 24;
+            button_rect.x -= button_rect.width + 4;
+			if (curr_copied != null && blt.parent != curr_copied && curr_copied != blt) {
+				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
                     SoundDefOf.DragSlider.PlayOneShotOnCamera();
-                    curr_copied.AddChild(blt);
-                }
+                    blt.LinkToParent(curr_copied);
+				}
+                // Link symbol
+                Rect img = button_rect.ContractedBy(2);
+                var col = Mouse.IsOver(button_rect) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
+				GUI.DrawTexture(img, Resources.linkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
+
+                TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.break_link".Translate());
             }
 
-			// Break link to parent bill
-            buttonRect.x -= 24 + 4;
-			if (blt.parent != null) {
-				if (Widgets.ButtonImage(buttonRect, Resources.breakLinkImage, baseColor)) {
+            // Break link to parent bill
+            button_rect.width = 24 + 4 + 24;
+            button_rect.x -= button_rect.width + 4;
+            if (blt.parent != null) {
+                var left = button_rect.LeftPartPixels(24).ContractedBy(2);
+                left.x += 4;
+				var right = button_rect.RightPartPixels(24).ContractedBy(2);
+
+                // Actual button
+                int par_id = blt.parent.myID;
+				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
 					SoundDefOf.DragSlider.PlayOneShotOnCamera();
-                    blt.BreakLink();
+					blt.BreakLink();
 				}
-			}
-		}
+
+                // Link symbol
+                var col = Mouse.IsOver(button_rect) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
+                GUI.DrawTexture(left, Resources.breakLinkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
+                
+                // Link ID
+                GUI.Label(right, par_id.ToString(), Text.CurFontStyle);
+
+                TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.make_link".Translate());
+            }
+        }
 	}
 }

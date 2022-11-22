@@ -29,6 +29,7 @@ namespace CrunchyDuck.Math {
 	// TODO: Next/previous buttons on bill details.
 	// TODO: add a button for infocard somewhere easier to access than a bill.
 	// TODO: Bill menu opens by default on clicking bench.
+	// TODO: Maybe allow things like smelting weapons to use Do Until X.
 	[StaticConstructorOnStartup]
 	class Math {
 		public static string version = "1.3.0";
