@@ -14,18 +14,10 @@ namespace CrunchyDuck.Math {
 	// TODO: Method to "resolve" a calculation, so it doesn't remember what you've typed in. This would be triggered by ctrl + enter
 	// TODO: Add math variable name to the i menu of all objects.
 	// TODO: Clothing rules/restriction variable.
-	// TODO: Add pop up window for inputting larger bills.
 	// TODO: Update "look everywhere" to ACTUALLY look everywhere, not just in stockpiles.
-	// TODO: Expanded view with the ability to make variables.
 	// TODO: Copy and link bills together (BWM)
-	// TODO: Drag to rearrange bills (BWM)
-	// TODO: Change "Unpause field" to accept booleans rather than thresholds.
 	// TODO: Language support for core variables. For example, changing my regex to support "ninos" instead of "kids"
-	// TODO: Rework pawn groups. Add a tab, allow searching specific pawns, make pawn group filtering better (filter modifiers like prisoner, guest, child)
-	// Access individual pawns as pawn group. 
-	// TODO BUG: Searching buildings like "simple research bench" doesn't work.
 	// TODO: Saving and loading bills, menu similar to infocard/variable card.
-	// TODO BUG: Input fields keep invalid input.
 	// TODO: Next/previous buttons on bill details.
 	// TODO: add a button for infocard somewhere easier to access than a bill.
 	// TODO: Bill menu opens by default on clicking bench.

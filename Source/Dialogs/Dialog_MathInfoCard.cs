@@ -98,7 +98,6 @@ namespace CrunchyDuck.Math {
 			}
 			List<TabRecord> tabs = new List<TabRecord>();
 
-			// TODO: More tabs, such as for categorydefs and maybe pawn groups?
 			tabs.Add(new TabRecord("Basic", () => tab = InfoCardTab.Basic, tab == InfoCardTab.Basic));
 			tabs.Add(new TabRecord("CD.M.infocard.pawns".Translate(), () => tab = InfoCardTab.Pawns, tab == InfoCardTab.Pawns));
 			tabs.Add(new TabRecord("CD.M.infocard.categories".Translate(), () => tab = InfoCardTab.Categories, tab == InfoCardTab.Categories));

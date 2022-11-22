@@ -6,7 +6,6 @@ using Verse;
 using RimWorld;
 
 namespace CrunchyDuck.Math {
-	// TODO: Finish this.
 	class Dialog_VariableList : Window {
 		private Vector2 scrollPosition = Vector2.zero;
 		public override Vector2 InitialSize => new Vector2(700f, 700f);
