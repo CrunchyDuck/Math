@@ -61,7 +61,6 @@ namespace CrunchyDuck.Math {
 		}
 
 		public void UpdateLinkedBills() {
-			// TODO: Link more fields.
 			foreach (BillLinkTracker c in childBCs) {
 				var other = c.bc;
 
