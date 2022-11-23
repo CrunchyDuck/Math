@@ -26,6 +26,8 @@ namespace CrunchyDuck.Math {
         private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
         public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
+		public Vector2 checkboxScrollPos = Vector2.zero;
+
 		private float extraPanelAllocation = MathSettings.settings.textInputAreaBonus / 3;
 
 		private float infoHoverHue = 0;
@@ -103,7 +105,7 @@ namespace CrunchyDuck.Math {
 			RenderIngredients(rect_right);
 
 			// Bill info panel.
-			RenderBillInfo(rect_left);
+			RenderLeftPanel(rect_left);
 
 			var buttons_x = rect_left.x;
 			// infocard button.
@@ -359,17 +361,17 @@ namespace CrunchyDuck.Math {
 			listing_Standard5.End();
 		}
 
-		private void RenderBillInfo(Rect rect_left) {
+		private void RenderLeftPanel(Rect rect_left) {
 			// Suspended button.
-			Listing_Standard listing_Standard6 = new Listing_Standard();
-			listing_Standard6.Begin(rect_left);
+			Listing_Standard ls = new Listing_Standard();
+			ls.Begin(rect_left);
 			if (bill.suspended) {
-				if (listing_Standard6.ButtonText("Suspended".Translate())) {
+				if (ls.ButtonText("Suspended".Translate())) {
 					bill.suspended = false;
 					SoundDefOf.Click.PlayOneShotOnCamera();
 				}
 			}
-			else if (listing_Standard6.ButtonText("NotSuspended".Translate())) {
+			else if (ls.ButtonText("NotSuspended".Translate())) {
 				bill.suspended = true;
 				SoundDefOf.Click.PlayOneShotOnCamera();
 			}
@@ -402,9 +404,52 @@ namespace CrunchyDuck.Math {
 			if (Text.CalcHeight(text6, rect_left.width) > rect_left.height) {
 				Text.Font = GameFont.Tiny;
 			}
-			listing_Standard6.Label(text6);
+			ls.Label(text6);
 			Text.Font = GameFont.Small;
-			listing_Standard6.End();
+			ls.End();
+
+			// Link options
+			Rect link_options_area = new Rect(rect_left.x, rect_left.y + ls.CurHeight, rect_left.width, rect_left.height - ls.CurHeight);
+			link_options_area.y = Mathf.Max(link_options_area.y, 150);
+			link_options_area.yMax = link_options_area.yMax - CloseButSize.y - 18f;
+			Widgets.DrawMenuSection(link_options_area);
+
+			link_options_area = link_options_area.ContractedBy(4);
+
+			Vector2 row_size = new Vector2(link_options_area.width, 30);
+			int checkboxes = 4;
+			//Widgets.CheckboxLabeled();
+			float scroll_area_total_height = checkboxes * row_size.y;
+			Rect scroll_area = new Rect(0.0f, 0.0f, link_options_area.width - 16f, scroll_area_total_height);
+
+			Widgets.BeginScrollView(link_options_area, ref checkboxScrollPos, scroll_area);
+			int i = 0;
+			Rect rect;
+
+			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
+			TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_suspended".Translate());
+			Widgets.CheckboxLabeled(rect, "Suspended", ref bc.linkTracker.linkSuspended);
+			
+			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
+			TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_input_fields".Translate());
+			Widgets.CheckboxLabeled(rect, "Input fields", ref bc.linkTracker.linkInputFields);
+			
+			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
+			if (bc.linkTracker.repeatModeCompatible)
+				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_repeat_mode".Translate());
+			else
+				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_repeat_mode_incompatible".Translate());
+			Widgets.CheckboxLabeled(rect, "Repeat mode", ref bc.linkTracker.linkRepeatMode, !bc.linkTracker.repeatModeCompatible);
+			
+			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
+			if (bc.linkTracker.repeatModeCompatible)
+				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_ingredients".Translate());
+			else
+				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_ingredients_incompatible".Translate());
+			Widgets.CheckboxLabeled(rect, "Ingredients", ref bc.linkTracker.linkIngredients, !bc.linkTracker.ingredientsCompatible);
+			//Widgets.CheckboxLabeled(new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y), "testincompat", ref bc.linkTracker.ingredientsCompatible, true);
+
+			Widgets.EndScrollView();
 		}
 
 		private static void MathBillEntry(InputField field, Listing_Standard ls, int multiplier = 1) {
