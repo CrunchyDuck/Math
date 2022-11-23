@@ -324,18 +324,19 @@ namespace CrunchyDuck.Math {
 
 		private void RenderIngredients(Rect rect_right) {
 			Rect rect5 = rect_right;
-			bool flag = true;
+			bool only_fixed_ingredients = true;
 			for (int j = 0; j < bill.recipe.ingredients.Count; j++) {
 				if (!bill.recipe.ingredients[j].IsFixedIngredient) {
-					flag = false;
+					only_fixed_ingredients = false;
 					break;
 				}
 			}
-			if (!flag) {
+			if (!only_fixed_ingredients) {
 				rect5.yMin = rect5.yMax - IngredientRadiusSubdialogHeight;
 				rect_right.yMax = rect5.yMin - 17f;
 				bool num = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
 				ThingFilterUI.DoThingFilterConfigWindow(rect_right, thingFilterState, bill.ingredientFilter, bill.recipe.fixedIngredientFilter, 4, null, HiddenSpecialThingFilters.ConcatIfNotNull(bill.recipe.forceHiddenSpecialFilters), forceHideHitPointsConfig: false, bill.recipe.GetPremultipliedSmallIngredients(), bill.Map);
+				Log.ErrorOnce((bill.recipe.fixedIngredientFilter != null).ToString(), 33);
 				bool flag2 = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
 				if (num && !flag2) {
 					Messages.Message("MessageBillValidationStoreZoneInsufficient".Translate(bill.LabelCap, bill.billStack.billGiver.LabelShort.CapitalizeFirst(), bill.GetStoreZone().label), bill.billStack.billGiver as Thing, MessageTypeDefOf.RejectInput, historical: false);
@@ -344,6 +345,7 @@ namespace CrunchyDuck.Math {
 			else {
 				rect5.yMin = 50f;
 			}
+
 			// Ingredient search slider.
 			Listing_Standard listing_Standard5 = new Listing_Standard();
 			listing_Standard5.Begin(rect5);

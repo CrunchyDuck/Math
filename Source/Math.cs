@@ -30,6 +30,11 @@ namespace CrunchyDuck.Math {
 	// TODO: add a button for infocard somewhere easier to access than a bill.
 	// TODO: Bill menu opens by default on clicking bench.
 	// TODO: Maybe allow things like smelting weapons to use Do Until X.
+	// TODO: Look at adding Math to Autoseller mod.
+
+	// TODO BUG: So, often people report that bills will stop updating properly. The only solution to this is to destroy the bill and remake it.
+	// I theorize this might happen if the bill's ID somehow changes. If this happens, the original BillComponent will still exist, but won't be findable.
+	// I think I could solve this by making the bills index themselves when loaded, rather than trying to find them.
 	[StaticConstructorOnStartup]
 	class Math {
 		public static string version = "1.3.0";

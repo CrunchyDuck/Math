@@ -26,8 +26,7 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
-		private static FieldInfo getThings = AccessTools.Field(typeof(ThingFilter), "thingDefs");
-		private static FieldInfo getDisallowedDefs = AccessTools.Field(typeof(ThingFilter), "disallowedThingDefs");
+		private static FieldInfo ThingFilter_allowedDefs = AccessTools.Field(typeof(ThingFilter), "allowedDefs");
 
 
 		public BillComponent bc;
@@ -131,8 +130,22 @@ namespace CrunchyDuck.Math {
 
 		// TODO: Check performance of this.
 		private static void MatchIngredients(BillComponent from, BillComponent to) {
-			var t = to.targetBill.ingredientFilter;
-			var f = from.targetBill.ingredientFilter;
+			var f = (HashSet<ThingDef>)ThingFilter_allowedDefs.GetValue(from.targetBill.ingredientFilter);
+			ThingFilter_allowedDefs.SetValue(to.targetBill.ingredientFilter, new HashSet<ThingDef>(f));
+
+			//f.CopyTo(t);
+
+			//var parent_filter = from.targetBill.recipe.fixedIngredientFilter;
+			//if (parent_filter != null) {
+			//	foreach (ThingDef allowedDef in (HashSet<ThingDef>)getThings.GetValue(parent_filter)) {
+			//		if (from.targetBill.ingredientFilter.Allows(allowedDef))
+			//			this.allowedDefs.Add();
+			//		else
+			//	}
+			//}
+			//else{
+			//	Log.Message("Bill: " + to.targetBill.ToString() + " has no fixed ingredient filter.");
+			//}
 
 			//foreach (ThingDef td in (HashSet<ThingDef>)getAllowedDefs.GetValue(f)) {
 			//	t.SetAllow(td, true);
@@ -142,12 +155,13 @@ namespace CrunchyDuck.Math {
 			//	Log.Error("Here");
 			//}
 			// TODO: doesn't work
-			Log.Error((getThings == null).ToString());
-			var r = (List<ThingDef>)getThings.GetValue(f);
-			Log.Error((r == null).ToString());
-			foreach (ThingDef td in (List<ThingDef>)getThings.GetValue(f)) {
-				t.SetAllow(td, f.Allows(td));
-			}
+
+			//Log.Error((getThings == null).ToString());
+			//var r = (List<ThingDef>)getThings.GetValue(f);
+			//Log.Error((r == null).ToString());
+			//foreach (ThingDef td in (List<ThingDef>)getThings.GetValue(f)) {
+			//	t.SetAllow(td, f.Allows(td));
+			//}
 		}
 
 		// Yes, it should be are. But naming consistency.
