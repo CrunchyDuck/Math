@@ -26,7 +26,10 @@ namespace CrunchyDuck.Math {
         private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
         public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
-		public Vector2 checkboxScrollPos = Vector2.zero;
+		public Vector2 linkSettingsScrollPos = Vector2.zero;
+		public const int LinkSettingsHeight = 150;
+		public const int ScrollBarWidth = 16;
+		public float BottomAreaHeight { get { return CloseButSize.y + 18; } }
 
 		private float extraPanelAllocation = MathSettings.settings.textInputAreaBonus / 3;
 
@@ -259,7 +262,7 @@ namespace CrunchyDuck.Math {
 			if (listing2.ButtonText(label1)) {
 				Text.Font = GameFont.Small;
 				List<FloatMenuOption> options = new List<FloatMenuOption>();
-				foreach (BillStoreModeDef billStoreModeDef in DefDatabase<BillStoreModeDef>.AllDefs.OrderBy<BillStoreModeDef, int>(bsm => bsm.listOrder)) {
+				foreach (BillStoreModeDef billStoreModeDef in DefDatabase<BillStoreModeDef>.AllDefs.OrderBy(bsm => bsm.listOrder)) {
 					if (billStoreModeDef == BillStoreModeDefOf.SpecificStockpile) {
 						List<SlotGroup> listInPriorityOrder = bill.billStack.billGiver.Map.haulDestinationManager.AllGroupsListInPriorityOrder;
 						int count = listInPriorityOrder.Count;
@@ -313,8 +316,8 @@ namespace CrunchyDuck.Math {
 				button_label = "AnyWorker".Translate();
 
 			// Worker restriction dropdown.
-			var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Pawn>>>)(b => this.GeneratePawnRestrictionOptions());
-			Widgets.Dropdown<Bill_Production, Pawn>(listing.GetRect(30f), bill, b => b.PawnRestriction, f, button_label);
+			var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Pawn>>>)(b => GeneratePawnRestrictionOptions());
+			Widgets.Dropdown(listing.GetRect(30f), bill, b => b.PawnRestriction, f, button_label);
 			
 			// Worker skill restriction.
 			if (bill.PawnRestriction == null && bill.recipe.workSkill != null && !bill.MechsOnly) {
@@ -338,7 +341,6 @@ namespace CrunchyDuck.Math {
 				rect_right.yMax = rect5.yMin - 17f;
 				bool num = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
 				ThingFilterUI.DoThingFilterConfigWindow(rect_right, thingFilterState, bill.ingredientFilter, bill.recipe.fixedIngredientFilter, 4, null, HiddenSpecialThingFilters.ConcatIfNotNull(bill.recipe.forceHiddenSpecialFilters), forceHideHitPointsConfig: false, bill.recipe.GetPremultipliedSmallIngredients(), bill.Map);
-				Log.ErrorOnce((bill.recipe.fixedIngredientFilter != null).ToString(), 33);
 				bool flag2 = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
 				if (num && !flag2) {
 					Messages.Message("MessageBillValidationStoreZoneInsufficient".Translate(bill.LabelCap, bill.billStack.billGiver.LabelShort.CapitalizeFirst(), bill.GetStoreZone().label), bill.billStack.billGiver as Thing, MessageTypeDefOf.RejectInput, historical: false);
@@ -409,45 +411,54 @@ namespace CrunchyDuck.Math {
 			ls.End();
 
 			// Link options
-			Rect link_options_area = new Rect(rect_left.x, rect_left.y + ls.CurHeight, rect_left.width, rect_left.height - ls.CurHeight);
-			link_options_area.y = Mathf.Max(link_options_area.y, 150);
-			link_options_area.yMax = link_options_area.yMax - CloseButSize.y - 18f;
-			Widgets.DrawMenuSection(link_options_area);
+			RenderLinkSettings(new Rect(rect_left.x, rect_left.yMax - BottomAreaHeight - LinkSettingsHeight, rect_left.width, LinkSettingsHeight));
+		}
 
-			link_options_area = link_options_area.ContractedBy(4);
+		private void RenderLinkSettings(Rect render_area) {
+			Widgets.DrawMenuSection(render_area);
 
-			Vector2 row_size = new Vector2(link_options_area.width, 30);
+			render_area = render_area.ContractedBy(4);
+
+			Vector2 row_size = new Vector2(render_area.width - ScrollBarWidth, 30);
 			int checkboxes = 4;
 			//Widgets.CheckboxLabeled();
 			float scroll_area_total_height = checkboxes * row_size.y;
-			Rect scroll_area = new Rect(0.0f, 0.0f, link_options_area.width - 16f, scroll_area_total_height);
+			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - ScrollBarWidth, scroll_area_total_height);
 
-			Widgets.BeginScrollView(link_options_area, ref checkboxScrollPos, scroll_area);
+			Widgets.BeginScrollView(render_area, ref linkSettingsScrollPos, scroll_area);
 			int i = 0;
 			Rect rect;
+			// TODO: Change this to be the click-and-drag type of checkboxes.
 
 			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
 			TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_suspended".Translate());
 			Widgets.CheckboxLabeled(rect, "Suspended", ref bc.linkTracker.linkSuspended);
-			
+
+			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
+			TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_input_fields".Translate());
+			Widgets.CheckboxLabeled(rect, "Target value/Repeat count", ref bc.linkTracker.linkInputFields);
+
 			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
 			TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_input_fields".Translate());
 			Widgets.CheckboxLabeled(rect, "Input fields", ref bc.linkTracker.linkInputFields);
-			
+
 			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
-			if (bc.linkTracker.repeatModeCompatible)
+			TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_input_fields".Translate());
+			Widgets.CheckboxLabeled(rect, "Input fields", ref bc.linkTracker.linkInputFields);
+
+			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
+			if (bc.linkTracker.compatibleRepeatMode)
 				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_repeat_mode".Translate());
 			else
 				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_repeat_mode_incompatible".Translate());
-			Widgets.CheckboxLabeled(rect, "Repeat mode", ref bc.linkTracker.linkRepeatMode, !bc.linkTracker.repeatModeCompatible);
-			
+			Widgets.CheckboxLabeled(rect, "Repeat mode", ref bc.linkTracker.linkRepeatMode, !bc.linkTracker.compatibleRepeatMode);
+
 			rect = new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y);
-			if (bc.linkTracker.repeatModeCompatible)
+			if (bc.linkTracker.compatibleRepeatMode)
 				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_ingredients".Translate());
 			else
 				TooltipHandler.TipRegion(rect, "CD.M.tooltips.link_ingredients_incompatible".Translate());
-			Widgets.CheckboxLabeled(rect, "Ingredients", ref bc.linkTracker.linkIngredients, !bc.linkTracker.ingredientsCompatible);
-			//Widgets.CheckboxLabeled(new Rect(0.0f, row_size.y * i++, row_size.x, row_size.y), "testincompat", ref bc.linkTracker.ingredientsCompatible, true);
+			Widgets.CheckboxLabeled(rect, "Ingredients", ref bc.linkTracker.linkIngredients, !bc.linkTracker.compatibleIngredients);
 
 			Widgets.EndScrollView();
 		}
