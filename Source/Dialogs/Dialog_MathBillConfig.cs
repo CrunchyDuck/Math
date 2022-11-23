@@ -429,7 +429,6 @@ namespace CrunchyDuck.Math {
 
 			// Code heavily inspired by ThingFilterUI.DoThingFilterConfigWindow
 			Widgets.BeginScrollView(render_area, ref linkSettingsScrollPos, scroll_area);
-			// TODO: Change this to be the click-and-drag type of checkboxes.
 			Listing_Tree lt = new Listing_Tree();
 			lt.Begin(scroll_area);
 			foreach (Generic_TreeNode node in linkSettingsMaster.children) {
@@ -610,18 +609,10 @@ namespace CrunchyDuck.Math {
 			Action<Generic_TreeNode, bool> on_act;
 			Func<Generic_TreeNode, MultiCheckboxState> check_state;
 
-			// Ingredients cat
-			var link_ingredients = new Generic_TreeNode("Link ingredients", "", category_on_act, category_check_state);
-			// Ingredients
-			on_act = (node, b) => bc.linkTracker.linkIngredients = b;
-			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredients);
-			link_ingredients.children.Add(new Generic_TreeNode("Ingredients", "", on_act, check_state));
-			// Ingredients radius
-			on_act = (node, b) => bc.linkTracker.linkIngredientsRadius = b;
-			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredientsRadius);
-			link_ingredients.children.Add(new Generic_TreeNode("Ingredient radius", "", on_act, check_state));
-
-			master.children.Add(link_ingredients);
+			// Name
+			on_act = (node, b) => lt.linkName = b;
+			check_state = (node) => CheckboxState(lt.linkName);
+			master.children.Add(new Generic_TreeNode("Name", "", on_act, check_state));
 
 			// Input settings
 			Generic_TreeNode input_settings = new Generic_TreeNode("Link input fields", "", category_on_act, category_check_state);
@@ -641,6 +632,10 @@ namespace CrunchyDuck.Math {
 			// Main settings
 			Generic_TreeNode middle_settings = new Generic_TreeNode("Middle panel", "I couldn't think of a better name, sorry.", category_on_act, category_check_state);
 			middle_settings.children.Add(input_settings);
+			// Repeat mode
+			on_act = (node, b) => lt.linkRepeatMode = b;
+			check_state = (node) => CheckboxState(lt.linkRepeatMode);
+			middle_settings.children.Add(new Generic_TreeNode("Repeat mode", "", on_act, check_state, () => !lt.compatibleRepeatMode, ""));
 			// Tainted
 			on_act = (node, b) => lt.linkTainted = b;
 			check_state = (node) => CheckboxState(lt.linkTainted);
@@ -653,6 +648,10 @@ namespace CrunchyDuck.Math {
 			on_act = (node, b) => lt.linkOnlyAllowedIngredients = b;
 			check_state = (node) => CheckboxState(lt.linkOnlyAllowedIngredients);
 			middle_settings.children.Add(new Generic_TreeNode("Only allowed ingredients", "", on_act, check_state));
+			// Stockpile to check
+			on_act = (node, b) => lt.linkCheckStockpiles = b;
+			check_state = (node) => CheckboxState(lt.linkCheckStockpiles);
+			middle_settings.children.Add(new Generic_TreeNode("Stockpile to check", "", on_act, check_state));
 			// Hitpoints
 			on_act = (node, b) => lt.linkCountHitpoints= b;
 			check_state = (node) => CheckboxState(lt.linkCountHitpoints);
@@ -661,10 +660,26 @@ namespace CrunchyDuck.Math {
 			on_act = (node, b) => lt.linkCountQuality = b;
 			check_state = (node) => CheckboxState(lt.linkCountQuality);
 			middle_settings.children.Add(new Generic_TreeNode("Quality filter", "", on_act, check_state));
-			// Stockpile to check
-			on_act = (node, b) => lt.linkTainted = b;
-			check_state = (node) => CheckboxState(lt.linkCheckStockpiles);
-			middle_settings.children.Add(new Generic_TreeNode("Stockpile to check", "", on_act, check_state, () => true));
+			// Stockpile
+			on_act = (node, b) => lt.linkStockpiles = b;
+			check_state = (node) => CheckboxState(lt.linkStockpiles);
+			middle_settings.children.Add(new Generic_TreeNode("Take to stockpile", "", on_act, check_state, () => !lt.compatibleStockpiles, ""));
+			// Workers
+			on_act = (node, b) => lt.linkWorkers = b;
+			check_state = (node) => CheckboxState(lt.linkWorkers);
+			middle_settings.children.Add(new Generic_TreeNode("Workers", "", on_act, check_state, () => !lt.compatibleWorkers, ""));
+
+			// Ingredients cat
+			var link_ingredients = new Generic_TreeNode("Link ingredients", "", category_on_act, category_check_state);
+			// Ingredients
+			on_act = (node, b) => bc.linkTracker.linkIngredients = b;
+			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredients);
+			link_ingredients.children.Add(new Generic_TreeNode("Ingredients", "", on_act, check_state, () => !lt.compatibleStockpiles, ""));
+			// Ingredients radius
+			on_act = (node, b) => bc.linkTracker.linkIngredientsRadius = b;
+			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredientsRadius);
+			link_ingredients.children.Add(new Generic_TreeNode("Ingredient radius", "", on_act, check_state));
+			master.children.Add(link_ingredients);
 
 			master.children.Add(middle_settings);
 
