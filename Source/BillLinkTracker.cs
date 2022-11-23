@@ -35,8 +35,13 @@ namespace CrunchyDuck.Math {
 		private HashSet<BillLinkTracker> childBCs = new HashSet<BillLinkTracker>();
 
 		public BillLinkTracker parent = null;
-		//public bool ingredientsCompatible = false;
-		public bool countingCompatible = false;
+		public bool ingredientsCompatible = false;
+		public bool repeatModeCompatible = false;
+
+		public bool linkSuspended = false;
+		public bool linkInputFields = false;
+		public bool linkRepeatMode = false;
+		public bool linkIngredients = false;
 
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
@@ -80,7 +85,10 @@ namespace CrunchyDuck.Math {
 			}
 
 			child.parent = this;
-			child.countingCompatible = CanCountProducts(child) == CanCountProducts(this);
+			child.linkInputFields = true;
+			child.linkSuspended = true;
+			child.repeatModeCompatible = child.linkRepeatMode = CanCountProducts(child) == CanCountProducts(this);
+			child.ingredientsCompatible = child.linkIngredients = IsIngredientsCompatible(child.bc);
 			childBCs.Add(child);
 		}
 
@@ -104,21 +112,30 @@ namespace CrunchyDuck.Math {
 
 		public void UpdateLinkedBills() {
 			// TODO: Link more fields.
-			foreach (BillLinkTracker blt in childBCs) {
-				var other = blt.bc;
+			foreach (BillLinkTracker child in childBCs) {
+				var other = child.bc;
 
-				MatchInputField(other.doXTimes, bc.doXTimes);
-				MatchInputField(other.doUntilX, bc.doUntilX);
-				MatchInputField(other.itemsToCount, bc.itemsToCount);
-				MatchInputField(other.unpause, bc.unpause);
-				other.customItemsToCount = bc.customItemsToCount;
+				if (child.linkInputFields) {
+					MatchInputField(other.doXTimes, bc.doXTimes);
+					MatchInputField(other.doUntilX, bc.doUntilX);
+					MatchInputField(other.itemsToCount, bc.itemsToCount);
+					MatchInputField(other.unpause, bc.unpause);
+					other.customItemsToCount = bc.customItemsToCount;
+				}
 
-				other.targetBill.suspended = bc.targetBill.suspended;
+				if (child.linkSuspended)
+					other.targetBill.suspended = bc.targetBill.suspended;
 
-				other.targetBill.repeatMode = bc.targetBill.repeatMode;
-				other.targetBill.paused = bc.targetBill.paused;
+				if (child.repeatModeCompatible && child.linkRepeatMode) {
+					other.targetBill.repeatMode = bc.targetBill.repeatMode;
+					other.targetBill.paused = bc.targetBill.paused;
+				}
+
+				// TODO: Check store locations are compatible.
 				other.targetBill.SetStoreMode(bc.targetBill.GetStoreMode());
-				MatchIngredients(bc, other);
+				
+				if (child.ingredientsCompatible && child.linkIngredients)
+					MatchIngredients(bc, other);
 			}
 		}
 
@@ -128,46 +145,19 @@ namespace CrunchyDuck.Math {
 			from.lastValid = to.lastValid;
 		}
 
-		// TODO: Check performance of this.
 		private static void MatchIngredients(BillComponent from, BillComponent to) {
+			// TODO: Match special filters.
 			var f = (HashSet<ThingDef>)ThingFilter_allowedDefs.GetValue(from.targetBill.ingredientFilter);
 			ThingFilter_allowedDefs.SetValue(to.targetBill.ingredientFilter, new HashSet<ThingDef>(f));
-
-			//f.CopyTo(t);
-
-			//var parent_filter = from.targetBill.recipe.fixedIngredientFilter;
-			//if (parent_filter != null) {
-			//	foreach (ThingDef allowedDef in (HashSet<ThingDef>)getThings.GetValue(parent_filter)) {
-			//		if (from.targetBill.ingredientFilter.Allows(allowedDef))
-			//			this.allowedDefs.Add();
-			//		else
-			//	}
-			//}
-			//else{
-			//	Log.Message("Bill: " + to.targetBill.ToString() + " has no fixed ingredient filter.");
-			//}
-
-			//foreach (ThingDef td in (HashSet<ThingDef>)getAllowedDefs.GetValue(f)) {
-			//	t.SetAllow(td, true);
-			//}
-			//foreach (ThingDef td in (List<ThingDef>)getDisallowedDefs.GetValue(f)) {
-			//	t.SetAllow(td, false);
-			//	Log.Error("Here");
-			//}
-			// TODO: doesn't work
-
-			//Log.Error((getThings == null).ToString());
-			//var r = (List<ThingDef>)getThings.GetValue(f);
-			//Log.Error((r == null).ToString());
-			//foreach (ThingDef td in (List<ThingDef>)getThings.GetValue(f)) {
-			//	t.SetAllow(td, f.Allows(td));
-			//}
 		}
 
 		// Yes, it should be are. But naming consistency.
 		public bool IsIngredientsCompatible(BillComponent other) {
-			// TODO: Check this works at all.
-			return bc.targetBill.ingredientFilter == other.targetBill.ingredientFilter;
+			// Can fixedIngredientFilter be null? i suspect so.
+			var f = (HashSet<ThingDef>)ThingFilter_allowedDefs.GetValue(bc.targetBill.recipe.fixedIngredientFilter);
+			var t = (HashSet<ThingDef>)ThingFilter_allowedDefs.GetValue(other.targetBill.recipe.fixedIngredientFilter);
+
+			return f.SetEquals(t);
 		}
 	}
 }
