@@ -29,7 +29,8 @@ namespace CrunchyDuck.Math {
 		public Vector2 linkSettingsScrollPos = Vector2.zero;
 		public const int LinkSettingsHeight = 150;
 		public const int ScrollBarWidth = 16;
-		public TreeNode linkSettingsMaster;
+		private TreeNode linkSettingsMaster;
+		private float linkSettingsHeight = 0;
 		public float BottomAreaHeight { get { return CloseButSize.y + 18; } }
 
 		private float extraPanelAllocation = MathSettings.settings.textInputAreaBonus / 3;
@@ -63,7 +64,7 @@ namespace CrunchyDuck.Math {
 			bc.unpause.buffer = bc.unpause.lastValid;
 			bc.doXTimes.buffer = bc.doXTimes.lastValid;
 			bc.itemsToCount.buffer = bc.itemsToCount.lastValid;
-			linkSettingsMaster = GetLinkSettingsTree();
+			linkSettingsMaster = GenerateLinkSettingsTree();
 
 			forcePause = true;
 			doCloseX = true;
@@ -423,10 +424,8 @@ namespace CrunchyDuck.Math {
 			render_area = render_area.ContractedBy(4);
 
 			Vector2 row_size = new Vector2(render_area.width - ScrollBarWidth, 30);
-			int checkboxes = 4;
 			//Widgets.CheckboxLabeled();
-			float scroll_area_total_height = checkboxes * row_size.y;
-			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - ScrollBarWidth, scroll_area_total_height);
+			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - ScrollBarWidth, linkSettingsHeight);
 
 			// Code heavily inspired by ThingFilterUI.DoThingFilterConfigWindow
 			Widgets.BeginScrollView(render_area, ref linkSettingsScrollPos, scroll_area);
@@ -436,6 +435,7 @@ namespace CrunchyDuck.Math {
 			foreach (Generic_TreeNode node in linkSettingsMaster.children) {
 				node.Render(lt, 0);
 			}
+			linkSettingsHeight = lt.CurHeight + 10;
 			lt.End();
 			Widgets.EndScrollView();
 		}
@@ -573,7 +573,7 @@ namespace CrunchyDuck.Math {
 			}
 		}
 	
-		private TreeNode GetLinkSettingsTree() {
+		private TreeNode GenerateLinkSettingsTree() {
 			/// BEWARE, YE
 			/// This code is a beautiful, dark hole.
 			/// Cryptic indeed, arcane mayhaps, and artfully blunt.
@@ -632,11 +632,11 @@ namespace CrunchyDuck.Math {
 			// Custom Item Count
 			on_act = (node, b) => lt.linkCustomItemCount = b;
 			check_state = (node) => CheckboxState(lt.linkCustomItemCount);
-			input_settings.children.Add(new Generic_TreeNode("Target count", "", on_act, check_state));
+			input_settings.children.Add(new Generic_TreeNode("Custom item count", "", on_act, check_state));
 			// Pause
 			on_act = (node, b) => lt.linkPause = b;
 			check_state = (node) => CheckboxState(lt.linkPause);
-			input_settings.children.Add(new Generic_TreeNode("Target count", "", on_act, check_state));
+			input_settings.children.Add(new Generic_TreeNode("Pause", "", on_act, check_state));
 
 			// Main settings
 			Generic_TreeNode middle_settings = new Generic_TreeNode("Middle panel", "I couldn't think of a better name, sorry.", category_on_act, category_check_state);
@@ -664,7 +664,7 @@ namespace CrunchyDuck.Math {
 			// Stockpile to check
 			on_act = (node, b) => lt.linkTainted = b;
 			check_state = (node) => CheckboxState(lt.linkCheckStockpiles);
-			middle_settings.children.Add(new Generic_TreeNode("Stockpile to check", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("Stockpile to check", "", on_act, check_state, () => true));
 
 			master.children.Add(middle_settings);
 
@@ -695,14 +695,16 @@ namespace CrunchyDuck.Math {
 		public Action<Generic_TreeNode, bool> ToggleAction;
 		public Func<Generic_TreeNode, MultiCheckboxState> CheckState;
 		public Func<bool> CheckDisabled;
+		public string disabledTooltip;
 
-		public Generic_TreeNode(string name, string tooltip, Action<Generic_TreeNode, bool> toggle_act, Func<Generic_TreeNode, MultiCheckboxState> check_state, Func<bool> check_disabled = null) {
+		public Generic_TreeNode(string name, string tooltip, Action<Generic_TreeNode, bool> toggle_act, Func<Generic_TreeNode, MultiCheckboxState> check_state, Func<bool> check_disabled = null, string disabled_tooltip = "") {
 			children = new List<TreeNode>();
 			this.name = name;
 			this.tooltip = tooltip;
 			this.ToggleAction = toggle_act;
 			this.CheckState = check_state;
 			this.CheckDisabled = check_disabled;
+			this.disabledTooltip = disabled_tooltip;
 		}
 
 		public void Render(Listing_Tree lt, int indentation_level) {
@@ -721,13 +723,21 @@ namespace CrunchyDuck.Math {
 		}
 
 		public void RenderLine(Listing_Tree lt, int indentation_level) {
-			lt.LabelLeft(name, tooltip, indentation_level, textColor: Color.white);
-			MultiCheckboxState state = CheckState(this);
-			MultiCheckboxState multiCheckboxState = Widgets.CheckboxMulti(new Rect(lt.LabelWidth, lt.curY, lt.lineHeight, lt.lineHeight), state, true);
-			if (multiCheckboxState == MultiCheckboxState.On)
-				ToggleAction(this, true);
-			else if (multiCheckboxState == MultiCheckboxState.Off)
-				ToggleAction(this, false);
+			var checkbox_pos = new Rect(lt.LabelWidth, lt.curY, lt.lineHeight, lt.lineHeight);
+			if (CheckDisabled != null && CheckDisabled()) {
+				bool b = false;
+				Widgets.Checkbox(checkbox_pos.position, ref b, lt.lineHeight, true);
+				lt.LabelLeft(name, disabledTooltip, indentation_level, textColor: Color.grey);
+			}
+			else {
+				lt.LabelLeft(name, tooltip, indentation_level, textColor: Color.white);
+				MultiCheckboxState state = CheckState(this);
+				MultiCheckboxState multiCheckboxState = Widgets.CheckboxMulti(checkbox_pos, state, true);
+				if (multiCheckboxState == MultiCheckboxState.On)
+					ToggleAction(this, true);
+				else if (multiCheckboxState == MultiCheckboxState.Off)
+					ToggleAction(this, false);
+			}
 		}
 	}
 }
