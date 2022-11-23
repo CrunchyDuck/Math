@@ -420,11 +420,7 @@ namespace CrunchyDuck.Math {
 
 		private void RenderLinkSettings(Rect render_area) {
 			Widgets.DrawMenuSection(render_area);
-
 			render_area = render_area.ContractedBy(4);
-
-			Vector2 row_size = new Vector2(render_area.width - ScrollBarWidth, 30);
-			//Widgets.CheckboxLabeled();
 			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - ScrollBarWidth, linkSettingsHeight);
 
 			// Code heavily inspired by ThingFilterUI.DoThingFilterConfigWindow
@@ -612,76 +608,75 @@ namespace CrunchyDuck.Math {
 			// Name
 			on_act = (node, b) => lt.linkName = b;
 			check_state = (node) => CheckboxState(lt.linkName);
-			master.children.Add(new Generic_TreeNode("Name", "", on_act, check_state));
+			master.children.Add(new Generic_TreeNode("CD.M.link.name".Translate(), "CD.M.link.name.description".Translate(), on_act, check_state));
 
 			// Input settings
-			Generic_TreeNode input_settings = new Generic_TreeNode("Link input fields", "", category_on_act, category_check_state);
+			Generic_TreeNode input_settings = new Generic_TreeNode("CD.M.link.input_fields".Translate(), "CD.M.link.input_fields.description".Translate(), category_on_act, category_check_state);
 			// Target count
 			on_act = (node, b) => lt.linkTargetCount = b;
 			check_state = (node) => CheckboxState(lt.linkTargetCount);
-			input_settings.children.Add(new Generic_TreeNode("Target count", "", on_act, check_state));
+			input_settings.children.Add(new Generic_TreeNode("CD.M.link.target_count".Translate(), "CD.M.link.target_count.description".Translate(), on_act, check_state));
 			// Custom Item Count
 			on_act = (node, b) => lt.linkCustomItemCount = b;
 			check_state = (node) => CheckboxState(lt.linkCustomItemCount);
-			input_settings.children.Add(new Generic_TreeNode("Custom item count", "", on_act, check_state));
+			input_settings.children.Add(new Generic_TreeNode("CD.M.link.custom_item_count".Translate(), "CD.M.link.custom_item_count.description".Translate(), on_act, check_state));
 			// Pause
 			on_act = (node, b) => lt.linkPause = b;
 			check_state = (node) => CheckboxState(lt.linkPause);
-			input_settings.children.Add(new Generic_TreeNode("Pause", "", on_act, check_state));
+			input_settings.children.Add(new Generic_TreeNode("CD.M.link.pause".Translate(), "CD.M.link.pause.description".Translate(), on_act, check_state));
 
 			// Main settings
-			Generic_TreeNode middle_settings = new Generic_TreeNode("Middle panel", "I couldn't think of a better name, sorry.", category_on_act, category_check_state);
+			Generic_TreeNode middle_settings = new Generic_TreeNode("CD.M.link.middle_panel".Translate(), "CD.M.link.middle_panel.description".Translate(), category_on_act, category_check_state);
 			middle_settings.children.Add(input_settings);
 			// Repeat mode
 			on_act = (node, b) => lt.linkRepeatMode = b;
 			check_state = (node) => CheckboxState(lt.linkRepeatMode);
-			middle_settings.children.Add(new Generic_TreeNode("Repeat mode", "", on_act, check_state, () => !lt.compatibleRepeatMode, ""));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.repeat_mode".Translate(), "CD.M.link.repeat_mode.description".Translate(), on_act, check_state, () => !lt.compatibleRepeatMode, "CD.M.link.repeat_mode_incompatible".Translate()));
 			// Tainted
 			on_act = (node, b) => lt.linkTainted = b;
 			check_state = (node) => CheckboxState(lt.linkTainted);
-			middle_settings.children.Add(new Generic_TreeNode("Tainted", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.tainted".Translate(), null, on_act, check_state));
 			// Equipped
 			on_act = (node, b) => lt.linkEquipped = b;
 			check_state = (node) => CheckboxState(lt.linkEquipped);
-			middle_settings.children.Add(new Generic_TreeNode("Equipped", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.equipped".Translate(), null, on_act, check_state));
 			// Only allowed ingredients
 			on_act = (node, b) => lt.linkOnlyAllowedIngredients = b;
 			check_state = (node) => CheckboxState(lt.linkOnlyAllowedIngredients);
-			middle_settings.children.Add(new Generic_TreeNode("Only allowed ingredients", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.only_allowed_ingredients".Translate(), null, on_act, check_state));
 			// Stockpile to check
 			on_act = (node, b) => lt.linkCheckStockpiles = b;
 			check_state = (node) => CheckboxState(lt.linkCheckStockpiles);
-			middle_settings.children.Add(new Generic_TreeNode("Stockpile to check", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.check_stockpile".Translate(), null, on_act, check_state));
 			// Hitpoints
 			on_act = (node, b) => lt.linkCountHitpoints= b;
 			check_state = (node) => CheckboxState(lt.linkCountHitpoints);
-			middle_settings.children.Add(new Generic_TreeNode("Hitpoints filter", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.hp".Translate(), null, on_act, check_state));
 			// Quality
 			on_act = (node, b) => lt.linkCountQuality = b;
 			check_state = (node) => CheckboxState(lt.linkCountQuality);
-			middle_settings.children.Add(new Generic_TreeNode("Quality filter", "", on_act, check_state));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.quality".Translate(), null, on_act, check_state));
 			// Stockpile
 			on_act = (node, b) => lt.linkStockpiles = b;
 			check_state = (node) => CheckboxState(lt.linkStockpiles);
-			middle_settings.children.Add(new Generic_TreeNode("Take to stockpile", "", on_act, check_state, () => !lt.compatibleStockpiles, ""));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.target_stockpile".Translate(), null, on_act, check_state, () => !lt.compatibleStockpiles, "CD.M.link.target_stockpile_incompatible".Translate()));
 			// Workers
 			on_act = (node, b) => lt.linkWorkers = b;
 			check_state = (node) => CheckboxState(lt.linkWorkers);
-			middle_settings.children.Add(new Generic_TreeNode("Workers", "", on_act, check_state, () => !lt.compatibleWorkers, ""));
+			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.workers".Translate(), null, on_act, check_state, () => !lt.compatibleWorkers, "CD.M.link.workers_incompatible".Translate()));
+			master.children.Add(middle_settings);
 
 			// Ingredients cat
-			var link_ingredients = new Generic_TreeNode("Link ingredients", "", category_on_act, category_check_state);
+			var link_ingredients = new Generic_TreeNode("CD.M.link.cat_ingredients".Translate(), null, category_on_act, category_check_state);
 			// Ingredients
 			on_act = (node, b) => bc.linkTracker.linkIngredients = b;
 			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredients);
-			link_ingredients.children.Add(new Generic_TreeNode("Ingredients", "", on_act, check_state, () => !lt.compatibleStockpiles, ""));
+			link_ingredients.children.Add(new Generic_TreeNode("CD.M.link.ingredients".Translate(), null, on_act, check_state, () => !lt.compatibleStockpiles, "CD.M.link.ingredients_incompatible".Translate()));
 			// Ingredients radius
 			on_act = (node, b) => bc.linkTracker.linkIngredientsRadius = b;
 			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredientsRadius);
-			link_ingredients.children.Add(new Generic_TreeNode("Ingredient radius", "", on_act, check_state));
+			link_ingredients.children.Add(new Generic_TreeNode("CD.M.link.ingredients_radius".Translate(), null, on_act, check_state));
 			master.children.Add(link_ingredients);
-
-			master.children.Add(middle_settings);
 
 			return master;
 		}
