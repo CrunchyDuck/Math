@@ -27,6 +27,7 @@ namespace CrunchyDuck.Math {
 		public BillComponent bc;
         public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
 		public Vector2 linkSettingsScrollPos = Vector2.zero;
+		public const int LinkParentHeight = 24 + 4 + 24 + 8;
 		public const int LinkSettingsHeight = 150;
 		public const int ScrollBarWidth = 16;
 		private TreeNode linkSettingsMaster;
@@ -414,8 +415,41 @@ namespace CrunchyDuck.Math {
 			ls.End();
 
 			// Link options
-			if (bc.linkTracker.parent != null)
-				RenderLinkSettings(new Rect(rect_left.x, rect_left.yMax - BottomAreaHeight - LinkSettingsHeight, rect_left.width, LinkSettingsHeight));
+			if (bc.linkTracker.parent != null) {
+				Rect link_settings_area = new Rect(rect_left.x, rect_left.yMax - BottomAreaHeight - LinkSettingsHeight, rect_left.width, LinkSettingsHeight);
+				Rect link_parent_area = new Rect(link_settings_area.x, link_settings_area.y - LinkParentHeight - 12, link_settings_area.width, LinkParentHeight);
+				RenderParent(link_parent_area);
+				RenderLinkSettings(link_settings_area);
+			}
+		}
+
+		private void RenderParent(Rect render_area) {
+			Widgets.DrawMenuSection(render_area);
+			render_area = render_area.ContractedBy(4);
+
+			Rect first_line = render_area;
+			first_line.height = 24;
+			Rect label_area = first_line.ChopRectLeft(0.6f);
+			Widgets.Label(label_area, "Parent:");
+			
+			Rect break_link_area = first_line.ChopRectLeft(24);
+			// Actual button
+			if (Widgets.ButtonText(break_link_area, "")) {
+				SoundDefOf.DragSlider.PlayOneShotOnCamera();
+				bc.linkTracker.BreakLink();
+			}
+			var col = Mouse.IsOver(break_link_area) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
+			GUI.DrawTexture(break_link_area.ContractedBy(2), Resources.breakLinkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
+			// Details button
+			Rect details_area = first_line;
+			details_area.xMin += 4;
+			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
+				
+			}
+
+			Rect second_line = render_area;
+			second_line.yMin += 24 + 4;
+			Widgets.Label(second_line, bc.linkTracker.parent.bc.name);
 		}
 
 		private void RenderLinkSettings(Rect render_area) {
