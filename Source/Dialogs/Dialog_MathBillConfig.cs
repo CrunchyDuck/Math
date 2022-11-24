@@ -27,9 +27,10 @@ namespace CrunchyDuck.Math {
 		public BillComponent bc;
         public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
 		public Vector2 linkSettingsScrollPos = Vector2.zero;
-		public const int LinkParentHeight = 24 + 4 + 24 + 8;
+		public const int LinkParentHeight = 24 + ElementPadding + 34 + 8;
 		public const int LinkSettingsHeight = 150;
 		public const int ScrollBarWidth = 16;
+		public const int ElementPadding = 4;
 		private TreeNode linkSettingsMaster;
 		private float linkSettingsHeight = 0;
 		public float BottomAreaHeight { get { return CloseButSize.y + 18; } }
@@ -101,6 +102,7 @@ namespace CrunchyDuck.Math {
 			Rect rect_right = new Rect(rect_middle.xMax + 17f, 50f, 0.0f, inRect.height - 50f - CloseButSize.y);
 			rect_right.xMax = inRect.xMax;
 
+			// Bill name
 			Text.Font = GameFont.Medium;
 			bc.name = Widgets.TextField(new Rect(40f, 0.0f, 400f, 34f), bc.name);
 			Text.Font = GameFont.Small;
@@ -429,27 +431,45 @@ namespace CrunchyDuck.Math {
 
 			Rect first_line = render_area;
 			first_line.height = 24;
-			Rect label_area = first_line.ChopRectLeft(0.6f);
+			// "Parent" text
+			Rect label_area = first_line.ChopRectLeft(0.5f);
+			var ta = Text.Anchor;
+			Text.Anchor = TextAnchor.MiddleLeft;
 			Widgets.Label(label_area, "Parent:");
-			
+			Text.Anchor = ta;
+			// Break link button
 			Rect break_link_area = first_line.ChopRectLeft(24);
-			// Actual button
 			if (Widgets.ButtonText(break_link_area, "")) {
 				SoundDefOf.DragSlider.PlayOneShotOnCamera();
 				bc.linkTracker.BreakLink();
+				return;
 			}
 			var col = Mouse.IsOver(break_link_area) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
 			GUI.DrawTexture(break_link_area.ContractedBy(2), Resources.breakLinkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
 			// Details button
 			Rect details_area = first_line;
-			details_area.xMin += 4;
+			details_area.xMin += ElementPadding;
 			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
 				
 			}
 
 			Rect second_line = render_area;
-			second_line.yMin += 24 + 4;
-			Widgets.Label(second_line, bc.linkTracker.parent.bc.name);
+			second_line.yMin += 24 + ElementPadding;
+			// Recipe image
+			var b = bc.linkTracker.parent.bc.targetBill;
+			Rect image_area = second_line.ChopRectLeft(30);
+			ThingStyleDef thingStyleDef = null;
+			if (ModsConfig.IdeologyActive && b.recipe.ProducedThingDef != null) {
+				thingStyleDef = (!b.globalStyle) ? b.style : Faction.OfPlayer.ideos.PrimaryIdeo.style.StyleForThingDef(b.recipe.ProducedThingDef)?.styleDef;
+			}
+			Widgets.DefIcon(image_area, b.recipe, null, 1f, thingStyleDef, drawPlaceholder: true, null, null, b.graphicIndexOverride);
+			// Recipe name
+			Rect name_area = second_line;
+			name_area.xMin += ElementPadding;
+			ta = Text.Anchor;
+			Text.Anchor = TextAnchor.MiddleLeft;
+			Widgets.Label(name_area, bc.linkTracker.parent.bc.name.Truncate(name_area.width));
+			Text.Anchor = ta;
 		}
 
 		private void RenderLinkSettings(Rect render_area) {
