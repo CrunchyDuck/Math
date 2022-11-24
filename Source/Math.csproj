@@ -60,6 +60,7 @@
     <Compile Include="CachedMapData.cs" />
     <Compile Include="Dialogs\Dialog_Updates.cs" />
     <Compile Include="Dialogs\Dialog_VariableList.cs" />
+    <Compile Include="GUIExtensions.cs" />
     <Compile Include="MathFilters\CategoryFilter.cs" />
     <Compile Include="MathFilters\MathFilter.cs" />
     <Compile Include="MathFilters\PawnFilter.cs" />

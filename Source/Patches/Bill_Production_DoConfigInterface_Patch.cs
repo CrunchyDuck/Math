@@ -28,15 +28,15 @@ namespace CrunchyDuck.Math {
                 tip = "Currently dropping output on floor. Click to take to stockpile.";
             }
             // Drop/take to stockpile
-            var button_rect = new Rect(baseRect.xMax - (24 + 4) * 4 + 12, baseRect.y, 24f, 24f);
+            var button_rect = new Rect(baseRect.xMax - (GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding) * 4 + 12, baseRect.y, GUIExtensions.SmallElementSize, GUIExtensions.SmallElementSize);
             if (Widgets.ButtonImage(button_rect, storeModeImage, baseColor)) {
                 SoundDefOf.DragSlider.PlayOneShotOnCamera();
                 __instance.SetStoreMode(nextStoreMode);
             }
             TooltipHandler.TipRegion(button_rect, tip);
             // Paste bill as linked
-            button_rect.width = 24;
-            button_rect.x -= button_rect.width + 4;
+            button_rect.width = GUIExtensions.SmallElementSize;
+            button_rect.x -= button_rect.width + GUIExtensions.ElementPadding;
 			if (curr_copied != null && blt.Parent != curr_copied && curr_copied != blt) {
 				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
                     SoundDefOf.DragSlider.PlayOneShotOnCamera();
@@ -50,10 +50,10 @@ namespace CrunchyDuck.Math {
                 TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.make_link".Translate());
             }
             // Break link to parent bill
-            button_rect.width = 24 + 4 + 24;
-            button_rect.x -= button_rect.width + 4;
+            button_rect.width = GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding + GUIExtensions.SmallElementSize;
+            button_rect.x -= button_rect.width + GUIExtensions.ElementPadding;
             if (blt.Parent != null) {
-                if (BillLinkTracker.RenderBreakLink(blt, button_rect.x, button_rect.y)) {
+                if (GUIExtensions.RenderBreakLink(blt, button_rect.x, button_rect.y)) {
                     SoundDefOf.DragSlider.PlayOneShotOnCamera();
                     blt.BreakLink();
                 }

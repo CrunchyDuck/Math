@@ -6,7 +6,7 @@ using System.Linq;
 
 
 namespace CrunchyDuck.Math {
-	class BillLinkTracker : IExposable {
+	public class BillLinkTracker : IExposable {
 		public static BillLinkTracker currentlyCopied;
 		/// I separate out these links
 		/// 1. so they can be iterated nicely.
@@ -85,8 +85,6 @@ namespace CrunchyDuck.Math {
 		public bool compatibleRepeatMode = false;
 		public bool compatibleWorkers = false;
 		public bool compatibleIngredients = false;
-
-		public const int BreakLinkWidth = 24 + 4 + 24;
 
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
@@ -315,30 +313,6 @@ namespace CrunchyDuck.Math {
 					children = child_ids.Select(i => IDs[i]).ToHashSet();
 				}
 			}
-		}
-	
-		public static bool RenderBreakLink(BillLinkTracker lt, float x, float y) {
-			Rect button_rect = new Rect(x, y, BreakLinkWidth, 24);
-			bool pressed = false;
-			var left = button_rect.LeftPartPixels(24).ContractedBy(2);
-			left.x += 4;
-			var right = button_rect.RightPartPixels(24).ContractedBy(2);
-
-			// Button
-			int par_id = lt.Parent.linkID;
-			if (Widgets.ButtonText(button_rect, "")) {
-				pressed = true;
-			}
-
-			// Link symbol
-			var col = Mouse.IsOver(button_rect) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
-			GUI.DrawTexture(left, Resources.breakLinkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
-
-			// Link ID
-			GUI.Label(right, par_id.ToString(), Text.CurFontStyle);
-
-			TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.break_link".Translate());
-			return pressed;
 		}
 	}
 }

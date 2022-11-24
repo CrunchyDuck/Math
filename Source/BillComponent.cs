@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
 	// I'd like to make this IExposible, but it would break peoples' saves.
-	class BillComponent {
+	public class BillComponent {
 		public Bill_Production targetBill;
 		public BillLinkTracker linkTracker;
 
@@ -79,7 +79,7 @@ namespace CrunchyDuck.Math {
 		}
 	}
 
-	class InputField {
+	public class InputField {
 		private Bill_Production bill;
 		public BillComponent bc;
 		public Field field;

@@ -86,7 +86,7 @@ namespace CrunchyDuck.Math {
 				Rect fields_rect = new Rect(0, 0, row_rect.width, row_rect.height);
 				fields_rect = fields_rect.ContractedBy(HorizontalPadding, 2);
 				// Delete button
-				Rect delete_button_rect = fields_rect.ChopRectRight(DeleteButSize);
+				Rect delete_button_rect = fields_rect.ChopRectRight(DeleteButSize, 0);
 				if (Widgets.ButtonImage(delete_button_rect, TexButton.DeleteX, Color.white, GenUI.SubtleMouseoverColor)) {
 					uvs.RemoveAt(i);
 					i--;
@@ -94,8 +94,8 @@ namespace CrunchyDuck.Math {
 				}
 
 				// Drag symbol
-				Rect drag_rect = fields_rect.ChopRectLeft(24 + HorizontalPadding);
-				drag_rect = new Rect(drag_rect.x, 3, 24, 24);
+				Rect drag_rect = fields_rect.ChopRectLeft(GUIExtensions.SmallElementSize + HorizontalPadding);
+				drag_rect = new Rect(drag_rect.x, 3, GUIExtensions.SmallElementSize, GUIExtensions.SmallElementSize);
 				TooltipHandler.TipRegion(drag_rect, "DragToReorder".Translate());
 				GUI.DrawTexture(drag_rect, Resources.DragHash);
 

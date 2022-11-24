@@ -14,7 +14,6 @@ namespace CrunchyDuck.Math {
 		IntVec3 billGiverPos;
 		public Bill_Production bill;
         private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
-        protected const float RecipeIconSize = 34f;
         [TweakValue("Interface", 0.0f, 400f)]
         private static int RepeatModeSubdialogHeight = 324 + 100;
         [TweakValue("Interface", 0.0f, 400f)]
@@ -26,10 +25,6 @@ namespace CrunchyDuck.Math {
 		public BillComponent bc;
         public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
 		public Vector2 linkSettingsScrollPos = Vector2.zero;
-		public const int LinkParentHeight = 24 + ElementPadding + 34 + 8;
-		public const int LinkSettingsHeight = 150;
-		public const int ScrollBarWidth = 16;
-		public const int ElementPadding = 4;
 		private TreeNode linkSettingsMaster;
 		private float linkSettingsHeight = 0;
 		public float BottomAreaHeight { get { return CloseButSize.y + 18; } }
@@ -38,6 +33,8 @@ namespace CrunchyDuck.Math {
 
 		private float infoHoverHue = 0;
 		private float hueSpeed = 1f / (60f * 5f);
+		public const int LinkParentHeight = GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding + GUIExtensions.RecipeIconSize + 8;
+		public const int LinkSettingsHeight = 150;
 
 		private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
 		private static IEnumerable<SpecialThingFilterDef> HiddenSpecialThingFilters {
@@ -120,16 +117,16 @@ namespace CrunchyDuck.Math {
 			if (bill.recipe.products.Count == 1) {
 				ThingDef thingDef = bill.recipe.products[0].thingDef;
 				Widgets.InfoCardButton(buttons_x, rect_right.y, thingDef, GenStuff.DefaultStuffFor(thingDef));
-				buttons_x += 24 + 4;
+				buttons_x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 			}
 
-			Rect button_rect = new Rect(buttons_x, rect_right.y, 24, 24);
+			Rect button_rect = new Rect(buttons_x, rect_right.y, GUIExtensions.SmallElementSize, GUIExtensions.SmallElementSize);
 			// Variables button
 			TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.user_variables".Translate());
 			if (Widgets.ButtonImage(button_rect, Resources.variablesButtonImage, Color.white)) {
 				Find.WindowStack.Add(new Dialog_VariableList(bc));
 			}
-			button_rect.x += 24 + 4;
+			button_rect.x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 
 			// math info button.
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
@@ -140,7 +137,7 @@ namespace CrunchyDuck.Math {
 			if (Widgets.ButtonImage(button_rect, Resources.infoButtonImage, color, gay_color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
-			button_rect.x += 24 + 4;
+			button_rect.x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 
 			BillMenuData.Unassign();
 		}
@@ -431,17 +428,17 @@ namespace CrunchyDuck.Math {
 			render_area = render_area.ContractedBy(4);
 
 			Rect first_line = render_area;
-			first_line.height = 24;
+			first_line.height = GUIExtensions.SmallElementSize;
 			// Details button
-			Rect details_area = first_line.ChopRectRight(BillLinkTracker.BreakLinkWidth + 20);
+			Rect details_area = first_line.ChopRectRight(GUIExtensions.DetailsButtonWidth, 0);
 			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
 				// billGiverPos here is wrong, but it doesn't really affect anything but the ingredient radius.
 				Find.WindowStack.Add(new Dialog_MathBillConfig(parent.targetBill, billGiverPos));
 				Close();
 			}
 			// Break link button
-			Rect break_link_area = first_line.ChopRectRight(BillLinkTracker.BreakLinkWidth, ElementPadding);
-			if (BillLinkTracker.RenderBreakLink(bc.linkTracker, break_link_area.x, break_link_area.y)) {
+			Rect break_link_area = first_line.ChopRectRight(GUIExtensions.BreakLinkWidth);
+			if (GUIExtensions.RenderBreakLink(bc.linkTracker, break_link_area.x, break_link_area.y)) {
 				SoundDefOf.DragSlider.PlayOneShotOnCamera();
 				bc.linkTracker.BreakLink();
 				return;
@@ -454,10 +451,10 @@ namespace CrunchyDuck.Math {
 			Text.Anchor = ta;
 
 			Rect second_line = render_area;
-			second_line.yMin += 24 + ElementPadding;
+			second_line.yMin += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 			// Recipe image
 			var b = parent.targetBill;
-			Rect image_area = second_line.ChopRectLeft(30);
+			Rect image_area = second_line.ChopRectLeft(GUIExtensions.RecipeIconSize);
 			ThingStyleDef thingStyleDef = null;
 			if (ModsConfig.IdeologyActive && b.recipe.ProducedThingDef != null) {
 				thingStyleDef = (!b.globalStyle) ? b.style : Faction.OfPlayer.ideos.PrimaryIdeo.style.StyleForThingDef(b.recipe.ProducedThingDef)?.styleDef;
@@ -465,7 +462,7 @@ namespace CrunchyDuck.Math {
 			Widgets.DefIcon(image_area, b.recipe, null, 1f, thingStyleDef, drawPlaceholder: true, null, null, b.graphicIndexOverride);
 			// Recipe name
 			Rect name_area = second_line;
-			name_area.xMin += ElementPadding;
+			name_area.xMin += GUIExtensions.ElementPadding;
 			ta = Text.Anchor;
 			Text.Anchor = TextAnchor.MiddleLeft;
 			Widgets.Label(name_area, parent.name.Truncate(name_area.width));
@@ -475,7 +472,7 @@ namespace CrunchyDuck.Math {
 		private void RenderLinkSettings(Rect render_area) {
 			Widgets.DrawMenuSection(render_area);
 			render_area = render_area.ContractedBy(4);
-			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - ScrollBarWidth, linkSettingsHeight);
+			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - GUIExtensions.ScrollBarWidth, linkSettingsHeight);
 
 			// Code heavily inspired by ThingFilterUI.DoThingFilterConfigWindow
 			Widgets.BeginScrollView(render_area, ref linkSettingsScrollPos, scroll_area);

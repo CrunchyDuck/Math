@@ -48,7 +48,7 @@ namespace CrunchyDuck.Math {
 			if (__instance is Bill_Production bp) {
 				if (bp.paused) {
 					if ((bool)CanUnpauseBill.Invoke(bp, new object[0]))
-						rect1.height += 24;
+						rect1.height += GUIExtensions.SmallElementSize;
 					else
 						rect1.height += 17;
 				}
