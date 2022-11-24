@@ -81,7 +81,7 @@
     <Compile Include="Patches\BillDetails_Patch.cs" />
     <Compile Include="Patches\Bill_Production_Constructor_Patch.cs" />
     <Compile Include="Patches\BillMenu_Patch.cs" />
-    <Compile Include="Patches\PatchExposeData.cs" />
+    <Compile Include="Patches\Patch_ExposeBillComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserVariable.cs" />
   </ItemGroup>

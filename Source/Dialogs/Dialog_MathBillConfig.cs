@@ -426,13 +426,15 @@ namespace CrunchyDuck.Math {
 		}
 
 		private void RenderParent(Rect render_area) {
+			var parent = bc.linkTracker.parent.bc;
+
 			Widgets.DrawMenuSection(render_area);
 			render_area = render_area.ContractedBy(4);
 
 			Rect first_line = render_area;
 			first_line.height = 24;
 			// "Parent" text
-			Rect label_area = first_line.ChopRectLeft(0.5f);
+			Rect label_area = first_line.ChopRectLeft(0.55f);
 			var ta = Text.Anchor;
 			Text.Anchor = TextAnchor.MiddleLeft;
 			Widgets.Label(label_area, "Parent:");
@@ -450,13 +452,15 @@ namespace CrunchyDuck.Math {
 			Rect details_area = first_line;
 			details_area.xMin += ElementPadding;
 			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
-				
+				// billGiverPos here is wrong, but it doesn't really affect anything but the ingredient radius.
+				Find.WindowStack.Add(new Dialog_MathBillConfig(parent.targetBill, billGiverPos));
+				Close();
 			}
 
 			Rect second_line = render_area;
 			second_line.yMin += 24 + ElementPadding;
 			// Recipe image
-			var b = bc.linkTracker.parent.bc.targetBill;
+			var b = parent.targetBill;
 			Rect image_area = second_line.ChopRectLeft(30);
 			ThingStyleDef thingStyleDef = null;
 			if (ModsConfig.IdeologyActive && b.recipe.ProducedThingDef != null) {
@@ -468,7 +472,7 @@ namespace CrunchyDuck.Math {
 			name_area.xMin += ElementPadding;
 			ta = Text.Anchor;
 			Text.Anchor = TextAnchor.MiddleLeft;
-			Widgets.Label(name_area, bc.linkTracker.parent.bc.name.Truncate(name_area.width));
+			Widgets.Label(name_area, parent.name.Truncate(name_area.width));
 			Text.Anchor = ta;
 		}
 

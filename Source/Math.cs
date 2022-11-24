@@ -109,7 +109,7 @@ namespace CrunchyDuck.Math {
 		private static void PerformPatches() {
 			// What can I say, I prefer a manual method of patching.
 			var harmony = new Harmony("CrunchyDuck.Math");
-			AddPatch(harmony, typeof(PatchExposeData));
+			AddPatch(harmony, typeof(Patch_ExposeBillComponent));
 			AddPatch(harmony, typeof(DoConfigInterface_Patch));
 			AddPatch(harmony, typeof(Bill_Production_Constructor_Patch));
 			AddPatch(harmony, typeof(BillDetails_Patch));
