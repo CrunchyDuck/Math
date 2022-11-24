@@ -5,11 +5,11 @@ using UnityEngine;
 using System.Collections.Generic;
 
 namespace CrunchyDuck.Math {
+	// I'd like to make this IExposible, but it would break peoples' saves.
 	class BillComponent {
 		public Bill_Production targetBill;
 		public BillLinkTracker linkTracker;
 
-		private static Regex oldCategory = new Regex(@"((?:c|cat|category) )(.+?)", RegexOptions.Compiled);
 		public CachedMapData Cache {
 			get {
 				return Math.GetCachedMap(targetBill);
@@ -66,12 +66,12 @@ namespace CrunchyDuck.Math {
 			Scribe_Values.Look(ref itemsToCount.lastValid, "itemsToCountLastValid");
 			itemsToCount.buffer = itemsToCount.lastValid;
 			Scribe_Values.Look(ref this.customItemsToCount, "itemsToCountBool");
-
-			// Back compatibility.
-			itemsToCount.buffer = oldCategory.Replace(itemsToCount.buffer, m => "categories." + m.Groups[2]);
-			doXTimes.buffer = oldCategory.Replace(doXTimes.buffer, m => "categories." + m.Groups[2]);
-			doUntilX.buffer = oldCategory.Replace(doUntilX.buffer, m => "categories." + m.Groups[2]);
-			unpause.buffer = oldCategory.Replace(unpause.buffer, m => "categories." + m.Groups[2]);
+			Scribe_Deep.Look(ref linkTracker, "linkTracker", this);
+			// for real why does scribe_deep need me to do this, why can't it just return a default
+			if (linkTracker == null) {
+				linkTracker = new BillLinkTracker(this);
+				linkTracker.ExposeData();
+			}
 
 			Scribe_Values.Look(ref targetBill.targetCount, "target_count_last_result");
 			Scribe_Values.Look(ref targetBill.repeatCount, "doXTimesLastResult");

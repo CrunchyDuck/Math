@@ -46,7 +46,7 @@ namespace CrunchyDuck.Math {
 			Math.ClearCacheMaps();
 
 			// Update linked bills.
-			foreach (BillLinkTracker blt in BillLinkTracker.linkIds.Values) {
+			foreach (BillLinkTracker blt in BillLinkTracker.linkIDs.Values) {
 				blt.UpdateLinkedBills();
 			}
 

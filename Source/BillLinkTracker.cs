@@ -5,34 +5,64 @@ using UnityEngine;
 using System.Collections.Generic;
 using HarmonyLib;
 using System.Reflection;
+using System.Linq;
 
 
 namespace CrunchyDuck.Math {
-	class BillLinkTracker {
+	class BillLinkTracker : IExposable {
 		public static BillLinkTracker currentlyCopied;
-		public static SortedDictionary<int, BillLinkTracker> linkIds = new SortedDictionary<int, BillLinkTracker>();
+		/// I separate out these links
+		/// 1. so they can be iterated nicely.
+		/// 2. so they can have nicer display values, rather than "link 263"
+		public static SortedDictionary<int, BillLinkTracker> linkIDs = new SortedDictionary<int, BillLinkTracker>();
 		private static int nextLinkID = 0;
 		public static int NextLinkID { 
 			get {
-				if (!linkIds.ContainsKey(nextLinkID))
+				if (!linkIDs.ContainsKey(nextLinkID))
 					return nextLinkID;
 				// Find next vacant ID.
 				for (int i = 0; ; i++) {
-					if (!linkIds.ContainsKey(i)) {
+					if (!linkIDs.ContainsKey(i)) {
 						nextLinkID = i;
 						return nextLinkID;
 					}
 				}
 			}
 		}
-
+		public static SortedDictionary<int, BillLinkTracker> IDs = new SortedDictionary<int, BillLinkTracker>();
+		private static int nextID = 0;
+		public static int NextID {
+			get {
+				if (!IDs.ContainsKey(nextID))
+					return nextID;
+				// Find a vacant ID.
+				for (int i = 0; ; i++) {
+					if (!IDs.ContainsKey(i)) {
+						nextID = i;
+						return nextID;
+					}
+				}
+			}
+		}
 
 		public BillComponent bc;
-		public int myID = -1;
-		public bool isMasterBC = false;
-		private HashSet<BillLinkTracker> childBCs = new HashSet<BillLinkTracker>();
 
-		public BillLinkTracker parent = null;
+		private int myID = -1;  // What's my ID in IDs?
+		private int parentID = -1;  // What my parent's ID is in linkIDs
+		public int linkID = -1;  // What my ID is in linkIDs
+		public bool isMasterBC = false;
+		private HashSet<BillLinkTracker> children = new HashSet<BillLinkTracker>();
+
+		public BillLinkTracker Parent {
+			get {
+				if (parentID == -1)
+					return null;
+				return linkIDs[parentID];
+			}
+			set {
+				parentID = value.linkID;
+			}
+		}
 
 		public bool linkName = false;
 		public bool linkSuspended = false;
@@ -58,10 +88,12 @@ namespace CrunchyDuck.Math {
 
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
+			myID = NextID;
+			IDs[myID] = this;
 		}
 
 		public void UpdateLinkedBills() {
-			foreach (BillLinkTracker c in childBCs) {
+			foreach (BillLinkTracker c in children) {
 				var other = c.bc;
 
 				if (c.linkName)
@@ -126,7 +158,7 @@ namespace CrunchyDuck.Math {
 		/// Break the link with a parent, from the child.
 		/// </summary>
 		public void BreakLink() {
-			parent.BreakLink(this);
+			Parent.BreakLink(this);
 		}
 
 		/// <summary>
@@ -134,7 +166,7 @@ namespace CrunchyDuck.Math {
 		/// </summary>
 		public void BreakLink(BillLinkTracker child) {
 			RemoveChild(child);
-			child.parent = null;
+			child.Parent = null;
 		}
 
 		public void LinkToParent(BillLinkTracker parent) {
@@ -143,8 +175,8 @@ namespace CrunchyDuck.Math {
 
 		public void LinkToChild(BillLinkTracker child) {
 			// steal baby
-			if (child.parent != null) {
-				child.parent.BreakLink(child);
+			if (child.Parent != null) {
+				child.Parent.BreakLink(child);
 			}
 			AddChild(child);
 		}
@@ -155,11 +187,11 @@ namespace CrunchyDuck.Math {
 		private void AddChild(BillLinkTracker child) {
 			if (!isMasterBC) {
 				isMasterBC = true;
-				myID = NextLinkID;
-				linkIds[myID] = this;
+				linkID = NextLinkID;
+				linkIDs[linkID] = this;
 			}
 
-			child.parent = this;
+			child.Parent = this;
 			child.linkName = false;
 			child.linkSuspended = child.linkTargetCount =
 				child.linkCustomItemCount = child.linkPause = 
@@ -171,18 +203,18 @@ namespace CrunchyDuck.Math {
 			child.compatibleRepeatMode = child.linkRepeatMode = CanCountProducts(child) == CanCountProducts(this);
 			child.compatibleWorkers = child.linkWorkers = child.linkIngredientsRadius = AreWorkersCompatible(child.bc);
 			child.compatibleIngredients = child.linkIngredients = AreIngredientsCompatible(child.bc);
-			childBCs.Add(child);
+			children.Add(child);
 		}
 
 		/// <summary>
 		/// Remove a child. This does not inform the child it has been abandoned.
 		/// </summary>
 		private void RemoveChild(BillLinkTracker child) {
-			childBCs.Remove(child);
-			if (childBCs.Count == 0) {
+			children.Remove(child);
+			if (children.Count == 0) {
 				isMasterBC = false;
-				linkIds.Remove(myID);
-				myID = -1;
+				linkIDs.Remove(linkID);
+				linkID = -1;
 			}
 		}
 
@@ -242,6 +274,45 @@ namespace CrunchyDuck.Math {
 			// Taken from RecipeWorkerCounter.CanCountProducts (Why does that method need bill?)
 			var recipe = blt.bc.targetBill.recipe;
 			return recipe.specialProducts == null && recipe.products != null && recipe.products.Count == 1;
+		}
+
+		public void ExposeData() {
+			Scribe_Values.Look(ref myID, "myID");
+			Scribe_Values.Look(ref linkID, "linkID", -1);
+			if (linkID != -1)
+				linkIDs[linkID] = this;
+			Scribe_Values.Look(ref isMasterBC, "isMasterBC", false);
+			Scribe_Values.Look(ref parentID, "parentID", -1);
+
+			Scribe_Values.Look(ref linkName, "linkName", false, true);
+			Scribe_Values.Look(ref linkSuspended, "linkSuspended", false, true);
+			Scribe_Values.Look(ref linkTargetCount, "linkTargetCount", false, true);
+			Scribe_Values.Look(ref linkCustomItemCount, "linkCustomItemCount", false, true);
+			Scribe_Values.Look(ref linkPause, "linkPause", false, true);
+			Scribe_Values.Look(ref linkTainted, "linkTainted", false, true);
+			Scribe_Values.Look(ref linkEquipped, "linkEquipped", false, true);
+			Scribe_Values.Look(ref linkOnlyAllowedIngredients, "linkOnlyAllowedIngredients", false, true);
+			Scribe_Values.Look(ref linkCountHitpoints, "linkCountHitpoints", false, true);
+			Scribe_Values.Look(ref linkCountQuality, "linkCountQuality", false, true);
+			Scribe_Values.Look(ref linkCheckStockpiles, "linkCheckStockpiles", false, true);
+			Scribe_Values.Look(ref linkStockpiles, "linkStockpiles", false, true);
+			Scribe_Values.Look(ref linkRepeatMode, "linkRepeatMode", false, true);
+			Scribe_Values.Look(ref linkWorkers, "linkWorkers", false, true);
+			Scribe_Values.Look(ref linkIngredients, "linkIngredients", false, true);
+			Scribe_Values.Look(ref linkIngredientsRadius, "linkIngredientsRadius", false, true);
+
+			Scribe_Values.Look(ref compatibleStockpiles, "compatibleStockpiles", false, true);
+			Scribe_Values.Look(ref compatibleRepeatMode, "compatibleRepeatMode", false, true);
+			Scribe_Values.Look(ref compatibleWorkers, "compatibleWorkers", false, true);
+			Scribe_Values.Look(ref compatibleIngredients, "compatibleIngredients", false, true);
+
+			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
+			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
+			if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs) {
+				if (child_ids != null) {
+					children = child_ids.Select(i => IDs[i]).ToHashSet();
+				}
+			}
 		}
 	}
 }

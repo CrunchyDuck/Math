@@ -11,7 +11,6 @@ using HarmonyLib;
 namespace CrunchyDuck.Math {
 	// After so much patching, I've decided to just completely reimplement the window.
 	class Dialog_MathBillConfig : Window {
-		// This is only for drawing the ingredient search radius for now. Not implemented.
 		IntVec3 billGiverPos;
 		public Bill_Production bill;
         private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
@@ -417,7 +416,7 @@ namespace CrunchyDuck.Math {
 			ls.End();
 
 			// Link options
-			if (bc.linkTracker.parent != null) {
+			if (bc.linkTracker.Parent != null) {
 				Rect link_settings_area = new Rect(rect_left.x, rect_left.yMax - BottomAreaHeight - LinkSettingsHeight, rect_left.width, LinkSettingsHeight);
 				Rect link_parent_area = new Rect(link_settings_area.x, link_settings_area.y - LinkParentHeight - 12, link_settings_area.width, LinkParentHeight);
 				RenderParent(link_parent_area);
@@ -426,7 +425,7 @@ namespace CrunchyDuck.Math {
 		}
 
 		private void RenderParent(Rect render_area) {
-			var parent = bc.linkTracker.parent.bc;
+			var parent = bc.linkTracker.Parent.bc;
 
 			Widgets.DrawMenuSection(render_area);
 			render_area = render_area.ContractedBy(4);

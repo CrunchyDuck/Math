@@ -14,7 +14,7 @@ namespace CrunchyDuck.Math {
 		public static void Postfix(Bill_Production __instance, Rect baseRect, Color baseColor) {
             BillComponent bc = BillManager.instance.AddGetBillComponent(__instance);
             BillLinkTracker blt = bc.linkTracker;
-            BillLinkTracker curr_copied = BillLinkTracker.currentlyCopied;
+			BillLinkTracker curr_copied = BillLinkTracker.currentlyCopied;
 
             var storeModeImage = Resources.bestStockpileImage;
             var nextStoreMode = BillStoreModeDefOf.DropOnFloor;
@@ -27,18 +27,17 @@ namespace CrunchyDuck.Math {
                 //var tip = "IW.ClickToDropTip".Translate();
                 tip = "Currently dropping output on floor. Click to take to stockpile.";
             }
+            // Drop/take to stockpile
             var button_rect = new Rect(baseRect.xMax - (24 + 4) * 4 + 12, baseRect.y, 24f, 24f);
-
             if (Widgets.ButtonImage(button_rect, storeModeImage, baseColor)) {
                 SoundDefOf.DragSlider.PlayOneShotOnCamera();
                 __instance.SetStoreMode(nextStoreMode);
             }
             TooltipHandler.TipRegion(button_rect, tip);
-
             // Paste bill as linked
             button_rect.width = 24;
             button_rect.x -= button_rect.width + 4;
-			if (curr_copied != null && blt.parent != curr_copied && curr_copied != blt) {
+			if (curr_copied != null && blt.Parent != curr_copied && curr_copied != blt) {
 				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
                     SoundDefOf.DragSlider.PlayOneShotOnCamera();
                     blt.LinkToParent(curr_copied);
@@ -50,17 +49,16 @@ namespace CrunchyDuck.Math {
 
                 TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.break_link".Translate());
             }
-
             // Break link to parent bill
             button_rect.width = 24 + 4 + 24;
             button_rect.x -= button_rect.width + 4;
-            if (blt.parent != null) {
+            if (blt.Parent != null) {
                 var left = button_rect.LeftPartPixels(24).ContractedBy(2);
                 left.x += 4;
 				var right = button_rect.RightPartPixels(24).ContractedBy(2);
 
                 // Actual button
-                int par_id = blt.parent.myID;
+                int par_id = blt.Parent.linkID;
 				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
 					SoundDefOf.DragSlider.PlayOneShotOnCamera();
 					blt.BreakLink();
