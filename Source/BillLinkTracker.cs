@@ -60,7 +60,10 @@ namespace CrunchyDuck.Math {
 				return linkIDs[parentID];
 			}
 			set {
-				parentID = value.linkID;
+				if (value == null)
+					parentID = -1;
+				else
+					parentID = value.linkID;
 			}
 		}
 
