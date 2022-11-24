@@ -74,9 +74,10 @@ namespace CrunchyDuck.Math {
 		/// <summary>
 		/// Remove a chunk from the rect and return it.
 		/// </summary>
-		public static Rect ChopRectRight(ref this Rect rect, int pixels) {
-			Rect chunk = rect.RightPartPixels(pixels);
+		public static Rect ChopRectRight(ref this Rect rect, int pixels, int right_margin = 0) {
+			Rect chunk = rect.RightPartPixels(pixels + right_margin);
 			rect.xMax -= chunk.width;
+			chunk.xMax -= right_margin;
 			return chunk;
 		}
 	}

@@ -432,29 +432,26 @@ namespace CrunchyDuck.Math {
 
 			Rect first_line = render_area;
 			first_line.height = 24;
+			// Details button
+			Rect details_area = first_line.ChopRectRight(BillLinkTracker.BreakLinkWidth + 20);
+			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
+				// billGiverPos here is wrong, but it doesn't really affect anything but the ingredient radius.
+				Find.WindowStack.Add(new Dialog_MathBillConfig(parent.targetBill, billGiverPos));
+				Close();
+			}
+			// Break link button
+			Rect break_link_area = first_line.ChopRectRight(BillLinkTracker.BreakLinkWidth, ElementPadding);
+			if (BillLinkTracker.RenderBreakLink(bc.linkTracker, break_link_area.x, break_link_area.y)) {
+				SoundDefOf.DragSlider.PlayOneShotOnCamera();
+				bc.linkTracker.BreakLink();
+				return;
+			}
 			// "Parent" text
 			Rect label_area = first_line.ChopRectLeft(0.55f);
 			var ta = Text.Anchor;
 			Text.Anchor = TextAnchor.MiddleLeft;
 			Widgets.Label(label_area, "Parent:");
 			Text.Anchor = ta;
-			// Break link button
-			Rect break_link_area = first_line.ChopRectLeft(24);
-			if (Widgets.ButtonText(break_link_area, "")) {
-				SoundDefOf.DragSlider.PlayOneShotOnCamera();
-				bc.linkTracker.BreakLink();
-				return;
-			}
-			var col = Mouse.IsOver(break_link_area) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
-			GUI.DrawTexture(break_link_area.ContractedBy(2), Resources.breakLinkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
-			// Details button
-			Rect details_area = first_line;
-			details_area.xMin += ElementPadding;
-			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
-				// billGiverPos here is wrong, but it doesn't really affect anything but the ingredient radius.
-				Find.WindowStack.Add(new Dialog_MathBillConfig(parent.targetBill, billGiverPos));
-				Close();
-			}
 
 			Rect second_line = render_area;
 			second_line.yMin += 24 + ElementPadding;

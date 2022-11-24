@@ -47,31 +47,16 @@ namespace CrunchyDuck.Math {
                 var col = Mouse.IsOver(button_rect) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
 				GUI.DrawTexture(img, Resources.linkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
 
-                TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.break_link".Translate());
+                TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.make_link".Translate());
             }
             // Break link to parent bill
             button_rect.width = 24 + 4 + 24;
             button_rect.x -= button_rect.width + 4;
             if (blt.Parent != null) {
-                var left = button_rect.LeftPartPixels(24).ContractedBy(2);
-                left.x += 4;
-				var right = button_rect.RightPartPixels(24).ContractedBy(2);
-
-                // Actual button
-                int par_id = blt.Parent.linkID;
-				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
-					SoundDefOf.DragSlider.PlayOneShotOnCamera();
-					blt.BreakLink();
-				}
-
-                // Link symbol
-                var col = Mouse.IsOver(button_rect) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
-                GUI.DrawTexture(left, Resources.breakLinkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
-                
-                // Link ID
-                GUI.Label(right, par_id.ToString(), Text.CurFontStyle);
-
-                TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.make_link".Translate());
+                if (BillLinkTracker.RenderBreakLink(blt, button_rect.x, button_rect.y)) {
+                    SoundDefOf.DragSlider.PlayOneShotOnCamera();
+                    blt.BreakLink();
+                }
             }
         }
 	}
