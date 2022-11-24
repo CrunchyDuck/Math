@@ -3,6 +3,7 @@ using Verse;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 
 namespace CrunchyDuck.Math {
@@ -64,94 +65,39 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
-		public bool linkName = false;
-		public bool linkSuspended = false;
-		public bool linkTargetCount = false;
-		public bool linkCustomItemCount = false;
-		public bool linkPause = false;
-		public bool linkTainted = false;
-		public bool linkEquipped = false;
-		public bool linkOnlyAllowedIngredients = false;
-		public bool linkCountHitpoints = false;
-		public bool linkCountQuality = false;
-		public bool linkCheckStockpiles = false;
-		public bool linkStockpiles = false;
-		public bool linkRepeatMode = false;
-		public bool linkWorkers = false;
-		public bool linkIngredients = false;
-		public bool linkIngredientsRadius = false;
-
-		public bool compatibleStockpiles = false;
-		public bool compatibleRepeatMode = false;
-		public bool compatibleWorkers = false;
-		public bool compatibleIngredients = false;
+		public Dictionary<string, LinkSetting> linkSettings = new Dictionary<string, LinkSetting>();
 
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
 			myID = NextID;
 			IDs[myID] = this;
+			linkSettings = GenerateLinkSettings(this);
 		}
 
 		public void UpdateLinkedBills() {
 			foreach (BillLinkTracker c in children) {
-				var other = c.bc;
-
-				if (c.linkName)
-					c.bc.name = bc.name;
-
-				if (c.linkSuspended)
-					other.targetBill.suspended = bc.targetBill.suspended;
-
-				if (c.linkTargetCount) {
-					MatchInputField(other.doXTimes, bc.doXTimes);
-					MatchInputField(other.doUntilX, bc.doUntilX);
+				foreach (LinkSetting sett in c.linkSettings.Values) {
+					sett.UpdateFromParent();
 				}
-
-				if (c.linkCustomItemCount) {
-					MatchInputField(other.itemsToCount, bc.itemsToCount);
-					other.customItemsToCount = bc.customItemsToCount;
-				}
-
-				if (c.linkPause) {
-					MatchInputField(other.unpause, bc.unpause);
-					other.targetBill.paused = bc.targetBill.paused;
-				}
-
-				if (c.linkTainted)
-					c.bc.targetBill.includeTainted = bc.targetBill.includeTainted;
-
-				if (linkEquipped)
-					c.bc.targetBill.includeEquipped = bc.targetBill.includeEquipped;
-
-				if (linkOnlyAllowedIngredients)
-					c.bc.targetBill.limitToAllowedStuff = bc.targetBill.limitToAllowedStuff;
-
-				if (linkCountHitpoints)
-					c.bc.targetBill.hpRange = bc.targetBill.hpRange;
-
-				if (linkCountQuality)
-					c.bc.targetBill.qualityRange = bc.targetBill.qualityRange;
-
-				if (linkCheckStockpiles)
-					c.bc.targetBill.includeFromZone = bc.targetBill.includeFromZone;
-
-				if (c.compatibleRepeatMode && c.linkRepeatMode)
-					other.targetBill.repeatMode = bc.targetBill.repeatMode;
-
-				if (c.compatibleStockpiles && c.linkStockpiles)
-					other.targetBill.SetStoreMode(bc.targetBill.GetStoreMode());
-
-				if (c.compatibleWorkers && c.linkWorkers) {
-					// Similar code to Bill.SetPawnRestriction
-					other.targetBill.pawnRestriction = bc.targetBill.pawnRestriction;
-					other.targetBill.slavesOnly = bc.targetBill.slavesOnly;
-					other.targetBill.mechsOnly = bc.targetBill.mechsOnly;
-					other.targetBill.nonMechsOnly = bc.targetBill.nonMechsOnly;
-				}
-
-				if (c.compatibleIngredients && c.linkIngredients)
-					MatchIngredients(bc, other);
 			}
+		}
+
+		/// <summary>
+		/// Make this child update its parents' values.
+		/// </summary>
+		public void UpdateParent() {
+			foreach (LinkSetting sett in linkSettings.Values) {
+				if (!sett.Enabled)
+					continue;
+				sett.UpdateToParent();
+			}
+		}
+
+		/// <summary>
+		/// Pastes every compatible setting, except name.
+		/// </summary>
+		public static void PasteAll(BillLinkTracker from, BillLinkTracker to) {
+
 		}
 
 		/// <summary>
@@ -192,17 +138,11 @@ namespace CrunchyDuck.Math {
 			}
 
 			child.Parent = this;
-			child.linkName = false;
-			child.linkSuspended = child.linkTargetCount =
-				child.linkCustomItemCount = child.linkPause = 
-				child.linkTainted = child.linkEquipped =
-				child.linkOnlyAllowedIngredients = child.linkCountHitpoints =
-				child.linkCountQuality = child.linkCheckStockpiles = true;
-			
-			child.compatibleStockpiles = child.linkStockpiles = AreStockpilesCompatible(child.bc);
-			child.compatibleRepeatMode = child.linkRepeatMode = CanCountProducts(child) == CanCountProducts(this);
-			child.compatibleWorkers = child.linkWorkers = child.linkIngredientsRadius = AreWorkersCompatible(child.bc);
-			child.compatibleIngredients = child.linkIngredients = AreIngredientsCompatible(child.bc);
+			// TODO: Fill in compatibilities.
+			child.linkSettings["stockpiles"].compatibleWithParent = AreStockpilesCompatible(child.bc);
+			child.linkSettings["repeatMode"].compatibleWithParent = CanCountProducts(child) == CanCountProducts(this);
+			child.linkSettings["workers"].compatibleWithParent = AreWorkersCompatible(child.bc);
+			child.linkSettings["ingredients"].compatibleWithParent = AreIngredientsCompatible(child.bc);
 			children.Add(child);
 		}
 
@@ -226,7 +166,7 @@ namespace CrunchyDuck.Math {
 
 		private static void MatchIngredients(BillComponent from, BillComponent to) {
 			to.targetBill.ingredientFilter.allowedDefs = new HashSet<ThingDef>(from.targetBill.ingredientFilter.allowedDefs);
-			if (from.linkTracker.linkIngredientsRadius)
+			if (from.linkTracker.linkSettings["ingredientRadius"].Enabled)
 				to.targetBill.ingredientSearchRadius = from.targetBill.ingredientSearchRadius;
 			// I believe that because they're structs, this is fine. I'm still learning to ref vs val stuff.
 			to.targetBill.ingredientFilter.AllowedHitPointsPercents = from.targetBill.ingredientFilter.AllowedHitPointsPercents;
@@ -284,27 +224,10 @@ namespace CrunchyDuck.Math {
 			Scribe_Values.Look(ref isMasterBC, "isMasterBC", false);
 			Scribe_Values.Look(ref parentID, "parentID", -1);
 
-			Scribe_Values.Look(ref linkName, "linkName", false, true);
-			Scribe_Values.Look(ref linkSuspended, "linkSuspended", false, true);
-			Scribe_Values.Look(ref linkTargetCount, "linkTargetCount", false, true);
-			Scribe_Values.Look(ref linkCustomItemCount, "linkCustomItemCount", false, true);
-			Scribe_Values.Look(ref linkPause, "linkPause", false, true);
-			Scribe_Values.Look(ref linkTainted, "linkTainted", false, true);
-			Scribe_Values.Look(ref linkEquipped, "linkEquipped", false, true);
-			Scribe_Values.Look(ref linkOnlyAllowedIngredients, "linkOnlyAllowedIngredients", false, true);
-			Scribe_Values.Look(ref linkCountHitpoints, "linkCountHitpoints", false, true);
-			Scribe_Values.Look(ref linkCountQuality, "linkCountQuality", false, true);
-			Scribe_Values.Look(ref linkCheckStockpiles, "linkCheckStockpiles", false, true);
-			Scribe_Values.Look(ref linkStockpiles, "linkStockpiles", false, true);
-			Scribe_Values.Look(ref linkRepeatMode, "linkRepeatMode", false, true);
-			Scribe_Values.Look(ref linkWorkers, "linkWorkers", false, true);
-			Scribe_Values.Look(ref linkIngredients, "linkIngredients", false, true);
-			Scribe_Values.Look(ref linkIngredientsRadius, "linkIngredientsRadius", false, true);
-
-			Scribe_Values.Look(ref compatibleStockpiles, "compatibleStockpiles", false, true);
-			Scribe_Values.Look(ref compatibleRepeatMode, "compatibleRepeatMode", false, true);
-			Scribe_Values.Look(ref compatibleWorkers, "compatibleWorkers", false, true);
-			Scribe_Values.Look(ref compatibleIngredients, "compatibleIngredients", false, true);
+			foreach (LinkSetting sett in linkSettings.Values) {
+				Scribe_Values.Look(ref sett.state, sett.name, sett.defaultState);
+				Scribe_Values.Look(ref sett.state, sett.name + "Compatible", true);
+			}
 
 			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
 			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
@@ -313,6 +236,129 @@ namespace CrunchyDuck.Math {
 					children = child_ids.Select(i => IDs[i]).ToHashSet();
 				}
 			}
+		}
+	
+		public static Dictionary<string, LinkSetting> GenerateLinkSettings(BillLinkTracker owner) {
+			Dictionary<string, LinkSetting> sett = new Dictionary<string, LinkSetting>();
+
+			string setting_name;
+			Action<BillLinkTracker, BillLinkTracker> update;
+
+			setting_name = "name";
+			update = (from, to) => to.bc.name = from.bc.name;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update, false));
+
+			setting_name = "suspended";
+			update = (from, to) => to.bc.targetBill.suspended = from.bc.targetBill.suspended;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "targetCount";
+			update = (from, to) => {
+				MatchInputField(from.bc.doXTimes, to.bc.doXTimes);
+				MatchInputField(from.bc.doUntilX, to.bc.doUntilX);
+			};
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "customItemCount";
+			update = (from, to) => {
+				MatchInputField(from.bc.itemsToCount, to.bc.itemsToCount);
+				to.bc.customItemsToCount = from.bc.customItemsToCount;
+			};
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "pause";
+			update = (from, to) => {
+				MatchInputField(from.bc.unpause, to.bc.unpause);
+				to.bc.targetBill.paused = from.bc.targetBill.paused;
+			};
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "tainted";
+			update = (from, to) => to.bc.targetBill.includeTainted = from.bc.targetBill.includeTainted;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "equipped";
+			update = (from, to) => to.bc.targetBill.includeEquipped = from.bc.targetBill.includeEquipped;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "onlyAllowedIngredients";
+			update = (from, to) => to.bc.targetBill.limitToAllowedStuff = from.bc.targetBill.limitToAllowedStuff;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "countHitpoints";
+			update = (from, to) => to.bc.targetBill.hpRange = from.bc.targetBill.hpRange;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "countQuality";
+			update = (from, to) => to.bc.targetBill.qualityRange = from.bc.targetBill.qualityRange;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "checkStockpile";
+			update = (from, to) => to.bc.targetBill.includeFromZone = from.bc.targetBill.includeFromZone;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "ingredientsRadius";
+			update = (from, to) => to.bc.targetBill.ingredientSearchRadius = from.bc.targetBill.ingredientSearchRadius;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+
+			setting_name = "stockpiles";
+			update = (from, to) => to.bc.targetBill.SetStoreMode(from.bc.targetBill.GetStoreMode());
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "repeatMode";
+			update = (from, to) => to.bc.targetBill.repeatMode = from.bc.targetBill.repeatMode;
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "workers";
+			update = (from, to) => {
+				// Similar code to Bill.SetPawnRestriction
+				to.bc.targetBill.pawnRestriction = from.bc.targetBill.pawnRestriction;
+				to.bc.targetBill.slavesOnly = from.bc.targetBill.slavesOnly;
+				to.bc.targetBill.mechsOnly = from.bc.targetBill.mechsOnly;
+				to.bc.targetBill.nonMechsOnly = from.bc.targetBill.nonMechsOnly;
+			};
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			setting_name = "ingredients";
+			update = (from, to) => MatchIngredients(from.bc, to.bc);
+			sett.Add(setting_name, new LinkSetting(owner, setting_name, update));
+
+			sett["ingredientsRadius"].state = sett["ingredients"].Enabled;
+
+			return sett;
+		}
+	}
+
+	public class LinkSetting {
+		public string name;
+		public BillLinkTracker owner;
+		private Action<BillLinkTracker, BillLinkTracker> update = null;
+
+		public bool defaultState = true;
+		public bool state = true;
+		public bool compatibleWithParent = true;
+		public bool Enabled { get { return state && compatibleWithParent; } }
+
+
+		public LinkSetting(BillLinkTracker owner, string name, Action<BillLinkTracker, BillLinkTracker> update, bool default_state = true) {
+			this.owner = owner;
+			this.name = name;
+			this.update = update;
+			this.defaultState = this.state = default_state;
+			//this.compatibleWithParent = compatible_with_parent;
+		}
+
+		public void UpdateFromParent() {
+			update(owner.Parent, owner);
+		}
+
+		public void UpdateToParent() {
+			update(owner, owner.Parent);
+		}
+
+		public void Reset() {
+			state = defaultState;
 		}
 	}
 }

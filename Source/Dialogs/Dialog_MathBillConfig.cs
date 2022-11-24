@@ -9,6 +9,7 @@ using Verse.Sound;
 using HarmonyLib;
 
 namespace CrunchyDuck.Math {
+
 	// After so much patching, I've decided to just completely reimplement the window.
 	class Dialog_MathBillConfig : Window {
 		IntVec3 billGiverPos;
@@ -530,6 +531,7 @@ namespace CrunchyDuck.Math {
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.
 		private IEnumerable<Widgets.DropdownMenuElement<Zone_Stockpile>> GenerateStockpileInclusion() {
+			// TODO BIG: Add a default "look in stockpiles" option that only checks stockpiles, and keep "Look everywhere" actually looking everywhere.
 			// All stockpiles.
 			yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
 				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate

@@ -30,7 +30,7 @@ namespace CrunchyDuck.Math.MathFilters {
 
 			{ "animals", p => p.AnimalOrWildMan()},
 			{ "anim", p => p.AnimalOrWildMan()},
-
+			// TODO BIG: Add "Adult" filter.
 			{ "kids", p => p.DevelopmentalStage == DevelopmentalStage.Child},
 
 			{ "babies", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
