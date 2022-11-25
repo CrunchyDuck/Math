@@ -230,16 +230,15 @@ namespace CrunchyDuck.Math {
 			Scribe_Values.Look(ref isMasterBC, "isMasterBC", false);
 			Scribe_Values.Look(ref parentID, "parentID", -1);
 
-			foreach (LinkSetting sett in linkSettings) {
-				Scribe_Values.Look(ref sett.state, sett.displayName);
-				Scribe_Values.Look(ref sett.state, sett.displayName + "Compatible");
-			}
+			Scribe_Deep.Look(ref linkSettings, "settings", this);
+			if (linkSettings == null)
+				linkSettings = new LinkSettings(this);
 
 			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
 			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
 			if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs) {
 				if (child_ids != null) {
-					children = child_ids.Select(i => IDs[i]).ToHashSet();
+					children = child_ids.Select(_i => IDs[_i]).ToHashSet();
 				}
 			}
 		}
@@ -265,7 +264,6 @@ namespace CrunchyDuck.Math {
 				this.defaultState = this.state = default_state;
 				this.tooltipIncompatible = tooltip_incompatible;
 				this.tooltip = tooltip;
-				//this.compatibleWithParent = compatible_with_parent;
 			}
 
 			public void UpdateFromParent() {
@@ -281,7 +279,7 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
-		public class LinkSettings : IEnumerable<LinkSetting> {
+		public class LinkSettings : IEnumerable<LinkSetting>, IExposable {
 			public BillLinkTracker lt;
 
 			public LinkSetting name;
@@ -397,6 +395,16 @@ namespace CrunchyDuck.Math {
 				yield return repeatMode;
 				yield return workers;
 				yield return ingredients;
+			}
+
+			public void ExposeData() {
+				int i = 0;
+				foreach (LinkSetting sett in this) {
+					// This method means that if the order of settings changes, loads will get weird. Don't do that.
+					Scribe_Values.Look(ref sett.state, "setting_" + i);
+					Scribe_Values.Look(ref sett.state, "setting_" + i + "compatible");
+					i++;
+				}
 			}
 		}
 	}
