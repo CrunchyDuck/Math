@@ -63,11 +63,14 @@ namespace CrunchyDuck.Math {
 			new MathFilters.PawnFilter(bc).Parse("animals", out r);
 			valueCache["animals"] = ((MathFilters.MathFilter)r).Count();
 
-			new MathFilters.PawnFilter(bc).Parse("babies", out r);
-			valueCache["babies"] = ((MathFilters.MathFilter)r).Count();
+			new MathFilters.PawnFilter(bc).Parse("adults", out r);
+			valueCache["adults"] = ((MathFilters.MathFilter)r).Count();
 
 			new MathFilters.PawnFilter(bc).Parse("kids", out r);
 			valueCache["kids"] = ((MathFilters.MathFilter)r).Count();
+
+			new MathFilters.PawnFilter(bc).Parse("babies", out r);
+			valueCache["babies"] = ((MathFilters.MathFilter)r).Count();
 
 			statEntries = GetBasicEntries();
 			// If these values aren't reset you get some corruption nonsense because the system is jank.
@@ -251,8 +254,9 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​" + "guests", "", "CD.M.infocard.pawns.guests.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "prisoners", "", "CD.M.infocard.pawns.prisoners.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "slaves", "", "CD.M.infocard.pawns.slaves.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "babies", "", "CD.M.infocard.pawns.babies.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "adults", "", "CD.M.infocard.pawns.adults.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "kids", "", "CD.M.infocard.pawns.kids.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "​" + "babies", "", "CD.M.infocard.pawns.babies.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "mechanitors", "", "CD.M.infocard.pawns.mechanitors.description".Translate(), display_priority--));
 
 			// Order traits alphabetically

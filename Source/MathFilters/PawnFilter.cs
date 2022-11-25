@@ -31,6 +31,8 @@ namespace CrunchyDuck.Math.MathFilters {
 			{ "animals", p => p.AnimalOrWildMan()},
 			{ "anim", p => p.AnimalOrWildMan()},
 
+			{ "adults", p => p.DevelopmentalStage == DevelopmentalStage.Adult },
+
 			{ "kids", p => p.DevelopmentalStage == DevelopmentalStage.Child},
 
 			{ "babies", p => p.DevelopmentalStage == DevelopmentalStage.Baby || p.DevelopmentalStage == DevelopmentalStage.Newborn},
