@@ -14,6 +14,7 @@
 	<!-- Link settings -->
 	<CD.M.link.name>Name</CD.M.link.name>
 	<CD.M.link.name.description>Link this bill's name to its parent.</CD.M.link.name.description>
+	<CD.M.link.suspended>Suspended</CD.M.link.suspended>
 	<CD.M.link.input_fields>Link input fields</CD.M.link.input_fields>
 	<CD.M.link.input_fields.description>Link this bill's input fields to its parent.</CD.M.link.input_fields.description>
 	<CD.M.link.target_count>Target count</CD.M.link.target_count>
@@ -31,8 +32,8 @@
 	<CD.M.link.equipped>Equipped</CD.M.link.equipped>
 	<CD.M.link.only_allowed_ingredients>Only allowed ingredients</CD.M.link.only_allowed_ingredients>
 	<CD.M.link.check_stockpile>Stockpile to check</CD.M.link.check_stockpile>
-	<CD.M.link.hp>Hitpoints filter</CD.M.link.hp>
-	<CD.M.link.quality>Quality filter</CD.M.link.quality>
+	<CD.M.link.count_hp>Hitpoints filter</CD.M.link.count_hp>
+	<CD.M.link.count_quality>Quality filter</CD.M.link.count_quality>
 	<CD.M.link.target_stockpile>Take to stockpile</CD.M.link.target_stockpile>
 	<CD.M.link.target_stockpile_incompatible>This bill produces a different thing to its parent, and can't be taken to the same stockpiles.</CD.M.link.target_stockpile_incompatible>
 	<CD.M.link.workers>Workers</CD.M.link.workers>
