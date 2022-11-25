@@ -100,19 +100,14 @@ namespace CrunchyDuck.Math {
 			if (children == null)
 				return;
 			foreach (BillLinkTracker c in children) {
-				foreach (LinkSetting sett in c.linkSettings) {
-					if (!sett.Enabled)
-						continue;
-					sett.UpdateFromParent();
-				}
-				c.UpdateChildren();
+				c.UpdateFromParent();
 			}
 		}
 
 		/// <summary>
 		/// Make this child update its parents' values.
 		/// </summary>
-		public void UpdateParent() {
+		public void UpdateToParent() {
 			if (Parent == null)
 				return;
 
@@ -121,7 +116,17 @@ namespace CrunchyDuck.Math {
 					continue;
 				sett.UpdateToParent();
 			}
-			Parent.UpdateParent();
+			Parent.UpdateChildren();
+			Parent.UpdateToParent();
+		}
+
+		public void UpdateFromParent() {
+			foreach (LinkSetting sett in linkSettings) {
+				if (!sett.Enabled)
+					continue;
+				sett.UpdateFromParent();
+			}
+			UpdateChildren();
 		}
 
 		/// <summary>
@@ -156,6 +161,7 @@ namespace CrunchyDuck.Math {
 				child.Parent.BreakLink(child);
 			}
 			AddChild(child);
+			child.UpdateFromParent();
 		}
 
 		public bool LinkWontCauseParadox(BillLinkTracker potential_parent) {
@@ -207,9 +213,9 @@ namespace CrunchyDuck.Math {
 		}
 
 		private static void MatchInputField(InputField from, InputField to) {
-			from.buffer = to.buffer;
-			from.CurrentValue = to.CurrentValue;
-			from.lastValid = to.lastValid;
+			to.buffer = from.buffer;
+			to.CurrentValue = from.CurrentValue;
+			to.lastValid = from.lastValid;
 		}
 
 		private static void MatchIngredients(BillComponent from, BillComponent to) {

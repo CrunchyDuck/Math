@@ -141,7 +141,7 @@ namespace CrunchyDuck.Math {
 			button_rect.x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 
 			bc.linkTracker.UpdateChildren();
-			bc.linkTracker.UpdateParent();
+			bc.linkTracker.UpdateToParent();
 
 			BillMenuData.Unassign();
 		}
