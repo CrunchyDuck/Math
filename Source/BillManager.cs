@@ -47,7 +47,7 @@ namespace CrunchyDuck.Math {
 
 			// Update linked bills.
 			foreach (BillLinkTracker blt in BillLinkTracker.linkIDs.Values) {
-				blt.UpdateLinkedBills();
+				blt.UpdateChildren();
 			}
 
 			// We create a copy as billTable can be modified during iteration by having null bills removed.

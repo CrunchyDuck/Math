@@ -75,13 +75,16 @@ namespace CrunchyDuck.Math {
 			linkSettings = new LinkSettings(this);// GenerateLinkSettings(this);
 		}
 
-		public void UpdateLinkedBills() {
+		public void UpdateChildren() {
+			if (children == null)
+				return;
 			foreach (BillLinkTracker c in children) {
 				foreach (LinkSetting sett in c.linkSettings) {
 					if (!sett.Enabled)
 						continue;
 					sett.UpdateFromParent();
 				}
+				c.UpdateChildren();
 			}
 		}
 
@@ -89,11 +92,15 @@ namespace CrunchyDuck.Math {
 		/// Make this child update its parents' values.
 		/// </summary>
 		public void UpdateParent() {
+			if (Parent == null)
+				return;
+
 			foreach (LinkSetting sett in linkSettings) {
 				if (!sett.Enabled)
 					continue;
 				sett.UpdateToParent();
 			}
+			Parent.UpdateParent();
 		}
 
 		/// <summary>
