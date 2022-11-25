@@ -14,17 +14,17 @@ namespace CrunchyDuck.Math {
 	class Dialog_MathBillConfig : Window {
 		IntVec3 billGiverPos;
 		public Bill_Production bill;
-        private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int RepeatModeSubdialogHeight = 324 + 100;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int StoreModeSubdialogHeight = 30;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int WorkerSelectionSubdialogHeight = 85;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int IngredientRadiusSubdialogHeight = 50;
+		private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int RepeatModeSubdialogHeight = 324 + 100;
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int StoreModeSubdialogHeight = 30;
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int WorkerSelectionSubdialogHeight = 85;
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
-        public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
+		public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
 		public Vector2 linkSettingsScrollPos = Vector2.zero;
 		private TreeNode linkSettingsMaster;
 		private float linkSettingsHeight = 0;
@@ -303,7 +303,7 @@ namespace CrunchyDuck.Math {
 			try {
 				non_mech = bill.NonMechsOnly;
 			}
-			catch {}
+			catch { }
 
 			if (bill.PawnRestriction != null)
 				button_label = bill.PawnRestriction.LabelShortCap;
@@ -321,7 +321,7 @@ namespace CrunchyDuck.Math {
 			// Worker restriction dropdown.
 			var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Pawn>>>)(b => GeneratePawnRestrictionOptions());
 			Widgets.Dropdown(listing.GetRect(30f), bill, b => b.PawnRestriction, f, button_label);
-			
+
 			// Worker skill restriction.
 			if (bill.PawnRestriction == null && bill.recipe.workSkill != null && !bill.MechsOnly) {
 				listing.Label("AllowedSkillRange".Translate(bill.recipe.workSkill.label));
@@ -479,7 +479,7 @@ namespace CrunchyDuck.Math {
 			Widgets.BeginScrollView(render_area, ref linkSettingsScrollPos, scroll_area);
 			Listing_Tree lt = new Listing_Tree();
 			lt.Begin(scroll_area);
-			foreach (Generic_TreeNode node in linkSettingsMaster.children) {
+			foreach (TreeNode_Link node in linkSettingsMaster.children) {
 				node.Render(lt, 0);
 			}
 			linkSettingsHeight = lt.CurHeight + 10;
@@ -534,8 +534,7 @@ namespace CrunchyDuck.Math {
 			// TODO BIG: Add a default "look in stockpiles" option that only checks stockpiles, and keep "Look everywhere" actually looking everywhere.
 			// All stockpiles.
 			yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
-				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate
-				{
+				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate {
 					bill.includeFromZone = null;
 				}),
 				payload = null
@@ -567,7 +566,7 @@ namespace CrunchyDuck.Math {
 				i = num;
 			}
 		}
-		
+
 		protected virtual IEnumerable<Widgets.DropdownMenuElement<Pawn>> GeneratePawnRestrictionOptions() {
 			if (ModsConfig.BiotechActive && bill.recipe.mechanitorOnlyRecipe) {
 				// Mechanitor category
@@ -583,8 +582,7 @@ namespace CrunchyDuck.Math {
 			}
 			// Any worker category
 			yield return new Widgets.DropdownMenuElement<Pawn> {
-				option = new FloatMenuOption("AnyWorker".Translate(), delegate
-				{
+				option = new FloatMenuOption("AnyWorker".Translate(), delegate {
 					bill.SetAnyPawnRestriction();
 				}),
 				payload = null
@@ -592,8 +590,7 @@ namespace CrunchyDuck.Math {
 			// Any slave category
 			if (ModsConfig.IdeologyActive) {
 				yield return new Widgets.DropdownMenuElement<Pawn> {
-					option = new FloatMenuOption("AnySlave".Translate(), delegate
-					{
+					option = new FloatMenuOption("AnySlave".Translate(), delegate {
 						bill.SetAnySlaveRestriction();
 					}),
 					payload = null
@@ -602,8 +599,7 @@ namespace CrunchyDuck.Math {
 			// Any mech category
 			if (ModsConfig.BiotechActive && MechWorkUtility.AnyWorkMechCouldDo(bill.recipe)) {
 				yield return new Widgets.DropdownMenuElement<Pawn> {
-					option = new FloatMenuOption("AnyMech".Translate(), delegate
-					{
+					option = new FloatMenuOption("AnyMech".Translate(), delegate {
 						bill.SetAnyMechRestriction();
 					}),
 					payload = null
@@ -620,7 +616,7 @@ namespace CrunchyDuck.Math {
 				yield return item2;
 			}
 		}
-	
+
 		private TreeNode GenerateLinkSettingsTree() {
 			/// BEWARE, YE
 			/// This code is a beautiful, dark hole.
@@ -631,152 +627,110 @@ namespace CrunchyDuck.Math {
 			var master = new TreeNode();
 			master.children = new List<TreeNode>();
 			BillLinkTracker lt = bc.linkTracker;
-			Action<Generic_TreeNode, bool> category_on_act = (node, value) => {
-				foreach (Generic_TreeNode child in node.children) {
-					child.ToggleAction(child, value);
-				}
-			};
-			Func<Generic_TreeNode, MultiCheckboxState> category_check_state = node => {
-				bool any_on = false;
-				bool any_off = false;
-				foreach (Generic_TreeNode child in node.children) {
-					var res = child.CheckState(child);
-					if (res == MultiCheckboxState.Partial)
-						return MultiCheckboxState.Partial;
-					else if (res == MultiCheckboxState.On)
-						any_on = true;
-					else
-						any_off = true;
 
-					if (any_on && any_off)
-						return MultiCheckboxState.Partial;
-				}
-				if (any_on)
-					return MultiCheckboxState.On;
-				return MultiCheckboxState.Off;
+			// TODO: Decide on order.
+			var setts = lt.linkSettings;
+			BillLinkTracker.LinkSetting[] main_settings_children = new BillLinkTracker.LinkSetting[] {
+				setts.repeatMode,
+				setts.tainted,
+				setts.equipped,
+				setts.onlyAllowedIngredients,
+				setts.checkStockpile,
+				setts.countHP,
+				setts.countQuality,
+				setts.targetStockpile,
+				setts.workers,
+				setts.suspended,
 			};
-			Action<Generic_TreeNode, bool> on_act;
-			Func<Generic_TreeNode, MultiCheckboxState> check_state;
+			BillLinkTracker.LinkSetting[] input_settings_children = new BillLinkTracker.LinkSetting[] {
+				setts.targetCount,
+				setts.customItemCount,
+				setts.pause,
+			};
+			BillLinkTracker.LinkSetting[] ingredient_settings_children = new BillLinkTracker.LinkSetting[] {
+				setts.ingredients,
+				setts.ingredientsRadius,
+			};
 
-			// Name
-			on_act = (node, b) => lt.linkName = b;
-			check_state = (node) => CheckboxState(lt.linkName);
-			master.children.Add(new Generic_TreeNode("CD.M.link.name".Translate(), "CD.M.link.name.description".Translate(), on_act, check_state));
+			master.children.Add(new LinkNode(setts.name));
 
 			// Input settings
-			Generic_TreeNode input_settings = new Generic_TreeNode("CD.M.link.input_fields".Translate(), "CD.M.link.input_fields.description".Translate(), category_on_act, category_check_state);
-			// Target count
-			on_act = (node, b) => lt.linkTargetCount = b;
-			check_state = (node) => CheckboxState(lt.linkTargetCount);
-			input_settings.children.Add(new Generic_TreeNode("CD.M.link.target_count".Translate(), "CD.M.link.target_count.description".Translate(), on_act, check_state));
-			// Custom Item Count
-			on_act = (node, b) => lt.linkCustomItemCount = b;
-			check_state = (node) => CheckboxState(lt.linkCustomItemCount);
-			input_settings.children.Add(new Generic_TreeNode("CD.M.link.custom_item_count".Translate(), "CD.M.link.custom_item_count.description".Translate(), on_act, check_state));
-			// Pause
-			on_act = (node, b) => lt.linkPause = b;
-			check_state = (node) => CheckboxState(lt.linkPause);
-			input_settings.children.Add(new Generic_TreeNode("CD.M.link.pause".Translate(), "CD.M.link.pause.description".Translate(), on_act, check_state));
+			LinkCategory input_settings = new LinkCategory("CD.M.link.input_fields".Translate(), "CD.M.link.input_fields.description".Translate());
+			foreach(var s in input_settings_children) {
+				input_settings.children.Add(new LinkNode(s));
+			}
+			//master.children.Add(input_settings);
 
-			// Main settings
-			Generic_TreeNode middle_settings = new Generic_TreeNode("CD.M.link.middle_panel".Translate(), "CD.M.link.middle_panel.description".Translate(), category_on_act, category_check_state);
+			// Main settings category.
+			LinkCategory middle_settings = new LinkCategory("CD.M.link.middle_panel".Translate(), "CD.M.link.middle_panel.description".Translate());
 			middle_settings.children.Add(input_settings);
-			// Repeat mode
-			on_act = (node, b) => lt.linkRepeatMode = b;
-			check_state = (node) => CheckboxState(lt.linkRepeatMode);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.repeat_mode".Translate(), "CD.M.link.repeat_mode.description".Translate(), on_act, check_state, () => !lt.compatibleRepeatMode, "CD.M.link.repeat_mode_incompatible".Translate()));
-			// Tainted
-			on_act = (node, b) => lt.linkTainted = b;
-			check_state = (node) => CheckboxState(lt.linkTainted);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.tainted".Translate(), null, on_act, check_state));
-			// Equipped
-			on_act = (node, b) => lt.linkEquipped = b;
-			check_state = (node) => CheckboxState(lt.linkEquipped);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.equipped".Translate(), null, on_act, check_state));
-			// Only allowed ingredients
-			on_act = (node, b) => lt.linkOnlyAllowedIngredients = b;
-			check_state = (node) => CheckboxState(lt.linkOnlyAllowedIngredients);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.only_allowed_ingredients".Translate(), null, on_act, check_state));
-			// Stockpile to check
-			on_act = (node, b) => lt.linkCheckStockpiles = b;
-			check_state = (node) => CheckboxState(lt.linkCheckStockpiles);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.check_stockpile".Translate(), null, on_act, check_state));
-			// Hitpoints
-			on_act = (node, b) => lt.linkCountHitpoints= b;
-			check_state = (node) => CheckboxState(lt.linkCountHitpoints);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.hp".Translate(), null, on_act, check_state));
-			// Quality
-			on_act = (node, b) => lt.linkCountQuality = b;
-			check_state = (node) => CheckboxState(lt.linkCountQuality);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.quality".Translate(), null, on_act, check_state));
-			// Stockpile
-			on_act = (node, b) => lt.linkStockpiles = b;
-			check_state = (node) => CheckboxState(lt.linkStockpiles);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.target_stockpile".Translate(), null, on_act, check_state, () => !lt.compatibleStockpiles, "CD.M.link.target_stockpile_incompatible".Translate()));
-			// Workers
-			on_act = (node, b) => lt.linkWorkers = b;
-			check_state = (node) => CheckboxState(lt.linkWorkers);
-			middle_settings.children.Add(new Generic_TreeNode("CD.M.link.workers".Translate(), null, on_act, check_state, () => !lt.compatibleWorkers, "CD.M.link.workers_incompatible".Translate()));
+			foreach(var s in main_settings_children) {
+				middle_settings.children.Add(new LinkNode(s));
+			}
 			master.children.Add(middle_settings);
 
-			// Ingredients cat
-			var link_ingredients = new Generic_TreeNode("CD.M.link.cat_ingredients".Translate(), null, category_on_act, category_check_state);
-			// Ingredients
-			on_act = (node, b) => bc.linkTracker.linkIngredients = b;
-			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredients);
-			link_ingredients.children.Add(new Generic_TreeNode("CD.M.link.ingredients".Translate(), null, on_act, check_state, () => !lt.compatibleStockpiles, "CD.M.link.ingredients_incompatible".Translate()));
-			// Ingredients radius
-			on_act = (node, b) => bc.linkTracker.linkIngredientsRadius = b;
-			check_state = (node) => CheckboxState(bc.linkTracker.linkIngredientsRadius);
-			link_ingredients.children.Add(new Generic_TreeNode("CD.M.link.ingredients_radius".Translate(), null, on_act, check_state));
+			// Ingredients settings category
+			LinkCategory link_ingredients = new LinkCategory("CD.M.link.cat_ingredients".Translate(), null);
+			foreach (var s in ingredient_settings_children) {
+				link_ingredients.children.Add(new LinkNode(s));
+			}
 			master.children.Add(link_ingredients);
 
 			return master;
 		}
+	}
 
-		private static MultiCheckboxState CheckboxState(params bool[] bools) {
-			bool any_on = false;
-			bool any_off = false;
-			foreach (bool b in bools) {
-				if (b)
-					any_on = true;
-				else
-					any_off = true;
-				if (any_on && any_off)
-					return MultiCheckboxState.Partial;
+	public abstract class TreeNode_Link : TreeNode {
+		public abstract void Render(Listing_Tree lt, int indentation_level);
+	}
+
+	public class LinkNode : TreeNode_Link {
+		public BillLinkTracker.LinkSetting set;
+
+		public LinkNode(BillLinkTracker.LinkSetting link_setting) {
+			this.set = link_setting;
+		}
+
+		public override void Render(Listing_Tree lt, int indentation_level) {
+			RenderLine(lt, indentation_level);
+			lt.EndLine();
+		}
+
+		public void RenderLine(Listing_Tree lt, int indentation_level) {
+			var checkbox_pos = new Rect(lt.LabelWidth, lt.curY, lt.lineHeight, lt.lineHeight);
+			if (!set.compatibleWithParent) {
+				bool b = false;
+				Widgets.Checkbox(checkbox_pos.position, ref b, lt.lineHeight, true);
+				lt.LabelLeft(set.displayName, set.tooltipIncompatible, indentation_level, textColor: Color.grey);
 			}
-
-			if (any_on)
-				return MultiCheckboxState.On;
-			return MultiCheckboxState.Off;
+			else {
+				bool before = set.state;
+				Widgets.Checkbox(checkbox_pos.position, ref set.state, lt.lineHeight, paintable: true);
+				if (set.state && set.state != before) {
+					set.UpdateFromParent();
+				}
+				lt.LabelLeft(set.displayName, set.tooltip, indentation_level, textColor: Color.white);
+			}
 		}
 	}
 
-	public class Generic_TreeNode : TreeNode {
+	public class LinkCategory : TreeNode_Link {
 		public string name;
 		public string tooltip;
-		public Action<Generic_TreeNode, bool> ToggleAction;
-		public Func<Generic_TreeNode, MultiCheckboxState> CheckState;
-		public Func<bool> CheckDisabled;
-		public string disabledTooltip;
 
-		public Generic_TreeNode(string name, string tooltip, Action<Generic_TreeNode, bool> toggle_act, Func<Generic_TreeNode, MultiCheckboxState> check_state, Func<bool> check_disabled = null, string disabled_tooltip = "") {
+		public LinkCategory(string name, string tooltip) {
 			children = new List<TreeNode>();
 			this.name = name;
 			this.tooltip = tooltip;
-			this.ToggleAction = toggle_act;
-			this.CheckState = check_state;
-			this.CheckDisabled = check_disabled;
-			this.disabledTooltip = disabled_tooltip;
 		}
 
-		public void Render(Listing_Tree lt, int indentation_level) {
+		public override void Render(Listing_Tree lt, int indentation_level) {
 			if (children.Count != 0) {
 				RenderLine(lt, indentation_level);
 				lt.OpenCloseWidget(this, indentation_level, 1);
 				lt.EndLine();
 				if (IsOpen(1)) {
-					foreach (Generic_TreeNode node in children)
+					foreach (TreeNode_Link node in children)
 						node.Render(lt, indentation_level + 1);
 				}
 				return;
@@ -787,20 +741,51 @@ namespace CrunchyDuck.Math {
 
 		public void RenderLine(Listing_Tree lt, int indentation_level) {
 			var checkbox_pos = new Rect(lt.LabelWidth, lt.curY, lt.lineHeight, lt.lineHeight);
-			if (CheckDisabled != null && CheckDisabled()) {
-				bool b = false;
-				Widgets.Checkbox(checkbox_pos.position, ref b, lt.lineHeight, true);
-				lt.LabelLeft(name, disabledTooltip, indentation_level, textColor: Color.grey);
+			lt.LabelLeft(name, tooltip, indentation_level, textColor: Color.white);
+			MultiCheckboxState state = CheckState();
+			MultiCheckboxState multiCheckboxState = Widgets.CheckboxMulti(checkbox_pos, state, true);
+			if (multiCheckboxState == MultiCheckboxState.On)
+				ToggleAction(true);
+			else if (multiCheckboxState == MultiCheckboxState.Off)
+				ToggleAction(false);
+		}
+	
+		public void ToggleAction(bool value) {
+			foreach (TreeNode child in children) {
+				if (child is LinkNode ln) {
+					ln.set.state = value;
+				}
+				else if (child is LinkCategory lc)
+					lc.ToggleAction(value);
 			}
-			else {
-				lt.LabelLeft(name, tooltip, indentation_level, textColor: Color.white);
-				MultiCheckboxState state = CheckState(this);
-				MultiCheckboxState multiCheckboxState = Widgets.CheckboxMulti(checkbox_pos, state, true);
-				if (multiCheckboxState == MultiCheckboxState.On)
-					ToggleAction(this, true);
-				else if (multiCheckboxState == MultiCheckboxState.Off)
-					ToggleAction(this, false);
+		}
+
+		public MultiCheckboxState CheckState() {
+			bool any_on = false;
+			bool any_off = false;
+			foreach (TreeNode child in children) {
+				if (child is LinkNode ln) {
+					if (ln.set.Enabled)
+						any_on = true;
+					else
+						any_off = true;
+				}
+				else if (child is LinkCategory lc) {
+					var res = lc.CheckState();
+					if (res == MultiCheckboxState.Partial)
+						return MultiCheckboxState.Partial;
+					else if (res == MultiCheckboxState.On)
+						any_on = true;
+					else
+						any_off = true;
+				}
+
+				if (any_on && any_off)
+					return MultiCheckboxState.Partial;
 			}
+			if (any_on)
+				return MultiCheckboxState.On;
+			return MultiCheckboxState.Off;
 		}
 	}
 }

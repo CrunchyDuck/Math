@@ -78,6 +78,8 @@ namespace CrunchyDuck.Math {
 		public void UpdateLinkedBills() {
 			foreach (BillLinkTracker c in children) {
 				foreach (LinkSetting sett in c.linkSettings) {
+					if (!sett.Enabled)
+						continue;
 					sett.UpdateFromParent();
 				}
 			}
@@ -139,11 +141,14 @@ namespace CrunchyDuck.Math {
 			}
 
 			child.Parent = this;
-			// TODO: Fill in compatibilities.
-			child.linkSettings.targetStockpile.compatibleWithParent = AreStockpilesCompatible(child.bc);
-			child.linkSettings.repeatMode.compatibleWithParent = CanCountProducts(child) == CanCountProducts(this);
-			child.linkSettings.workers.compatibleWithParent = AreWorkersCompatible(child.bc);
-			child.linkSettings.ingredients.compatibleWithParent = AreIngredientsCompatible(child.bc);
+			foreach(var sett in child.linkSettings) {
+				sett.Reset();
+			}
+
+			child.linkSettings.targetStockpile.state = child.linkSettings.targetStockpile.compatibleWithParent = AreStockpilesCompatible(child.bc);
+			child.linkSettings.repeatMode.state = child.linkSettings.repeatMode.compatibleWithParent = CanCountProducts(child) == CanCountProducts(this);
+			child.linkSettings.workers.state = child.linkSettings.workers.compatibleWithParent = AreWorkersCompatible(child.bc);
+			child.linkSettings.ingredients.state = child.linkSettings.ingredients.compatibleWithParent = AreIngredientsCompatible(child.bc);
 			children.Add(child);
 		}
 
@@ -226,8 +231,8 @@ namespace CrunchyDuck.Math {
 			Scribe_Values.Look(ref parentID, "parentID", -1);
 
 			foreach (LinkSetting sett in linkSettings) {
-				Scribe_Values.Look(ref sett.state, sett.displayName, sett.defaultState);
-				Scribe_Values.Look(ref sett.state, sett.displayName + "Compatible", true);
+				Scribe_Values.Look(ref sett.state, sett.displayName);
+				Scribe_Values.Look(ref sett.state, sett.displayName + "Compatible");
 			}
 
 			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
@@ -250,7 +255,7 @@ namespace CrunchyDuck.Math {
 			public bool defaultState = true;
 			public bool state = true;
 			public bool compatibleWithParent = true;
-			public bool Enabled { get { return state && compatibleWithParent; } }
+			public bool Enabled { get { return state && compatibleWithParent; } set { state = value; } }
 
 
 			public LinkSetting(BillLinkTracker owner, string display_name, Action<BillLinkTracker, BillLinkTracker> update, bool default_state = true, string tooltip = null, string tooltip_incompatible = null) {
@@ -347,10 +352,10 @@ namespace CrunchyDuck.Math {
 
 
 				update = (from, to) => to.bc.targetBill.SetStoreMode(from.bc.targetBill.GetStoreMode());
-				targetStockpile = new LinkSetting(owner, "CD.M.link.target_stockpile".Translate(), update);
+				targetStockpile = new LinkSetting(owner, "CD.M.link.target_stockpile".Translate(), update, tooltip_incompatible: "CD.M.link.target_stockpile_incompatible".Translate());
 
 				update = (from, to) => to.bc.targetBill.repeatMode = from.bc.targetBill.repeatMode;
-				repeatMode = new LinkSetting(owner, "CD.M.link.repeat_mode".Translate(), update);
+				repeatMode = new LinkSetting(owner, "CD.M.link.repeat_mode".Translate(), update, tooltip:"CD.M.link.repeat_mode.description".Translate(), tooltip_incompatible: "CD.M.link.repeat_mode_incompatible".Translate());
 
 				update = (from, to) => {
 					// Similar code to Bill.SetPawnRestriction
@@ -359,10 +364,10 @@ namespace CrunchyDuck.Math {
 					to.bc.targetBill.mechsOnly = from.bc.targetBill.mechsOnly;
 					to.bc.targetBill.nonMechsOnly = from.bc.targetBill.nonMechsOnly;
 				};
-				workers = new LinkSetting(owner, "CD.M.link.workers".Translate(), update);
+				workers = new LinkSetting(owner, "CD.M.link.workers".Translate(), update, tooltip_incompatible: "CD.M.link.workers_incompatible".Translate());
 
 				update = (from, to) => MatchIngredients(from.bc, to.bc);
-				ingredients = new LinkSetting(owner, "CD.M.link.ingredients".Translate(), update);
+				ingredients = new LinkSetting(owner, "CD.M.link.ingredients".Translate(), update, tooltip_incompatible: "CD.M.link.ingredients_incompatible".Translate());
 
 				ingredientsRadius.state = ingredients.Enabled;
 			}
