@@ -4,12 +4,7 @@
 	<CD.M.tooltips.user_variables>User variables</CD.M.tooltips.user_variables>
 	<CD.M.tooltips.make_link>Link this bill to the currently copied bill.</CD.M.tooltips.make_link>
 	<CD.M.tooltips.break_link>Break this bill's link with its parent.</CD.M.tooltips.break_link>
-	<CD.M.tooltips.link_suspended>Link this bill's "suspended" status to its parent.</CD.M.tooltips.link_suspended>
-	<CD.M.tooltips.link_input_fields>Link this bill's inputs to its parent.</CD.M.tooltips.link_input_fields>
-	<CD.M.tooltips.link_repeat_mode>Link this bill's repeat mode to its parent.</CD.M.tooltips.link_repeat_mode>
-	<CD.M.tooltips.link_repeat_mode_incompatible>This bill's repeat modes are not compatible with its parent (Normally means one can't have "Do until you have X").</CD.M.tooltips.link_repeat_mode_incompatible>
-	<CD.M.tooltips.link_ingredients>Link this bill's ingredients to its parent.</CD.M.tooltips.link_ingredients>
-	<CD.M.tooltips.link_ingredients_incompatible>This bill's available ingredients do not match its parents'.</CD.M.tooltips.link_ingredients_incompatible>
+	<CD.M.tooltips.link_paradox>This bill is a parent to the currently copied bill. Linking would cause a circular relationship. No paradoxes allowed.</CD.M.tooltips.link_paradox>
 	
 	<!-- Link settings -->
 	<CD.M.link.name>Name</CD.M.link.name>

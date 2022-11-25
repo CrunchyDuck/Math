@@ -75,6 +75,27 @@ namespace CrunchyDuck.Math {
 			linkSettings = new LinkSettings(this);// GenerateLinkSettings(this);
 		}
 
+		public void ExposeData() {
+			Scribe_Values.Look(ref myID, "myID");
+			Scribe_Values.Look(ref linkID, "linkID", -1);
+			if (linkID != -1)
+				linkIDs[linkID] = this;
+			Scribe_Values.Look(ref isMasterBC, "isMasterBC", false);
+			Scribe_Values.Look(ref parentID, "parentID", -1);
+
+			Scribe_Deep.Look(ref linkSettings, "settings", this);
+			if (linkSettings == null)
+				linkSettings = new LinkSettings(this);
+
+			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
+			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
+			if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs) {
+				if (child_ids != null) {
+					children = child_ids.Select(_i => IDs[_i]).ToHashSet();
+				}
+			}
+		}
+
 		public void UpdateChildren() {
 			if (children == null)
 				return;
@@ -137,53 +158,15 @@ namespace CrunchyDuck.Math {
 			AddChild(child);
 		}
 
-		/// <summary>
-		/// Add a child, and inform that child it has been a new daddy.
-		/// </summary>
-		private void AddChild(BillLinkTracker child) {
-			if (!isMasterBC) {
-				isMasterBC = true;
-				linkID = NextLinkID;
-				linkIDs[linkID] = this;
+		public bool LinkWontCauseParadox(BillLinkTracker potential_parent) {
+			// Check if the potential parent has any parents. If it does, are any of these parents our children?
+			var par = potential_parent;
+			while (par.Parent != null) {
+				if (par.Parent == this)
+					return false;
+				par = par.Parent;
 			}
-
-			child.Parent = this;
-			foreach(var sett in child.linkSettings) {
-				sett.Reset();
-			}
-
-			child.linkSettings.targetStockpile.state = child.linkSettings.targetStockpile.compatibleWithParent = AreStockpilesCompatible(child.bc);
-			child.linkSettings.repeatMode.state = child.linkSettings.repeatMode.compatibleWithParent = CanCountProducts(child) == CanCountProducts(this);
-			child.linkSettings.workers.state = child.linkSettings.workers.compatibleWithParent = AreWorkersCompatible(child.bc);
-			child.linkSettings.ingredients.state = child.linkSettings.ingredients.compatibleWithParent = AreIngredientsCompatible(child.bc);
-			children.Add(child);
-		}
-
-		/// <summary>
-		/// Remove a child. This does not inform the child it has been abandoned.
-		/// </summary>
-		private void RemoveChild(BillLinkTracker child) {
-			children.Remove(child);
-			if (children.Count == 0) {
-				isMasterBC = false;
-				linkIDs.Remove(linkID);
-				linkID = -1;
-			}
-		}
-
-		private static void MatchInputField(InputField from, InputField to) {
-			from.buffer = to.buffer;
-			from.CurrentValue = to.CurrentValue;
-			from.lastValid = to.lastValid;
-		}
-
-		private static void MatchIngredients(BillComponent from, BillComponent to) {
-			to.targetBill.ingredientFilter.allowedDefs = new HashSet<ThingDef>(from.targetBill.ingredientFilter.allowedDefs);
-			if (from.linkTracker.linkSettings.ingredientsRadius.Enabled)
-				to.targetBill.ingredientSearchRadius = from.targetBill.ingredientSearchRadius;
-			// I believe that because they're structs, this is fine. I'm still learning to ref vs val stuff.
-			to.targetBill.ingredientFilter.AllowedHitPointsPercents = from.targetBill.ingredientFilter.AllowedHitPointsPercents;
-			to.targetBill.ingredientFilter.AllowedQualityLevels = from.targetBill.ingredientFilter.AllowedQualityLevels;
+			return true;
 		}
 
 		public bool AreIngredientsCompatible(BillComponent other) {
@@ -223,30 +206,58 @@ namespace CrunchyDuck.Math {
 			return true;
 		}
 
+		private static void MatchInputField(InputField from, InputField to) {
+			from.buffer = to.buffer;
+			from.CurrentValue = to.CurrentValue;
+			from.lastValid = to.lastValid;
+		}
+
+		private static void MatchIngredients(BillComponent from, BillComponent to) {
+			to.targetBill.ingredientFilter.allowedDefs = new HashSet<ThingDef>(from.targetBill.ingredientFilter.allowedDefs);
+			if (from.linkTracker.linkSettings.ingredientsRadius.Enabled)
+				to.targetBill.ingredientSearchRadius = from.targetBill.ingredientSearchRadius;
+			// I believe that because they're structs, this is fine. I'm still learning to ref vs val stuff.
+			to.targetBill.ingredientFilter.AllowedHitPointsPercents = from.targetBill.ingredientFilter.AllowedHitPointsPercents;
+			to.targetBill.ingredientFilter.AllowedQualityLevels = from.targetBill.ingredientFilter.AllowedQualityLevels;
+		}
+
 		private static bool CanCountProducts(BillLinkTracker blt) {
 			// Taken from RecipeWorkerCounter.CanCountProducts (Why does that method need bill?)
 			var recipe = blt.bc.targetBill.recipe;
 			return recipe.specialProducts == null && recipe.products != null && recipe.products.Count == 1;
 		}
 
-		public void ExposeData() {
-			Scribe_Values.Look(ref myID, "myID");
-			Scribe_Values.Look(ref linkID, "linkID", -1);
-			if (linkID != -1)
+		/// <summary>
+		/// Add a child, and inform that child it has been a new daddy.
+		/// </summary>
+		private void AddChild(BillLinkTracker child) {
+			if (!isMasterBC) {
+				isMasterBC = true;
+				linkID = NextLinkID;
 				linkIDs[linkID] = this;
-			Scribe_Values.Look(ref isMasterBC, "isMasterBC", false);
-			Scribe_Values.Look(ref parentID, "parentID", -1);
+			}
 
-			Scribe_Deep.Look(ref linkSettings, "settings", this);
-			if (linkSettings == null)
-				linkSettings = new LinkSettings(this);
+			child.Parent = this;
+			foreach (var sett in child.linkSettings) {
+				sett.Reset();
+			}
 
-			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
-			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
-			if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs) {
-				if (child_ids != null) {
-					children = child_ids.Select(_i => IDs[_i]).ToHashSet();
-				}
+			child.linkSettings.targetStockpile.state = child.linkSettings.targetStockpile.compatibleWithParent = AreStockpilesCompatible(child.bc);
+			child.linkSettings.repeatMode.state = child.linkSettings.repeatMode.compatibleWithParent = CanCountProducts(child) == CanCountProducts(this);
+			child.linkSettings.workers.state = child.linkSettings.workers.compatibleWithParent = AreWorkersCompatible(child.bc);
+			child.linkSettings.ingredients.state = child.linkSettings.ingredients.compatibleWithParent = AreIngredientsCompatible(child.bc);
+			children.Add(child);
+		}
+
+		/// <summary>
+		/// Remove a child. This does not inform the child it has been abandoned.
+		/// </summary>
+		private void RemoveChild(BillLinkTracker child) {
+			children.Remove(child);
+			if (children.Count == 0) {
+				isMasterBC = false;
+				linkIDs.Remove(linkID);
+				linkID = -1;
 			}
 		}
 

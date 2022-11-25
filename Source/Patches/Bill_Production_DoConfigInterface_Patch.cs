@@ -34,20 +34,22 @@ namespace CrunchyDuck.Math {
                 __instance.SetStoreMode(nextStoreMode);
             }
             TooltipHandler.TipRegion(button_rect, tip);
+
             // Paste bill as linked
             button_rect.width = GUIExtensions.SmallElementSize;
             button_rect.x -= button_rect.width + GUIExtensions.ElementPadding;
-			if (curr_copied != null && blt.Parent != curr_copied && curr_copied != blt) {
-				if (Widgets.ButtonText(button_rect, "", true, true, baseColor)) {
+			if (curr_copied != null && curr_copied != blt) {
+				bool butt_enabled = blt.LinkWontCauseParadox(curr_copied);
+                if (Widgets.ButtonText(button_rect, "", true, true, butt_enabled ? baseColor : Color.black, active: butt_enabled)) {
                     SoundDefOf.DragSlider.PlayOneShotOnCamera();
                     blt.LinkToParent(curr_copied);
 				}
                 // Link symbol
                 Rect img = button_rect.ContractedBy(2);
                 var col = Mouse.IsOver(button_rect) ? Widgets.MouseoverOptionColor : Widgets.NormalOptionColor;
-				GUI.DrawTexture(img, Resources.linkImage, ScaleMode.ScaleToFit, true, 1, col, 0, 0);
+				GUI.DrawTexture(img, Resources.linkImage, ScaleMode.ScaleToFit, true, 1, butt_enabled ? col : Color.gray, 0, 0);
 
-                TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.make_link".Translate());
+                TooltipHandler.TipRegion(button_rect, butt_enabled ? "CD.M.tooltips.make_link".Translate() : "CD.M.tooltips.link_paradox".Translate());
             }
             // Break link to parent bill
             button_rect.width = GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding + GUIExtensions.SmallElementSize;
