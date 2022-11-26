@@ -7,47 +7,40 @@
 		<li>1.4</li>
 	</supportedVersions>
 	<packageId>CrunchyDuck.Math</packageId>
-	<description>[b]Math![/b] improves the bill UI, allows you to perform math in input fields, and use handy variables related to your colony.
-
-[h2]Why would I use [b]Math![/b]?[/h2]
-A lot of bills are made to fit your colony's situation - Each colonist intakes col_in amount of nutrition, a meal is about 1 nutrition and we want 5 days of food. So our bill should be "colonists intake" * 5. Or maybe you don't want to count [i]just[/i] simple meals, but all meals. [b]Math![/b] improves the user interface for bills, and gives you variables and equations supported by a [url=https://github.com/ncalc/ncalc]powerful math library.[/url] [b]Math![/b] will remember these equations and update bills once an hour to adapt to any changes in their variables, automating much of the work required to maintain recipes.
-
-[h2]How do I use [b]Math![/b]?[/h2]
-Type it in!!
-[img]https://steamuserimages-a.akamaihd.net/ugc/1853820727236000569/A63D104F2ED5666712E69A8E472CC76434919605/?imw=637&#038;imh=358&#038;ima=fit[/img]
-It can evaluate if statements, perform trigonometry, and so much more! Heck, I don't know all the things [b]Math![/b] can do! Take a look at NCalc's [url=https://github.com/ncalc/ncalc/wiki/Functions]functions[/url] and [url=https://github.com/ncalc/ncalc/wiki/Operators]operators[/url] to see what you can do!
-
-[h2]Variables[/h2]
-[b]Math![/b] has a robust variable searching system, allowing you to search things like food or items, categories of things and stats of those things.
-Tutorials and descriptions can all be seen from the handy-dandy in-bill info card.
-[img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/infocard.png[/img]
-
-[h2]Future updates[/h2]
-[b]Math![/b] is far from done, and I have many QOL updates planned. Some of the most interesting are:
-UI improvements from Better Workbench Management. As BWM has been left for over a year, I'm going to be taking over what it started by combining its improves with my own. In the future I might rename this mod to better reflect that.
-Custom user variables, letting you simplify equations or store results.
-Expandable text field to allow as much room as you'll need.
+	<description>[h2]What does this mod do?[/h2]
+[list]
+[*]Ability to perform [b]Math![/b] with a huge range of variables, from "how many pawns have the fast walker trait", to "how much food do our colonists need to eat per day"
+[*]Create your own variables to cut down on the amount of [b]Math![/b] you need to do
+[*]New field to calculate how much of an item exists - Want you simple meal production to count all meals, not just simple? Use "categories.meals"!
+[*]Larger bill details
+[*]Robust in-game info button with examples, variables and explanations for using [b]Math![/b]
+[/list]
+Many features from the mod [url=https://steamcommunity.com/sharedfiles/filedetails/?id=935982361]Better Workbench Management[/url] have been added, such as:
+[list]
+[*]Dragging bills to rearrange
+[*]Linking [b]any[/b] bills together to match their settings, as well as options to choose what settings are matched.
+[*]A button to easily switch between "take to stockpile" and "drop on floor"
+[*]Renaming bills!
+[/list]
 
 [h2]Compatibility[/h2]
-You can add this to a new save, and you can also remove it from a save. You will get an error the first time you do so, but it shouldn't break your game.
+You can add this to a new save, and you can also remove it from a save. You will get an error the first time you remove the mod, but it won't break your game.
 Things from other mods like new foods or weapons will work with this mod.
 If a mod changes the UI of the bill menu, it likely won't work with this mod.
-Better Workbench Management doesn't play nicely with this mod, and I'm gradually integrating its functionality into this mod anyways.
-Everybody Gets One doesn't seem to work.
 
 [h2]Languages[/h2]
 [b]Math![/b] will allow you to use variables in your native language.
-However, right now none of my tutorials/explanations are in other languages. I do intend to support other languages as much as I can however.
+However, right now none of my tutorials/explanations are in other languages. I have everything set up to support other languages, but none made yet.
 If you speak any language besides English or Spanish and wish to contribute, I'd be happy to discuss it in my Discord.
 
 
 [b]Links:[/b]
 Discord with me and my budderoos: https://discord.gg/hUnEs9ZhwA
 Github: https://github.com/CrunchyDuck/Math
-NCalc: https://github.com/ncalc/ncalc
+NCalc, the math library I use: https://github.com/ncalc/ncalc
 donate: I will keep doing what I do regardless of income. https://ko-fi.com/crunchyduck
 
-[b]Credits:[/b]
+[b]Credits[/b]
 falconne, who made [url=https://steamcommunity.com/sharedfiles/filedetails/?id=935982361]Better Workbench Management[/url] and its assets.
 
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/licence_image.png[/img]</description>
