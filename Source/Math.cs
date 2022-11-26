@@ -37,7 +37,7 @@ namespace CrunchyDuck.Math {
 	// I think I could solve this by making the bills index themselves when loaded, rather than trying to find them.
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.3.0";
+		public static string version = "1.4.0";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
