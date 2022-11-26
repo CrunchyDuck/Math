@@ -147,7 +147,8 @@ namespace CrunchyDuck.Math {
 					}
 				}
 
-				resources[thing_name].AddRange(GetThingFromPRF(map, td));
+				if (Math.rimfactorySupportEnabled)
+					resources[thing_name].AddRange(GetThingFromPRF(map, td));
 			}
 
 			// TODO: Index things that are on corpses. 
@@ -237,7 +238,6 @@ namespace CrunchyDuck.Math {
 		private static List<Thing> GetThingFromPRF(Map map, ThingDef def)
 		{
 			List<Thing> things = new List<Thing>();
-			if (!Math.rimfactorySupportEnabled) return things;
 			// Copied and adapted from PRF Patch_RecipeWorkerCounter_CountProducts
 			PRFGameComponent prfGameComponent = Current.Game.GetComponent<PRFGameComponent>();
 			for (int index = 0; index < prfGameComponent.AssemblerQueue.Count; ++index)

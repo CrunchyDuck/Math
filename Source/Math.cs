@@ -119,6 +119,7 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(Patch_BillCopying));
 
 			if (rimfactorySupportEnabled)  {
+				Log.Message("Math: PRF support enabled.");
 				AddPatch(harmony, typeof(RimFactory_Patch_RecipeWorkerCounter_CountProducts_Patch));
 			}
 		}
