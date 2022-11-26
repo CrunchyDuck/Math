@@ -44,6 +44,9 @@
       <HintPath>..\Assemblies\NCalc.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ProjectRimFactory">
+      <HintPath>G:\SteamLibrary\steamapps\workshop\content\294100\2033979700\Assemblies\ProjectRimFactory.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -74,6 +77,7 @@
     <Compile Include="Patches\Patch_BillStack_DoListing.cs" />
     <Compile Include="Patches\Patch_Bill_DoInterface.cs" />
     <Compile Include="Patches\Patch_Bill_LabelCap.cs" />
+    <Compile Include="Patches\RimFactory_Patch_RecipeWorkerCounter_CountProducts_Patch.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Patches\BillDetails_Patch.cs" />

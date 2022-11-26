@@ -37,7 +37,10 @@ namespace CrunchyDuck.Math {
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
 		public static Dictionary<string, (TraitDef traitDef, int index)> searchableTraits = new Dictionary<string, (TraitDef, int)>();
 
+		public static bool rimfactorySupportEnabled = false;
+
 		static Math() {
+			Check3rdPartyMods();
 			PerformPatches();
 
 			// I checked, this does run after all defs are loaded :)
@@ -95,6 +98,12 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
+		private static void Check3rdPartyMods()
+		{
+			rimfactorySupportEnabled =
+				LoadedModManager.RunningModsListForReading.Any(mod => mod.PackageId == "spdskatr.projectrimfactory");
+		}
+
 		private static void PerformPatches() {
 			// What can I say, I prefer a manual method of patching.
 			var harmony = new Harmony("CrunchyDuck.Math");
@@ -108,6 +117,10 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(Patch_Bill_DoInterface));
 			AddPatch(harmony, typeof(Patch_BillStack_DoListing));
 			AddPatch(harmony, typeof(Patch_BillCopying));
+
+			if (rimfactorySupportEnabled)  {
+				AddPatch(harmony, typeof(RimFactory_Patch_RecipeWorkerCounter_CountProducts_Patch));
+			}
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {
