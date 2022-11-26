@@ -355,6 +355,7 @@ namespace CrunchyDuck.Math {
 				update = (from, to) => {
 					MatchInputField(from.bc.unpause, to.bc.unpause);
 					to.bc.targetBill.paused = from.bc.targetBill.paused;
+					to.bc.targetBill.pauseWhenSatisfied = from.bc.targetBill.pauseWhenSatisfied;
 				};
 				pause = new LinkSetting(owner, "CD.M.link.pause".Translate(), update);
 
