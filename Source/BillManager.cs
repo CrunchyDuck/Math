@@ -16,6 +16,8 @@ namespace CrunchyDuck.Math {
 
 		public BillManager(Game game) {
 			instance = this;
+			// Reset static variables.
+			BillLinkTracker.ResetStatic();
 		}
 
 		// Create it if it doesn't exist and return it.

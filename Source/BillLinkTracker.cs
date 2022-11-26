@@ -68,6 +68,13 @@ namespace CrunchyDuck.Math {
 		public LinkSettings linkSettings;
 		//public Dictionary<string, LinkSetting> linkSettings = new Dictionary<string, LinkSetting>();
 
+		public static void ResetStatic() {
+			nextID = 0;
+			nextLinkID = 0;
+			linkIDs = new SortedDictionary<int, BillLinkTracker>();
+			IDs = new SortedDictionary<int, BillLinkTracker>();
+		}
+
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
 			myID = NextID;
