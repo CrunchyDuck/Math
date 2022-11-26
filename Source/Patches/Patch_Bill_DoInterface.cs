@@ -42,12 +42,13 @@ namespace CrunchyDuck.Math {
 			return codes.AsEnumerable();
 		}
 
+		// Add dragging to reorder.
 		public static void Postfix(ref Bill __instance, float x, float y, float width) {
 			Rect rect1 = new Rect(x, y, width, 53f);
 			if (__instance is Bill_Production bp) {
 				if (bp.paused) {
 					if ((bool)CanUnpauseBill.Invoke(bp, new object[0]))
-						rect1.height += 24;
+						rect1.height += GUIExtensions.SmallElementSize;
 					else
 						rect1.height += 17;
 				}

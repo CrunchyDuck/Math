@@ -16,6 +16,10 @@ namespace CrunchyDuck.Math {
 		public static readonly Texture2D variablesButtonImage = ContentFinder<Texture2D>.Get("variables_button");
 		public static readonly Texture2D bestStockpileImage = ContentFinder<Texture2D>.Get("BWM_BestStockpile");
 		public static readonly Texture2D dropOnFloorImage = ContentFinder<Texture2D>.Get("BWM_DropOnFloor");
+		public static readonly Texture2D breakLinkImage = ContentFinder<Texture2D>.Get("BWM_BreakLink");
+		public static readonly Texture2D linkImage = ContentFinder<Texture2D>.Get("BWM_Link");
+		public static readonly Texture2D leftArrowImage = ContentFinder<Texture2D>.Get("BWM_LeftArrow");
+		public static readonly Texture2D rightArrowImage = ContentFinder<Texture2D>.Get("BWM_RightArrow");
 		public static readonly Texture2D DragHash = ContentFinder<Texture2D>.Get("UI/Buttons/DragHash");
 
 		public Resources() {}

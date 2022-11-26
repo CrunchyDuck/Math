@@ -4,7 +4,7 @@ using RimWorld;
 using Verse;
 
 namespace CrunchyDuck.Math {
-	class PatchExposeData {
+	class Patch_ExposeBillComponent {
 		// Patches
 		public static MethodInfo Target() {
 			return AccessTools.Method(typeof(Bill_Production), "ExposeData");

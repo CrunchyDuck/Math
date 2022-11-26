@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Linq;
 
 namespace CrunchyDuck.Math {
+	// TODO: Possibly add a button to copy a variable directly from infocard.
+
 	// oh my god the vanilla game dialog_infocard is programmed so poorly
 	// the interface is so simple, yet for some reason instead of abstracting it down,
 	// they have a shit load of different modes for different types of defs
@@ -30,7 +32,7 @@ namespace CrunchyDuck.Math {
 		public static FieldInfo statsCacheValues = AccessTools.Field(typeof(StatsReportUtility), "cachedEntryValues");
 #endif
 		public override Vector2 InitialSize => new Vector2(950f, 760f);
-		protected override float Margin => 0.0f;
+		public override float Margin => 0.0f;
 		private InfoCardTab tab;
 
 		// TODO BUG: Using search bar disables scroll.

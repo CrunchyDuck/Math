@@ -21,9 +21,15 @@ namespace CrunchyDuck.Math {
 	// TODO: Next/previous buttons on bill details.
 	// TODO: add a button for infocard somewhere easier to access than a bill.
 	// TODO: Bill menu opens by default on clicking bench.
+	// TODO: Maybe allow things like smelting weapons to use Do Until X.
+	// TODO: Look at adding Math to Autoseller mod.
+
+	// TODO BUG: So, often people report that bills will stop updating properly. The only solution to this is to destroy the bill and remake it.
+	// I theorize this might happen if the bill's ID somehow changes. If this happens, the original BillComponent will still exist, but won't be findable.
+	// I think I could solve this by making the bills index themselves when loaded, rather than trying to find them.
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.3.0";
+		public static string version = "1.4.0";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
@@ -95,7 +101,7 @@ namespace CrunchyDuck.Math {
 		private static void PerformPatches() {
 			// What can I say, I prefer a manual method of patching.
 			var harmony = new Harmony("CrunchyDuck.Math");
-			AddPatch(harmony, typeof(PatchExposeData));
+			AddPatch(harmony, typeof(Patch_ExposeBillComponent));
 			AddPatch(harmony, typeof(DoConfigInterface_Patch));
 			AddPatch(harmony, typeof(Bill_Production_Constructor_Patch));
 			AddPatch(harmony, typeof(BillDetails_Patch));
@@ -104,6 +110,7 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(Patch_Bill_LabelCap));
 			AddPatch(harmony, typeof(Patch_Bill_DoInterface));
 			AddPatch(harmony, typeof(Patch_BillStack_DoListing));
+			AddPatch(harmony, typeof(Patch_BillCopying));
 		}
 
 		private static void AddPatch(Harmony harmony, Type type) {

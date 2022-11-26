@@ -11,6 +11,7 @@ namespace CrunchyDuck.Math {
 		public override Vector2 InitialSize => new Vector2(700f, 700f);
 		public string version;
 		private List<UpdateLog> updates = new List<UpdateLog>() {
+			{ new UpdateLog("1.4.0", "CD.M.updates.1.4".Translate()) },
 			{ new UpdateLog("1.3.0", "CD.M.updates.1.3".Translate()) }
 		};
 		private int i = 0;

@@ -9,27 +9,33 @@ using Verse.Sound;
 using HarmonyLib;
 
 namespace CrunchyDuck.Math {
+
 	// After so much patching, I've decided to just completely reimplement the window.
 	class Dialog_MathBillConfig : Window {
-		// This is only for drawing the ingredient search radius for now. Not implemented.
 		IntVec3 billGiverPos;
 		public Bill_Production bill;
-        private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
-        protected const float RecipeIconSize = 34f;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int RepeatModeSubdialogHeight = 324 + 100;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int StoreModeSubdialogHeight = 30;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int WorkerSelectionSubdialogHeight = 85;
-        [TweakValue("Interface", 0.0f, 400f)]
-        private static int IngredientRadiusSubdialogHeight = 50;
+		private ThingFilterUI.UIState thingFilterState = new ThingFilterUI.UIState();
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int RepeatModeSubdialogHeight = 324 + 100;
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int StoreModeSubdialogHeight = 30;
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int WorkerSelectionSubdialogHeight = 85;
+		[TweakValue("Interface", 0.0f, 400f)]
+		private static int IngredientRadiusSubdialogHeight = 50;
 		public BillComponent bc;
-        public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
+		public override Vector2 InitialSize => new Vector2(800f + MathSettings.settings.textInputAreaBonus, 634f + 100f);
+		public Vector2 linkSettingsScrollPos = Vector2.zero;
+		private TreeNode linkSettingsMaster;
+		private float linkSettingsHeight = 0;
+		public float BottomAreaHeight { get { return CloseButSize.y + 18; } }
+
 		private float extraPanelAllocation = MathSettings.settings.textInputAreaBonus / 3;
 
 		private float infoHoverHue = 0;
 		private float hueSpeed = 1f / (60f * 5f);
+		public const int LinkParentHeight = GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding + GUIExtensions.RecipeIconSize + 8;
+		public const int LinkSettingsHeight = 150;
 
 		private static List<SpecialThingFilterDef> cachedHiddenSpecialThingFilters;
 		private static IEnumerable<SpecialThingFilterDef> HiddenSpecialThingFilters {
@@ -57,6 +63,7 @@ namespace CrunchyDuck.Math {
 			bc.unpause.buffer = bc.unpause.lastValid;
 			bc.doXTimes.buffer = bc.doXTimes.lastValid;
 			bc.itemsToCount.buffer = bc.itemsToCount.lastValid;
+			linkSettingsMaster = GenerateLinkSettingsTree();
 
 			forcePause = true;
 			doCloseX = true;
@@ -67,7 +74,7 @@ namespace CrunchyDuck.Math {
 
 		public override void WindowUpdate() => bill.TryDrawIngredientSearchRadiusOnMap(billGiverPos);
 
-		protected override void LateWindowOnGUI(Rect inRect) {
+		public override void LateWindowOnGUI(Rect inRect) {
 			Rect rect = new Rect(inRect.x, inRect.y, 34f, 34f);
 			ThingStyleDef thingStyleDef = null;
 			if (ModsConfig.IdeologyActive && bill.recipe.ProducedThingDef != null) {
@@ -92,6 +99,7 @@ namespace CrunchyDuck.Math {
 			Rect rect_right = new Rect(rect_middle.xMax + 17f, 50f, 0.0f, inRect.height - 50f - CloseButSize.y);
 			rect_right.xMax = inRect.xMax;
 
+			// Bill name
 			Text.Font = GameFont.Medium;
 			bc.name = Widgets.TextField(new Rect(40f, 0.0f, 400f, 34f), bc.name);
 			Text.Font = GameFont.Small;
@@ -103,23 +111,23 @@ namespace CrunchyDuck.Math {
 			RenderIngredients(rect_right);
 
 			// Bill info panel.
-			RenderBillInfo(rect_left);
+			RenderLeftPanel(rect_left);
 
 			var buttons_x = rect_left.x;
 			// infocard button.
 			if (bill.recipe.products.Count == 1) {
 				ThingDef thingDef = bill.recipe.products[0].thingDef;
 				Widgets.InfoCardButton(buttons_x, rect_right.y, thingDef, GenStuff.DefaultStuffFor(thingDef));
-				buttons_x += 24 + 4;
+				buttons_x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 			}
 
-			Rect button_rect = new Rect(buttons_x, rect_right.y, 24, 24);
+			Rect button_rect = new Rect(buttons_x, rect_right.y, GUIExtensions.SmallElementSize, GUIExtensions.SmallElementSize);
 			// Variables button
 			TooltipHandler.TipRegion(button_rect, "CD.M.tooltips.user_variables".Translate());
 			if (Widgets.ButtonImage(button_rect, Resources.variablesButtonImage, Color.white)) {
 				Find.WindowStack.Add(new Dialog_VariableList(bc));
 			}
-			button_rect.x += 24 + 4;
+			button_rect.x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
 
 			// math info button.
 			infoHoverHue = (infoHoverHue + hueSpeed) % 1f;
@@ -130,7 +138,10 @@ namespace CrunchyDuck.Math {
 			if (Widgets.ButtonImage(button_rect, Resources.infoButtonImage, color, gay_color)) {
 				Find.WindowStack.Add(new Dialog_MathInfoCard(bc));
 			}
-			button_rect.x += 24 + 4;
+			button_rect.x += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
+
+			bc.linkTracker.UpdateChildren();
+			bc.linkTracker.UpdateToParent();
 
 			BillMenuData.Unassign();
 		}
@@ -257,7 +268,7 @@ namespace CrunchyDuck.Math {
 			if (listing2.ButtonText(label1)) {
 				Text.Font = GameFont.Small;
 				List<FloatMenuOption> options = new List<FloatMenuOption>();
-				foreach (BillStoreModeDef billStoreModeDef in DefDatabase<BillStoreModeDef>.AllDefs.OrderBy<BillStoreModeDef, int>(bsm => bsm.listOrder)) {
+				foreach (BillStoreModeDef billStoreModeDef in DefDatabase<BillStoreModeDef>.AllDefs.OrderBy(bsm => bsm.listOrder)) {
 					if (billStoreModeDef == BillStoreModeDefOf.SpecificStockpile) {
 						List<SlotGroup> listInPriorityOrder = bill.billStack.billGiver.Map.haulDestinationManager.AllGroupsListInPriorityOrder;
 						int count = listInPriorityOrder.Count;
@@ -295,7 +306,7 @@ namespace CrunchyDuck.Math {
 			try {
 				non_mech = bill.NonMechsOnly;
 			}
-			catch {}
+			catch { }
 
 			if (bill.PawnRestriction != null)
 				button_label = bill.PawnRestriction.LabelShortCap;
@@ -311,9 +322,9 @@ namespace CrunchyDuck.Math {
 				button_label = "AnyWorker".Translate();
 
 			// Worker restriction dropdown.
-			var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Pawn>>>)(b => this.GeneratePawnRestrictionOptions());
-			Widgets.Dropdown<Bill_Production, Pawn>(listing.GetRect(30f), bill, b => b.PawnRestriction, f, button_label);
-			
+			var f = (Func<Bill_Production, IEnumerable<Widgets.DropdownMenuElement<Pawn>>>)(b => GeneratePawnRestrictionOptions());
+			Widgets.Dropdown(listing.GetRect(30f), bill, b => b.PawnRestriction, f, button_label);
+
 			// Worker skill restriction.
 			if (bill.PawnRestriction == null && bill.recipe.workSkill != null && !bill.MechsOnly) {
 				listing.Label("AllowedSkillRange".Translate(bill.recipe.workSkill.label));
@@ -324,14 +335,14 @@ namespace CrunchyDuck.Math {
 
 		private void RenderIngredients(Rect rect_right) {
 			Rect rect5 = rect_right;
-			bool flag = true;
+			bool only_fixed_ingredients = true;
 			for (int j = 0; j < bill.recipe.ingredients.Count; j++) {
 				if (!bill.recipe.ingredients[j].IsFixedIngredient) {
-					flag = false;
+					only_fixed_ingredients = false;
 					break;
 				}
 			}
-			if (!flag) {
+			if (!only_fixed_ingredients) {
 				rect5.yMin = rect5.yMax - IngredientRadiusSubdialogHeight;
 				rect_right.yMax = rect5.yMin - 17f;
 				bool num = bill.GetStoreZone() == null || bill.recipe.WorkerCounter.CanPossiblyStoreInStockpile(bill, bill.GetStoreZone());
@@ -344,6 +355,7 @@ namespace CrunchyDuck.Math {
 			else {
 				rect5.yMin = 50f;
 			}
+
 			// Ingredient search slider.
 			Listing_Standard listing_Standard5 = new Listing_Standard();
 			listing_Standard5.Begin(rect5);
@@ -357,17 +369,17 @@ namespace CrunchyDuck.Math {
 			listing_Standard5.End();
 		}
 
-		private void RenderBillInfo(Rect rect_left) {
+		private void RenderLeftPanel(Rect rect_left) {
 			// Suspended button.
-			Listing_Standard listing_Standard6 = new Listing_Standard();
-			listing_Standard6.Begin(rect_left);
+			Listing_Standard ls = new Listing_Standard();
+			ls.Begin(rect_left);
 			if (bill.suspended) {
-				if (listing_Standard6.ButtonText("Suspended".Translate())) {
+				if (ls.ButtonText("Suspended".Translate())) {
 					bill.suspended = false;
 					SoundDefOf.Click.PlayOneShotOnCamera();
 				}
 			}
-			else if (listing_Standard6.ButtonText("NotSuspended".Translate())) {
+			else if (ls.ButtonText("NotSuspended".Translate())) {
 				bill.suspended = true;
 				SoundDefOf.Click.PlayOneShotOnCamera();
 			}
@@ -400,9 +412,82 @@ namespace CrunchyDuck.Math {
 			if (Text.CalcHeight(text6, rect_left.width) > rect_left.height) {
 				Text.Font = GameFont.Tiny;
 			}
-			listing_Standard6.Label(text6);
+			ls.Label(text6);
 			Text.Font = GameFont.Small;
-			listing_Standard6.End();
+			ls.End();
+
+			// Link options
+			if (bc.linkTracker.Parent != null) {
+				Rect link_settings_area = new Rect(rect_left.x, rect_left.yMax - BottomAreaHeight - LinkSettingsHeight, rect_left.width, LinkSettingsHeight);
+				Rect link_parent_area = new Rect(link_settings_area.x, link_settings_area.y - LinkParentHeight - 12, link_settings_area.width, LinkParentHeight);
+				RenderParent(link_parent_area);
+				RenderLinkSettings(link_settings_area);
+			}
+		}
+
+		private void RenderParent(Rect render_area) {
+			var parent = bc.linkTracker.Parent.bc;
+
+			Widgets.DrawMenuSection(render_area);
+			render_area = render_area.ContractedBy(4);
+
+			Rect first_line = render_area;
+			first_line.height = GUIExtensions.SmallElementSize;
+			// Details button
+			Rect details_area = first_line.ChopRectRight(GUIExtensions.DetailsButtonWidth, 0);
+			if (Widgets.ButtonText(details_area, "Details".Translate() + "...")) {
+				// billGiverPos here is wrong, but it doesn't really affect anything but the ingredient radius.
+				Find.WindowStack.Add(new Dialog_MathBillConfig(parent.targetBill, billGiverPos));
+				Close();
+			}
+			// Break link button
+			Rect break_link_area = first_line.ChopRectRight(GUIExtensions.BreakLinkWidth);
+			if (GUIExtensions.RenderBreakLink(bc.linkTracker, break_link_area.x, break_link_area.y)) {
+				SoundDefOf.DragSlider.PlayOneShotOnCamera();
+				bc.linkTracker.BreakLink();
+				return;
+			}
+			// "Parent" text
+			Rect label_area = first_line.ChopRectLeft(0.55f);
+			var ta = Text.Anchor;
+			Text.Anchor = TextAnchor.MiddleLeft;
+			Widgets.Label(label_area, "Parent:");
+			Text.Anchor = ta;
+
+			Rect second_line = render_area;
+			second_line.yMin += GUIExtensions.SmallElementSize + GUIExtensions.ElementPadding;
+			// Recipe image
+			var b = parent.targetBill;
+			Rect image_area = second_line.ChopRectLeft(GUIExtensions.RecipeIconSize);
+			ThingStyleDef thingStyleDef = null;
+			if (ModsConfig.IdeologyActive && b.recipe.ProducedThingDef != null) {
+				thingStyleDef = (!b.globalStyle) ? b.style : Faction.OfPlayer.ideos.PrimaryIdeo.style.StyleForThingDef(b.recipe.ProducedThingDef)?.styleDef;
+			}
+			Widgets.DefIcon(image_area, b.recipe, null, 1f, thingStyleDef, drawPlaceholder: true, null, null, b.graphicIndexOverride);
+			// Recipe name
+			Rect name_area = second_line;
+			name_area.xMin += GUIExtensions.ElementPadding;
+			ta = Text.Anchor;
+			Text.Anchor = TextAnchor.MiddleLeft;
+			Widgets.Label(name_area, parent.name.Truncate(name_area.width));
+			Text.Anchor = ta;
+		}
+
+		private void RenderLinkSettings(Rect render_area) {
+			Widgets.DrawMenuSection(render_area);
+			render_area = render_area.ContractedBy(4);
+			Rect scroll_area = new Rect(0.0f, 0.0f, render_area.width - GUIExtensions.ScrollBarWidth, linkSettingsHeight);
+
+			// Code heavily inspired by ThingFilterUI.DoThingFilterConfigWindow
+			Widgets.BeginScrollView(render_area, ref linkSettingsScrollPos, scroll_area);
+			Listing_Tree lt = new Listing_Tree();
+			lt.Begin(scroll_area);
+			foreach (TreeNode_Link node in linkSettingsMaster.children) {
+				node.Render(lt, 0);
+			}
+			linkSettingsHeight = lt.CurHeight + 10;
+			lt.End();
+			Widgets.EndScrollView();
 		}
 
 		private static void MathBillEntry(InputField field, Listing_Standard ls, int multiplier = 1) {
@@ -449,10 +534,10 @@ namespace CrunchyDuck.Math {
 
 		// The dotpeek version of these functions were... irrecoverable. Praise ILSpy.
 		private IEnumerable<Widgets.DropdownMenuElement<Zone_Stockpile>> GenerateStockpileInclusion() {
+			// TODO BIG: Add a default "look in stockpiles" option that only checks stockpiles, and keep "Look everywhere" actually looking everywhere.
 			// All stockpiles.
 			yield return new Widgets.DropdownMenuElement<Zone_Stockpile> {
-				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate
-				{
+				option = new FloatMenuOption("IncludeFromAll".Translate(), delegate {
 					bill.includeFromZone = null;
 				}),
 				payload = null
@@ -484,7 +569,7 @@ namespace CrunchyDuck.Math {
 				i = num;
 			}
 		}
-		
+
 		protected virtual IEnumerable<Widgets.DropdownMenuElement<Pawn>> GeneratePawnRestrictionOptions() {
 			if (ModsConfig.BiotechActive && bill.recipe.mechanitorOnlyRecipe) {
 				// Mechanitor category
@@ -500,8 +585,7 @@ namespace CrunchyDuck.Math {
 			}
 			// Any worker category
 			yield return new Widgets.DropdownMenuElement<Pawn> {
-				option = new FloatMenuOption("AnyWorker".Translate(), delegate
-				{
+				option = new FloatMenuOption("AnyWorker".Translate(), delegate {
 					bill.SetAnyPawnRestriction();
 				}),
 				payload = null
@@ -509,8 +593,7 @@ namespace CrunchyDuck.Math {
 			// Any slave category
 			if (ModsConfig.IdeologyActive) {
 				yield return new Widgets.DropdownMenuElement<Pawn> {
-					option = new FloatMenuOption("AnySlave".Translate(), delegate
-					{
+					option = new FloatMenuOption("AnySlave".Translate(), delegate {
 						bill.SetAnySlaveRestriction();
 					}),
 					payload = null
@@ -519,8 +602,7 @@ namespace CrunchyDuck.Math {
 			// Any mech category
 			if (ModsConfig.BiotechActive && MechWorkUtility.AnyWorkMechCouldDo(bill.recipe)) {
 				yield return new Widgets.DropdownMenuElement<Pawn> {
-					option = new FloatMenuOption("AnyMech".Translate(), delegate
-					{
+					option = new FloatMenuOption("AnyMech".Translate(), delegate {
 						bill.SetAnyMechRestriction();
 					}),
 					payload = null
@@ -536,6 +618,177 @@ namespace CrunchyDuck.Math {
 			foreach (Widgets.DropdownMenuElement<Pawn> item2 in BillDialogUtility.GetPawnRestrictionOptionsForBill(bill)) {
 				yield return item2;
 			}
+		}
+
+		private TreeNode GenerateLinkSettingsTree() {
+			/// BEWARE, YE
+			/// This code is a beautiful, dark hole.
+			/// Cryptic indeed, arcane mayhaps, and artfully blunt.
+			/// Dare not comprehend.
+
+			// Just a container, never displayed.
+			var master = new TreeNode();
+			master.children = new List<TreeNode>();
+			BillLinkTracker lt = bc.linkTracker;
+
+			// TODO: Decide on order.
+			var setts = lt.linkSettings;
+			BillLinkTracker.LinkSetting[] main_settings_children = new BillLinkTracker.LinkSetting[] {
+				setts.repeatMode,
+				setts.tainted,
+				setts.equipped,
+				setts.onlyAllowedIngredients,
+				setts.checkStockpile,
+				setts.countHP,
+				setts.countQuality,
+				setts.targetStockpile,
+				setts.workers,
+				setts.suspended,
+			};
+			BillLinkTracker.LinkSetting[] input_settings_children = new BillLinkTracker.LinkSetting[] {
+				setts.targetCount,
+				setts.customItemCount,
+				setts.pause,
+			};
+			BillLinkTracker.LinkSetting[] ingredient_settings_children = new BillLinkTracker.LinkSetting[] {
+				setts.ingredients,
+				setts.ingredientsRadius,
+			};
+
+			master.children.Add(new LinkNode(setts.name));
+
+			// Input settings
+			LinkCategory input_settings = new LinkCategory("CD.M.link.input_fields".Translate(), "CD.M.link.input_fields.description".Translate());
+			foreach(var s in input_settings_children) {
+				input_settings.children.Add(new LinkNode(s));
+			}
+			//master.children.Add(input_settings);
+
+			// Main settings category.
+			LinkCategory middle_settings = new LinkCategory("CD.M.link.middle_panel".Translate(), "CD.M.link.middle_panel.description".Translate());
+			middle_settings.children.Add(input_settings);
+			foreach(var s in main_settings_children) {
+				middle_settings.children.Add(new LinkNode(s));
+			}
+			master.children.Add(middle_settings);
+
+			// Ingredients settings category
+			LinkCategory link_ingredients = new LinkCategory("CD.M.link.cat_ingredients".Translate(), null);
+			foreach (var s in ingredient_settings_children) {
+				link_ingredients.children.Add(new LinkNode(s));
+			}
+			master.children.Add(link_ingredients);
+
+			return master;
+		}
+	}
+
+	public abstract class TreeNode_Link : TreeNode {
+		public abstract void Render(Listing_Tree lt, int indentation_level);
+	}
+
+	public class LinkNode : TreeNode_Link {
+		public BillLinkTracker.LinkSetting set;
+
+		public LinkNode(BillLinkTracker.LinkSetting link_setting) {
+			this.set = link_setting;
+		}
+
+		public override void Render(Listing_Tree lt, int indentation_level) {
+			RenderLine(lt, indentation_level);
+			lt.EndLine();
+		}
+
+		public void RenderLine(Listing_Tree lt, int indentation_level) {
+			var checkbox_pos = new Rect(lt.LabelWidth, lt.curY, lt.lineHeight, lt.lineHeight);
+			if (!set.compatibleWithParent) {
+				bool b = false;
+				Widgets.Checkbox(checkbox_pos.position, ref b, lt.lineHeight, true);
+				lt.LabelLeft(set.displayName, set.tooltipIncompatible, indentation_level, textColor: Color.grey);
+			}
+			else {
+				bool before = set.state;
+				Widgets.Checkbox(checkbox_pos.position, ref set.state, lt.lineHeight, paintable: true);
+				if (set.state && set.state != before) {
+					set.UpdateFromParent();
+				}
+				lt.LabelLeft(set.displayName, set.tooltip, indentation_level, textColor: Color.white);
+			}
+		}
+	}
+
+	public class LinkCategory : TreeNode_Link {
+		public string name;
+		public string tooltip;
+
+		public LinkCategory(string name, string tooltip) {
+			children = new List<TreeNode>();
+			this.name = name;
+			this.tooltip = tooltip;
+		}
+
+		public override void Render(Listing_Tree lt, int indentation_level) {
+			if (children.Count != 0) {
+				RenderLine(lt, indentation_level);
+				lt.OpenCloseWidget(this, indentation_level, 1);
+				lt.EndLine();
+				if (IsOpen(1)) {
+					foreach (TreeNode_Link node in children)
+						node.Render(lt, indentation_level + 1);
+				}
+				return;
+			}
+			RenderLine(lt, indentation_level);
+			lt.EndLine();
+		}
+
+		public void RenderLine(Listing_Tree lt, int indentation_level) {
+			var checkbox_pos = new Rect(lt.LabelWidth, lt.curY, lt.lineHeight, lt.lineHeight);
+			lt.LabelLeft(name, tooltip, indentation_level, textColor: Color.white);
+			MultiCheckboxState state = CheckState();
+			MultiCheckboxState multiCheckboxState = Widgets.CheckboxMulti(checkbox_pos, state, true);
+			if (multiCheckboxState == MultiCheckboxState.On)
+				ToggleAction(true);
+			else if (multiCheckboxState == MultiCheckboxState.Off)
+				ToggleAction(false);
+		}
+	
+		public void ToggleAction(bool value) {
+			foreach (TreeNode child in children) {
+				if (child is LinkNode ln) {
+					ln.set.state = value;
+				}
+				else if (child is LinkCategory lc)
+					lc.ToggleAction(value);
+			}
+		}
+
+		public MultiCheckboxState CheckState() {
+			bool any_on = false;
+			bool any_off = false;
+			foreach (TreeNode child in children) {
+				if (child is LinkNode ln) {
+					if (ln.set.Enabled)
+						any_on = true;
+					else
+						any_off = true;
+				}
+				else if (child is LinkCategory lc) {
+					var res = lc.CheckState();
+					if (res == MultiCheckboxState.Partial)
+						return MultiCheckboxState.Partial;
+					else if (res == MultiCheckboxState.On)
+						any_on = true;
+					else
+						any_off = true;
+				}
+
+				if (any_on && any_off)
+					return MultiCheckboxState.Partial;
+			}
+			if (any_on)
+				return MultiCheckboxState.On;
+			return MultiCheckboxState.Off;
 		}
 	}
 }

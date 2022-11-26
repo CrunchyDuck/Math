@@ -8,7 +8,7 @@ using CrunchyDuck.Math.MathFilters;
 
 namespace CrunchyDuck.Math {
 	// TODO: Add in checking against pawn skills, like "get all pawns with shooting > 3"
-	class CachedMapData {
+	public class CachedMapData {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
 
@@ -55,7 +55,6 @@ namespace CrunchyDuck.Math {
 					}
 					// category
 					else if (CategoryFilter.names.Contains(command)) {
-						// TODO: Allow prefab searching from a category.
 						if (i + 1 < commands.Length && CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value)) {
 							filter = new MathFilters.ThingFilter(bc, value);
 							continue;

@@ -16,6 +16,8 @@ namespace CrunchyDuck.Math {
 
 		public BillManager(Game game) {
 			instance = this;
+			// Reset static variables.
+			BillLinkTracker.ResetStatic();
 		}
 
 		// Create it if it doesn't exist and return it.
@@ -34,20 +36,30 @@ namespace CrunchyDuck.Math {
 
 		public override void GameComponentTick() {
 			base.GameComponentTick();
-			// Make sure bills are up to date.
-
 			if (Current.Game.tickManager.TicksGame % updateRegularity == 0) {
-				// We create a copy as billTable can be modified during iteration by having null bills removed.
-				// It would be more elegant to throw and catch an error to make this object handle the billTable,
-				// But I use Math.DoMath in a lot of places outside of here that I don't want erroring.
-				Dictionary<int, BillComponent> bt_copy = billTable.ToDictionary(entry => entry.Key, entry => entry.Value);
-				foreach (BillComponent bc in bt_copy.Values) {
-					UpdateBill(bc);
-					// TODO: This is a rough fix for doXTimes being messy with Math. Find a more reliable way to update the doXTimes buffer.
-					bc.doXTimes.SetAll(UnityEngine.Mathf.CeilToInt(bc.doXTimes.CurrentValue));
-				}
+				MathTick();
+			}
+		}
 
-				Math.ClearCacheMaps();
+		/// <summary>
+		/// Updates bills, mostly.
+		/// </summary>
+		public void MathTick() {
+			Math.ClearCacheMaps();
+
+			// Update linked bills.
+			foreach (BillLinkTracker blt in BillLinkTracker.linkIDs.Values) {
+				blt.UpdateChildren();
+			}
+
+			// We create a copy as billTable can be modified during iteration by having null bills removed.
+			// It would be more elegant to throw and catch an error to make this object handle the billTable,
+			// But I use Math.DoMath in a lot of places outside of here that I don't want erroring.
+			Dictionary<int, BillComponent> bt_copy = billTable.ToDictionary(entry => entry.Key, entry => entry.Value);
+			foreach (BillComponent bc in bt_copy.Values) {
+				UpdateBill(bc);
+				// TODO: This is a rough fix for doXTimes being messy with Math. Find a more reliable way to update the doXTimes buffer.
+				bc.doXTimes.SetAll(UnityEngine.Mathf.CeilToInt(bc.doXTimes.CurrentValue));
 			}
 		}
 
