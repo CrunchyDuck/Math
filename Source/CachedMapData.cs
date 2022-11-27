@@ -10,8 +10,7 @@ using ThingFilter = CrunchyDuck.Math.MathFilters.ThingFilter;
 
 namespace CrunchyDuck.Math {
 	// TODO: Add in checking against pawn skills, like "get all pawns with shooting > 3"
-	public class CachedMapData
-	{
+	public class CachedMapData {
 		private Map map;
 		private static Regex v13_getIntake = new Regex(@"Final value: (\d+(?:.\d+)?)", RegexOptions.Compiled);
 
@@ -20,27 +19,22 @@ namespace CrunchyDuck.Math {
 		public List<Thing> ownedAnimals = new List<Thing>();
 		public Dictionary<string, List<Thing>> resources = new Dictionary<string, List<Thing>>();
 
-		public CachedMapData(Map map)
-		{
+		public CachedMapData(Map map) {
 			this.map = map;
 
-			foreach (Pawn p in map.mapPawns.AllPawns)
-			{
+			foreach (Pawn p in map.mapPawns.AllPawns) {
 				bool in_faction = p.Faction == Faction.OfPlayer;
 				bool animal = p.AnimalOrWildMan();
 				bool guest = p.IsQuestLodger() || p.guest?.HostFaction == Faction.OfPlayer;
 				bool prisoner = p.IsPrisonerOfColony;
 				bool slave = p.IsSlaveOfColony;
 
-				if (animal && in_faction)
-				{
+				if (animal && in_faction) {
 					ownedAnimals.Add(p);
 					pawns_dict[p.LabelShort.ToParameter()] = p;
 				}
-				else
-				{
-					if (in_faction || guest || prisoner || slave)
-					{
+				else {
+					if (in_faction || guest || prisoner || slave) {
 						humanPawns.Add(p);
 						pawns_dict[p.LabelShort.ToParameter()] = p;
 					}
@@ -48,29 +42,23 @@ namespace CrunchyDuck.Math {
 			}
 		}
 
-		public bool SearchVariable(string input, BillComponent bc, out float count)
-		{
+		public bool SearchVariable(string input, BillComponent bc, out float count) {
 			count = 0;
 			string[] commands = input.Split('.');
 			MathFilter filter = null;
-			for (int i = 0; i < commands.Length; i++)
-			{
+			for (int i = 0; i < commands.Length; i++) {
 				string command = commands[i];
 				// Initialize a filter.
-				if (filter == null)
-				{
+				if (filter == null) {
 					// thing
-					if (Math.searchableThings.ContainsKey(command))
-					{
+					if (Math.searchableThings.ContainsKey(command)) {
 						filter = new ThingFilter(bc, command);
 						continue;
 					}
 					// category
-					else if (CategoryFilter.names.Contains(command))
-					{
+					else if (CategoryFilter.names.Contains(command)) {
 						if (i + 1 < commands.Length &&
-						    CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value))
-						{
+						    CategoryFilter.searchableCategories.TryGetValue(commands[++i], out ThingCategoryDef value)) {
 							filter = new ThingFilter(bc, value);
 							continue;
 						}
@@ -78,11 +66,9 @@ namespace CrunchyDuck.Math {
 							return false;
 					}
 					// thingdef
-					else if (ThingDefFilter.names.Contains(command))
-					{
+					else if (ThingDefFilter.names.Contains(command)) {
 						if (i + 1 < commands.Length &&
-						    Math.searchableThings.TryGetValue(commands[++i], out ThingDef value))
-						{
+						    Math.searchableThings.TryGetValue(commands[++i], out ThingDef value)) {
 							filter = new ThingDefFilter(value);
 							continue;
 						}
@@ -90,13 +76,11 @@ namespace CrunchyDuck.Math {
 							return false;
 					}
 					// pawn
-					else if (PawnFilter.filterMethods.ContainsKey(command) || pawns_dict.ContainsKey(command))
-					{
+					else if (PawnFilter.filterMethods.ContainsKey(command) || pawns_dict.ContainsKey(command)) {
 						filter = new PawnFilter(bc);
 					}
 					// Can't find filter.
-					else
-					{
+					else {
 						return false;
 					}
 
@@ -104,8 +88,7 @@ namespace CrunchyDuck.Math {
 
 				// Parse input
 				ReturnType type = filter.Parse(command, out object result);
-				switch (type)
-				{
+				switch (type) {
 					case ReturnType.Count:
 						count = (float) result;
 						return true;
@@ -117,8 +100,7 @@ namespace CrunchyDuck.Math {
 				}
 			}
 
-			if (filter.CanCount)
-			{
+			if (filter.CanCount) {
 				count = filter.Count();
 				return true;
 			}
@@ -126,23 +108,19 @@ namespace CrunchyDuck.Math {
 			return false;
 		}
 
-		public List<Thing> GetThings(string thing_name, BillComponent bc)
-		{
+		public List<Thing> GetThings(string thing_name, BillComponent bc) {
 			List<Thing> found_things = new List<Thing>();
 			// Fill the list of *all* of this thing first
-			if (!resources.ContainsKey(thing_name))
-			{
+			if (!resources.ContainsKey(thing_name)) {
 				ThingDef td = Math.searchableThings[thing_name];
 				// Patch to fix a missing key bug report:
 				// https://steamcommunity.com/workshop/filedetails/discussion/2876902608/3487500856972015279/?ctp=3#c3495383439605482600
 				var l = map.listerThings.ThingsOfDef(td).ListFullCopy();
 				resources[thing_name] = l ?? new List<Thing>();
 				// Count equipped/inventory/hands.
-				foreach (Pawn pawn in map.mapPawns.FreeColonistsAndPrisonersSpawned)
-				{
+				foreach (Pawn pawn in map.mapPawns.FreeColonistsAndPrisonersSpawned) {
 					List<Thing> things = GetThingInPawn(pawn, td);
-					foreach (var thing in things)
-					{
+					foreach (var thing in things) {
 						resources[thing_name].Add(thing);
 					}
 				}
@@ -153,14 +131,12 @@ namespace CrunchyDuck.Math {
 
 			// TODO: Index things that are on corpses. 
 			// Filter this thing based on parameters.
-			foreach (Thing _thing in resources[thing_name])
-			{
+			foreach (Thing _thing in resources[thing_name]) {
 				Thing thing = _thing.GetInnerIfMinified();
 				// Check if in stockpile.
 				// TODO: Make default only check stockpiles, with an option to make it check everywhere.
 				var zone = bc.targetBill.includeFromZone;
-				if (zone != null && !zone.ContainsCell(thing.InteractionCell))
-				{
+				if (zone != null && !zone.ContainsCell(thing.InteractionCell)) {
 					continue;
 				}
 
@@ -170,8 +146,7 @@ namespace CrunchyDuck.Math {
 
 				// Hitpoints
 				if (thing.def.useHitPoints &&
-				    !bc.targetBill.hpRange.Includes((float) thing.HitPoints / (float) thing.MaxHitPoints))
-				{
+				    !bc.targetBill.hpRange.Includes((float) thing.HitPoints / (float) thing.MaxHitPoints)) {
 					continue;
 				}
 
@@ -180,8 +155,7 @@ namespace CrunchyDuck.Math {
 					continue;
 
 				var producted_thing = bc.targetBill.recipe.ProducedThingDef;
-				if (producted_thing != null)
-				{
+				if (producted_thing != null) {
 					// Tainted
 					bool can_choose_tainted = producted_thing.IsApparel && producted_thing.apparel.careIfWornByCorpse;
 					Apparel a = thing.GetType() == typeof(Apparel) ? (Apparel) thing : null;
@@ -190,8 +164,7 @@ namespace CrunchyDuck.Math {
 
 					// Equipped.
 					bool can_choose_equipped = producted_thing.IsWeapon || producted_thing.IsApparel;
-					if (can_choose_equipped && !bc.targetBill.includeEquipped && thing.IsHeldByPawn())
-					{
+					if (can_choose_equipped && !bc.targetBill.includeEquipped && thing.IsHeldByPawn()) {
 						continue;
 					}
 				}
@@ -203,30 +176,23 @@ namespace CrunchyDuck.Math {
 		}
 
 		// Code taken from RecipeWorkerCounter.CountProducts
-		public static List<Thing> GetThingInPawn(Pawn pawn, ThingDef def)
-		{
+		public static List<Thing> GetThingInPawn(Pawn pawn, ThingDef def) {
 			List<Thing> things = new List<Thing>();
-			foreach (ThingWithComps equipment in pawn.equipment.AllEquipmentListForReading)
-			{
-				if (equipment.def.Equals(def))
-				{
+			foreach (ThingWithComps equipment in pawn.equipment.AllEquipmentListForReading) {
+				if (equipment.def.Equals(def)) {
 					things.Add((Thing) equipment);
 				}
 			}
 
-			foreach (var apparel in pawn.apparel.WornApparel)
-			{
-				if (apparel.def.Equals(def))
-				{
+			foreach (var apparel in pawn.apparel.WornApparel) {
+				if (apparel.def.Equals(def)) {
 					things.Add((Thing) apparel);
 				}
 			}
 
 			// TODO: Check this in the future. It doesn't work as of now in spite of multiple tests, and I believe it's a core game problem.
-			foreach (Thing heldThing in pawn.inventory.GetDirectlyHeldThings())
-			{
-				if (heldThing.def.Equals(def))
-				{
+			foreach (Thing heldThing in pawn.inventory.GetDirectlyHeldThings()) {
+				if (heldThing.def.Equals(def)) {
 					things.Add((Thing) heldThing);
 				}
 			}
@@ -235,17 +201,13 @@ namespace CrunchyDuck.Math {
 		}
 
 		// RimFactory CountProducts Support
-		private static List<Thing> GetThingFromPRF(Map map, ThingDef def)
-		{
+		private static List<Thing> GetThingFromPRF(Map map, ThingDef def) {
 			List<Thing> things = new List<Thing>();
 			// Copied and adapted from PRF Patch_RecipeWorkerCounter_CountProducts
 			PRFGameComponent prfGameComponent = Current.Game.GetComponent<PRFGameComponent>();
-			for (int index = 0; index < prfGameComponent.AssemblerQueue.Count; ++index)
-			{
-				if (map == prfGameComponent.AssemblerQueue[index].Map)
-				{
-					foreach (Thing thing in prfGameComponent.AssemblerQueue[index].GetThingQueue())
-					{
+			for (int index = 0; index < prfGameComponent.AssemblerQueue.Count; ++index) {
+				if (map == prfGameComponent.AssemblerQueue[index].Map) {
+					foreach (Thing thing in prfGameComponent.AssemblerQueue[index].GetThingQueue()) {
 						Thing innerIfMinified = thing.GetInnerIfMinified();
 						if (innerIfMinified.def == def)
 							things.Add(innerIfMinified);
@@ -253,12 +215,9 @@ namespace CrunchyDuck.Math {
 				}
 			}
 
-			foreach (ILinkableStorageParent linkableStorageParent in TradePatchHelper.AllPowered(map))
-			{
-				if (!linkableStorageParent.AdvancedIOAllowed)
-				{
-					foreach (Thing storedItem in linkableStorageParent.StoredItems)
-					{
+			foreach (ILinkableStorageParent linkableStorageParent in TradePatchHelper.AllPowered(map)) {
+				if (!linkableStorageParent.AdvancedIOAllowed) {
+					foreach (Thing storedItem in linkableStorageParent.StoredItems) {
 						Thing innerIfMinified = storedItem.GetInnerIfMinified();
 						if (innerIfMinified.def == def)
 							things.Add(innerIfMinified);
