@@ -23,10 +23,11 @@ namespace CrunchyDuck.Math {
 	// TODO: Bill menu opens by default on clicking bench.
 	// TODO: Maybe allow things like smelting weapons to use Do Until X.
 	// TODO: Look at adding Math to Autoseller mod.
+	// TODO: Potentially move compatibility patches into their own project(s).
 
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.4.1";
+		public static string version = "1.4.2";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
