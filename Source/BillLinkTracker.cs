@@ -49,6 +49,7 @@ namespace CrunchyDuck.Math {
 		private int parentID = -1;  // What my parent's ID is in linkIDs
 		public int linkID = -1;  // What my ID is in linkIDs
 		public bool isMasterBC = false;
+		private HashSet<int> tmp_childIDs;  // Used to resolve cross refs when loading.
 		private HashSet<BillLinkTracker> children = new HashSet<BillLinkTracker>();
 
 		public BillLinkTracker Parent {
@@ -106,15 +107,14 @@ namespace CrunchyDuck.Math {
 			if (linkSettings == null)
 				linkSettings = new LinkSettings(this);
 
-			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
-			//foreach (var c in children) {
-			//	Log.Error(c.myID.ToString());
-			//	child_ids.Add(c.myID);
-			//}
-			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
+			// LoadSaveMode.ResolvingCrossRefs doesn't seem to actually load anything; I need to store the relevant data on my own.
+			if (Scribe.mode == LoadSaveMode.LoadingVars || Scribe.mode == LoadSaveMode.Saving) {
+				tmp_childIDs = children.Select(bc => bc.myID).ToHashSet();
+				Scribe_Collections.Look(ref tmp_childIDs, "children", LookMode.Value);
+			}
 			if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs) {
-				if (child_ids != null) {
-					children = child_ids.Select(_i => IDs[_i]).ToHashSet();
+				if (tmp_childIDs.Count > 0) {
+					children = tmp_childIDs.Select(_i => IDs[_i]).ToHashSet();
 				}
 			}
 		}
