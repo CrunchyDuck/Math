@@ -39,6 +39,7 @@ namespace CrunchyDuck.Math {
 		public static Dictionary<string, (TraitDef traitDef, int index)> searchableTraits = new Dictionary<string, (TraitDef, int)>();
 
 		public static bool rimfactorySupportEnabled = false;
+		public static bool compositableLoadoutsSupportEnabled = false;
 
 		static Math() {
 			Check3rdPartyMods();
@@ -103,6 +104,12 @@ namespace CrunchyDuck.Math {
 		{
 			rimfactorySupportEnabled =
 				LoadedModManager.RunningModsListForReading.Any(mod => mod.PackageId == "spdskatr.projectrimfactory");
+
+			compositableLoadoutsSupportEnabled =
+				LoadedModManager.RunningModsListForReading.Any(mod => mod.PackageId == "wiri.compositableloadouts");
+
+			if (compositableLoadoutsSupportEnabled)
+				Log.Message("Math: Compositable Loadouts Support Enabled.");
 		}
 
 		private static void PerformPatches() {
