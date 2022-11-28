@@ -55,7 +55,10 @@ namespace CrunchyDuck.Math {
 			get {
 				if (parentID == -1)
 					return null;
-				return linkIDs[parentID];
+				if (linkIDs.ContainsKey(parentID)) {
+					return linkIDs[parentID];
+				}
+				return null;
 			}
 			set {
 				if (value == null)
