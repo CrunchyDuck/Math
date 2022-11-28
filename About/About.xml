@@ -24,10 +24,14 @@ Many features from the mod [url=https://steamcommunity.com/sharedfiles/filedetai
 [/list]
 
 [h2]Compatibility[/h2]
-You can add this to a new save, and you can also remove it from a save. You will get an error the first time you remove the mod, but it won't break your game.
-Project RimFactory has been made compatible (Thanks to [url=https://steamcommunity.com/profiles/76561198014704195]Sparkle[/url])
-Things from other mods like new foods or weapons will work with this mod.
-If a mod changes the UI of the bill menu, it likely won't work with this mod.
+[list]
+[*]Any mods that add new things (food, weapons, really anything) will be compatible and usable as variables.
+[*]Compatible with new saves. Removing from a save will produce a one-time error.
+[*]Compatible with [url=https://steamcommunity.com/workshop/filedetails/?id=2033979700]Project Rimfactory[/url] (Thanks to [url=https://github.com/ruifung]ruifung[/url])
+[*]Supports using loadout tags from [url=https://steamcommunity.com/workshop/filedetails/?id=2679126859]Compositable Loadouts[/url] ([url=https://github.com/ruifung]ruifung[/url] again)
+
+[*]Incompatible with [url=https://steamcommunity.com/sharedfiles/filedetails/?id=935982361]Better Workbench Management[/url]. Most of its functionality has been integrated into this mod anyway.
+[/list]
 
 [h2]Languages[/h2]
 [b]Math![/b] will allow you to use variables in your native language.
@@ -43,6 +47,7 @@ donate: I will keep doing what I do regardless of income. https://ko-fi.com/crun
 
 [b]Credits[/b]
 falconne, who made [url=https://steamcommunity.com/sharedfiles/filedetails/?id=935982361]Better Workbench Management[/url] and its assets.
+[url=https://github.com/ruifung]ruifung[/url], who has done multiple compatibility patches.
 
 [img]https://raw.githubusercontent.com/CrunchyDuck/Math/master/About/licence_image.png[/img]</description>
 	<modDependencies>
