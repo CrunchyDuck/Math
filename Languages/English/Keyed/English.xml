@@ -122,14 +122,18 @@ A variable should be named the same way parameters are - lowercase, no . or " in
 	<CD.M.infocard.basic.tutorials.doXTimes.description>Any equations you put into "Do X Times" will be resolved down into a number, rather than remembered like in "Do Until X".
 	
 This is done so you can make one-time calculations in the field, like colonists * 3, without the bill running forever.</CD.M.infocard.basic.tutorials.doXTimes.description>
-	
+	<CD.M.infocard.basic.tutorials.stacks>Counting Stacks</CD.M.infocard.basic.tutorials.stacks>
+	<CD.M.tutorial.basic.tutorials.stacks.description>You can also search for the count of Things in terms of stacks by adding ".stacks". This is only applicable to searching for Things.</CD.M.tutorial.basic.tutorials.stacks.description>
+
+
 	<CD.M.infocard.basic.examples.pawns>"colonists" * 2</CD.M.infocard.basic.examples.pawns>
 	<CD.M.infocard.basic.examples.pawns.description>Get the number of colonists you have, times two. Useful for things like clothing or weapon production.</CD.M.infocard.basic.examples.pawns.description>
 	<CD.M.infocard.basic.examples.intake>"pawns.intake" * 5</CD.M.infocard.basic.examples.intake>
 	<CD.M.infocard.basic.examples.intake.description>The amount of nutritional intake all pawns in your colony need for 5 days. Meals have 0.9 nutrition, so this is rough estimate for how many meals you need.</CD.M.infocard.basic.examples.intake.description>
 	<CD.M.infocard.basic.examples.meals>"categories.meals"</CD.M.infocard.basic.examples.meals>
 	<CD.M.infocard.basic.examples.meals.description>How many meals your colony has - simple, fine, luxury, packaged... Useful in the "Custom item count" field.</CD.M.infocard.basic.examples.meals.description>
-
+	<CD.M.infocard.basic.examples.stacks>"granite blocks.stacks"</CD.M.infocard.basic.examples.stacks>
+	<CD.M.infocard.basic.examples.stacks.description>How many stacks of granite blocks your colony has. This is equivalent to ["granite blocks" / "prefab.granite blocks.stack limit"].</CD.M.infocard.basic.examples.stacks.description>
 	
 	<CD.M.tutorial.searching.things>Searching Things</CD.M.tutorial.searching.things>
 	<CD.M.tutorial.searching.things.description>You can search any Thing in the game such as "slate blocks", ostriches, "compacted steel", etc.
@@ -145,7 +149,7 @@ Compacted steel -> "compacted steel"
 Medicine x5 -> "medicine"
 Go-juice -> "go-juice"
 Uranium mace (legendary) -> mace</CD.M.tutorial.searching.things.description>
-
+	
 	<CD.M.tutorial.searching.stats>Searching Thing Stats</CD.M.tutorial.searching.stats>
 	<CD.M.tutorial.searching.stats.description>Things have stats like "market value", "nutrition", "mech bandwidth". This mod supports two types of stat searching.
 
@@ -172,7 +176,7 @@ Eggs (unfert.) -> "cat eggs (unfert_)"</CD.M.tutorial.searching.categories.descr
 
 	<CD.M.tutorial.searching.traits>Searching traits</CD.M.tutorial.searching.traits>
 	<CD.M.tutorial.searching.traits.description>You can search any trait on any pawn group, such as "pawns.traits.jogger", "colonists.traits.nudist", "colonists.traits.gay"</CD.M.tutorial.searching.traits.description>
-
+	
 	<!-- Pawn groups -->
 	<CD.M.pawn.group.pawns.description>Alias: pwn
 Number of owned pawns on the map the bill is contained in.</CD.M.pawn.group.pawns.description>
@@ -263,4 +267,12 @@ The full list of traits can be seen at the bottom of this tab.</CD.M.infocard.pa
 	<CD.M.infocard.categories>Categories</CD.M.infocard.categories>
 	<CD.M.infocard.categories.description>You can search any category of things in game, such as "categories.raw food", "categories.textiles", "c.meals", etc. Categories can be seen in any stockpile or bill menu.</CD.M.infocard.categories.description>
 	
+	<CD.M.infocard.compositable_loadouts>Compositable Loadouts</CD.M.infocard.compositable_loadouts>
+	<CD.M.infocard.compositable_loadouts.description>You can search by pawns assigned a given tag using the selector "lt" or "loadout tags". In the event of multiple tags with identical names, the first one should be used.</CD.M.infocard.compositable_loadouts.description>
+	
+	<CD.M.infocard.compositable_loadouts.tag>"lt.{0}"</CD.M.infocard.compositable_loadouts.tag>
+	<CD.M.infocard.compositable_loadouts.tag.description>Number of pawns on map with the loadout tag "{0}".</CD.M.infocard.compositable_loadouts.tag.description>
+
+	<CD.M.infocard.compositable_loadouts.no_tags>No tags found</CD.M.infocard.compositable_loadouts.no_tags>
+	<CD.M.infocard.compositable_loadouts.no_tags.description>No tags have been created yet, create some tags to see examples.</CD.M.infocard.compositable_loadouts.no_tags.description>
 </LanguageData>

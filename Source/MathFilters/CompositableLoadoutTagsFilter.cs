@@ -18,7 +18,7 @@ namespace CrunchyDuck.Math.MathFilters {
 			LoadoutManager loadoutManager = Current.Game.GetComponent<LoadoutManager>();
 			// This looks like it uses a for loop internally, and is cleaner.
 			// Also, since tag names are user defined, this will just return the first tag with the name, duplicate tag names are user error.
-			tagResult = loadoutManager.tags.Find(tag => name.Equals(tag.name, StringComparison.CurrentCultureIgnoreCase));
+			tagResult = loadoutManager.tags.Find(tag => tag.name.ToParameter() == name);
 			return tagResult != null;
 		}
 		
