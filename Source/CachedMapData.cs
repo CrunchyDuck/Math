@@ -82,7 +82,7 @@ namespace CrunchyDuck.Math {
 					}
 					// compositable loadouts; Has to be extracted to separate methods because otherwise it throws exceptions when run without the mod.
 					else if (Math.compositableLoadoutsSupportEnabled && IsCompositableLoadoutCommand(command)) {
-						if (i + 1 >= commands.Length && GetCompositableLoadoutFilter(commands[++i], bc, ref filter))
+						if (i + 1 < commands.Length && GetCompositableLoadoutFilter(commands[++i], bc, ref filter))
 							continue;
 						return false;
 					}
