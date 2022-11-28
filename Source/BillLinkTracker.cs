@@ -58,6 +58,7 @@ namespace CrunchyDuck.Math {
 				if (linkIDs.ContainsKey(parentID)) {
 					return linkIDs[parentID];
 				}
+				parentID = -1;
 				return null;
 			}
 			set {
@@ -76,17 +77,25 @@ namespace CrunchyDuck.Math {
 			nextLinkID = 0;
 			linkIDs = new SortedDictionary<int, BillLinkTracker>();
 			IDs = new SortedDictionary<int, BillLinkTracker>();
+			currentlyCopied = null;
 		}
 
 		public BillLinkTracker(BillComponent bc) {
 			this.bc = bc;
-			myID = NextID;
-			IDs[myID] = this;
+			if (Scribe.mode == LoadSaveMode.LoadingVars) {
+				myID = NextID;
+				IDs[myID] = this;
+			}
 			linkSettings = new LinkSettings(this);// GenerateLinkSettings(this);
 		}
 
 		public void ExposeData() {
-			Scribe_Values.Look(ref myID, "myID");
+			Scribe_Values.Look(ref myID, "myID", -1, true);
+			if (Scribe.mode == LoadSaveMode.LoadingVars) {
+				if (myID == -1)
+					myID = NextID;
+				IDs[myID] = this;
+			}
 			Scribe_Values.Look(ref linkID, "linkID", -1);
 			if (linkID != -1)
 				linkIDs[linkID] = this;
@@ -98,6 +107,10 @@ namespace CrunchyDuck.Math {
 				linkSettings = new LinkSettings(this);
 
 			HashSet<int> child_ids = children.Select(bc => bc.myID).ToHashSet();
+			//foreach (var c in children) {
+			//	Log.Error(c.myID.ToString());
+			//	child_ids.Add(c.myID);
+			//}
 			Scribe_Collections.Look(ref child_ids, "children", LookMode.Value);
 			if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs) {
 				if (child_ids != null) {
