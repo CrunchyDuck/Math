@@ -10,7 +10,8 @@ namespace CrunchyDuck.Math.MathFilters {
 		public static HashSet<string> names = new HashSet<string> { "loadout tags", "lt" };
 		public override bool CanCount { get { return true; } }
 
-		private Tag tag;
+		// Use generic object type because otherwise exceptions can get thrown.
+		private object tag;
 		private BillComponent bc;
 
 		[CanBeNull]
@@ -32,7 +33,7 @@ namespace CrunchyDuck.Math.MathFilters {
 				return 0;
 			}
 			LoadoutManager loadoutManager = Current.Game.GetComponent<LoadoutManager>();
-			return loadoutManager.pawnTags[tag].Pawns.Count(p => p != null && !p.Dead && p.IsValidLoadoutHolder() && p.Map == bc.targetBill.Map && p.HostFaction == null);
+			return loadoutManager.pawnTags[(Tag)tag].Pawns.Count(p => p != null && !p.Dead && p.IsValidLoadoutHolder() && p.Map == bc.targetBill.Map && p.HostFaction == null);
 		}
 
 		public override ReturnType Parse(string command, out object result) {
