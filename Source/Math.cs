@@ -27,7 +27,7 @@ namespace CrunchyDuck.Math {
 
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.4.3";
+		public static string version = "1.4.4";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();
