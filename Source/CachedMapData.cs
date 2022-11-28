@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CrunchyDuck.Math.MathFilters;
+using Inventory;
 using ProjectRimFactory;
 using ProjectRimFactory.Common.HarmonyPatches;
 using ProjectRimFactory.Storage;
@@ -78,6 +79,12 @@ namespace CrunchyDuck.Math {
 					// pawn
 					else if (PawnFilter.filterMethods.ContainsKey(command) || pawns_dict.ContainsKey(command)) {
 						filter = new PawnFilter(bc);
+					}
+					// compositable loadouts; Has to be extracted to separate methods because otherwise it throws exceptions when run without the mod.
+					else if (Math.compositableLoadoutsSupportEnabled && IsCompositableLoadoutCommand(command)) {
+						if (i + 1 >= commands.Length && GetCompositableLoadoutFilter(commands[++i], bc, ref filter))
+							continue;
+						return false;
 					}
 					// Can't find filter.
 					else {
@@ -226,6 +233,16 @@ namespace CrunchyDuck.Math {
 			}
 
 			return things;
+		}
+
+		private static bool IsCompositableLoadoutCommand(string command) {
+			return CompositableLoadoutTagsFilter.names.Contains(command);
+		}
+		private static bool GetCompositableLoadoutFilter(string command, BillComponent bc, ref MathFilter filter) {
+			if (!CompositableLoadoutTagsFilter.TryFindTagByName(command, out Tag tag))
+				return false;
+			filter = new CompositableLoadoutTagsFilter(bc, tag);
+			return true;
 		}
 
 	}

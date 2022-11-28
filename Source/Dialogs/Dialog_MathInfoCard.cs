@@ -2,6 +2,7 @@
 using Verse;
 using RimWorld;
 using HarmonyLib;
+using Inventory;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
@@ -108,6 +109,9 @@ namespace CrunchyDuck.Math {
 			tabs.Add(new TabRecord("CD.M.infocard.categories".Translate(), () => tab = InfoCardTab.Categories, tab == InfoCardTab.Categories));
 			tabs.Add(new TabRecord("StatDefs", () => tab = InfoCardTab.StatDefs, tab == InfoCardTab.StatDefs));
 
+			if (Math.compositableLoadoutsSupportEnabled)
+				tabs.Add(new TabRecord("CD.M.infocard.compositable_loadouts".Translate(), () => tab = InfoCardTab.CompositableLoadouts, tab == InfoCardTab.CompositableLoadouts));
+
 			Rect label_area = new Rect(inRect);
 			label_area = label_area.ContractedBy(18f);
 			label_area.height = 34f;
@@ -132,6 +136,9 @@ namespace CrunchyDuck.Math {
 				statEntries = GetPawnsEntries();
 			else if (tab == InfoCardTab.StatDefs)
 				statEntries = GetStatDefsEntries();
+			else if (tab == InfoCardTab.CompositableLoadouts)
+				statEntries = GetCompositableLoadoutsEntries();
+			
 			statsCacheValues.SetValue(null, new List<string>());
 			statsCache.SetValue(null, statEntries);
 			StatsFinalize.Invoke(null, new object[] { statsCache.GetValue(null) });
@@ -160,7 +167,7 @@ namespace CrunchyDuck.Math {
 				display_priority--);
 			stats.Add(stat);
 
-
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.stacks".Translate(), "", "CD.M.infocard.basic.tutorials.stacks.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.variable_names".Translate(), "", "CD.M.infocard.basic.tutorials.variable_names.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.itemcount".Translate(), "", "CD.M.infocard.basic.tutorials.itemcount.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.basic.tutorials.doXTimes".Translate(), "", "CD.M.infocard.basic.tutorials.doXTimes.description".Translate(), display_priority--));
@@ -172,6 +179,7 @@ namespace CrunchyDuck.Math {
 			// nice thinking oken
 			// BEWARE THE HIDDEN HORRORS.
 			cat = catExamples;
+			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.stacks".Translate(), "", "CD.M.infocard.basic.examples.stacks.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.pawns".Translate(), "", "CD.M.infocard.basic.examples.pawns.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.intake".Translate(), "", "CD.M.infocard.basic.examples.intake.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.basic.examples.meals".Translate(), "", "CD.M.infocard.basic.examples.meals.description".Translate(), display_priority--));
@@ -273,6 +281,30 @@ namespace CrunchyDuck.Math {
 
 			return stats;
 		}
+
+		private List<StatDrawEntry> GetCompositableLoadoutsEntries() {
+			var stats = new List<StatDrawEntry>();
+			int display_priority = 10000;
+			
+			var cat = catIntroduction;
+			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.compositable_loadouts".Translate(), "", "CD.M.infocard.compositable_loadouts.description".Translate(), display_priority--));
+			
+			cat = catExamples;
+			LoadoutManager loadoutManager = Current.Game.GetComponent<LoadoutManager>();
+			if (loadoutManager.tags.Count == 0) {
+				stats.Add(new StatDrawEntry(cat, "CD.M.infocard.compositable_loadouts.no_tags".Translate(), "", "CD.M.infocard.compositable_loadouts.no_tags.description".Translate(), display_priority--));
+			}
+			else {
+				var tagNames = new SortedSet<string>();
+				foreach (Tag tag in loadoutManager.tags) {
+					tagNames.Add(tag.name);
+				}
+				foreach (string tag in tagNames) {
+					stats.Add(new StatDrawEntry(cat, "CD.M.infocard.compositable_loadouts.tag".Translate(tag.ToParameter()), "", "CD.M.infocard.compositable_loadouts.tag.description".Translate(tag), display_priority--));
+				}
+			}
+			return stats;
+		}
 	}
 
 	public enum InfoCardTab {
@@ -280,5 +312,6 @@ namespace CrunchyDuck.Math {
 		Pawns,
 		Categories,
 		StatDefs,
+		CompositableLoadouts
 	}
 }

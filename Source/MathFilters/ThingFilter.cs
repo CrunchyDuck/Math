@@ -11,6 +11,7 @@ namespace CrunchyDuck.Math.MathFilters {
 		};
 		public static Dictionary<string, Func<Thing, float>> counterMethods = new Dictionary<string, Func<Thing, float>>() {
 			//{ "stack limit", t => t.def.stackLimit }
+			{"stacks", GetStacks}
 		};
 
 		public override bool CanCount { get { return true; } }
@@ -37,6 +38,11 @@ namespace CrunchyDuck.Math.MathFilters {
 				count += thing.stackCount;
 			}
 			return count;
+		}
+		
+		// This function will assume that every Thing in this ThingFilter is the same ThingDef.
+		public static float GetStacks(Thing thing) {
+			return ((float) thing.stackCount) / thing.def.stackLimit;
 		}
 
 		public override ReturnType Parse(string command, out object result) {

@@ -43,6 +43,10 @@
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
+    <Reference Include="Inventory">
+      <HintPath>..\..\..\..\..\workshop\content\294100\2679126859\1.4\Assemblies\Inventory.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="NCalc, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Assemblies\NCalc.dll</HintPath>
@@ -67,6 +71,7 @@
     <Compile Include="Dialogs\Dialog_VariableList.cs" />
     <Compile Include="GUIExtensions.cs" />
     <Compile Include="MathFilters\CategoryFilter.cs" />
+    <Compile Include="MathFilters\CompositableLoadoutTagsFilter.cs" />
     <Compile Include="MathFilters\MathFilter.cs" />
     <Compile Include="MathFilters\PawnFilter.cs" />
     <Compile Include="MathFilters\ThingDefFilter.cs" />
