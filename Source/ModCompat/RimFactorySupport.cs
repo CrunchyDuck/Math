@@ -17,10 +17,10 @@ namespace CrunchyDuck.Math.ModCompat {
 		
 		private static readonly AccessTools.FieldRef<GameComponent, IReadOnlyList<object>> PrfGameCompAssemblerQueue = AccessTools.FieldRefAccess<IReadOnlyList<object>>(PrfGameCompType, "AssemblerQueue");
 		private static readonly AccessTools.FieldRef<MapComponent, IReadOnlyList<object>> PrfMapCompColdStorageBuildings = AccessTools.FieldRefAccess<IReadOnlyList<object>>(PrfMapCompType, "ColdStorageBuildings");
-		private static readonly PropertyInfo PrfStorageParentAdvancedIoAllowed = AccessTools.Property(PrfILinkableStorageParentType, "AdvancedIOAllowed");
-		private static readonly PropertyInfo PrfStorageParentStoredItems = AccessTools.Property(PrfILinkableStorageParentType, "StoredItems");
-		private static readonly PropertyInfo PrfAssemblerQueueMap = AccessTools.Property(PrfAssemblerQueueType, "Map");
-		private static readonly MethodInfo PrfGetAssemblerThingQueue = AccessTools.Method(PrfAssemblerQueueType, "GetThingQueue", Type.EmptyTypes);
+		private static readonly FastInvokeHandler PrfStorageParentAdvancedIoAllowed = MethodInvoker.GetHandler(AccessTools.PropertyGetter(PrfILinkableStorageParentType, "AdvancedIOAllowed"));
+		private static readonly FastInvokeHandler PrfStorageParentStoredItems = MethodInvoker.GetHandler(AccessTools.PropertyGetter(PrfILinkableStorageParentType, "StoredItems"));
+		private static readonly FastInvokeHandler PrfAssemblerQueueMap = MethodInvoker.GetHandler(AccessTools.PropertyGetter(PrfAssemblerQueueType, "Map"));
+		private static readonly FastInvokeHandler PrfGetAssemblerThingQueue = MethodInvoker.GetHandler(AccessTools.Method(PrfAssemblerQueueType, "GetThingQueue", Type.EmptyTypes));
 		private static readonly Func<Map, MapComponent> GetPrfMapComp = AccessTools.MethodDelegate<Func<Map, MapComponent>>(
 			AccessTools.Method(PrfPatchStorageUtilType, "GetPRFMapComponent", new[] { typeof(Map) }));
 		private static GameComponent GetPrfGameComp() => Current.Game.GetComponent(PrfGameCompType);
@@ -30,14 +30,14 @@ namespace CrunchyDuck.Math.ModCompat {
 			// Adapted from PRF Patch_RecipeWorkerCounter_CountProducts
 			GameComponent prfGameComponent = GetPrfGameComp();
 			IEnumerable<Thing> assemblerQueuedThings = PrfGameCompAssemblerQueue(prfGameComponent)
-				.Where(assembler => PrfAssemblerQueueMap.GetValue(assembler) == map)
-				.SelectMany(assembler => (IEnumerable<Thing>)PrfGetAssemblerThingQueue.Invoke(assembler, null));
+				.Where(assembler => PrfAssemblerQueueMap(assembler) == map)
+				.SelectMany(assembler => (IEnumerable<Thing>)PrfGetAssemblerThingQueue(assembler));
 
 			
 			MapComponent prfMapComp = GetPrfMapComp(map);
 			IEnumerable<Thing> coldStoredThings = PrfMapCompColdStorageBuildings(prfMapComp)
-				.Where(storageParent => !(bool)PrfStorageParentAdvancedIoAllowed.GetValue(storageParent))
-				.SelectMany(storageParent => (IEnumerable<Thing>)PrfStorageParentStoredItems.GetValue(storageParent));
+				.Where(storageParent => !(bool)PrfStorageParentAdvancedIoAllowed(storageParent))
+				.SelectMany(storageParent => (IEnumerable<Thing>)PrfStorageParentStoredItems(storageParent));
 
 			return assemblerQueuedThings.Concat(coldStoredThings)
 				.Select(thing => thing.GetInnerIfMinified())
