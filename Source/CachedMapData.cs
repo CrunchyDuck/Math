@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using CrunchyDuck.Math.MathFilters;
-using Inventory;
-using ProjectRimFactory;
-using ProjectRimFactory.Common.HarmonyPatches;
-using ProjectRimFactory.Storage;
+﻿using CrunchyDuck.Math.MathFilters;
+using CrunchyDuck.Math.ModCompat;
 using RimWorld;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Verse;
 using ThingFilter = CrunchyDuck.Math.MathFilters.ThingFilter;
 
@@ -81,8 +78,8 @@ namespace CrunchyDuck.Math {
 						filter = new PawnFilter(bc);
 					}
 					// compositable loadouts; Has to be extracted to separate methods because otherwise it throws exceptions when run without the mod.
-					else if (Math.compositableLoadoutsSupportEnabled && IsCompositableLoadoutCommand(command)) {
-						if (i + 1 < commands.Length && GetCompositableLoadoutFilter(commands[++i], bc, ref filter))
+					else if (Math.compositableLoadoutsSupportEnabled && CompositableLoadoutTagsFilter.names.Contains(command)) {
+						if (i + 1 < commands.Length && CompositableLoadoutsSupport.GetCompositableLoadoutFilter(commands[++i], bc, ref filter))
 							continue;
 						return false;
 					}
@@ -133,7 +130,7 @@ namespace CrunchyDuck.Math {
 				}
 
 				if (Math.rimfactorySupportEnabled)
-					resources[thing_name].AddRange(GetThingFromPRF(map, td));
+					resources[thing_name].AddRange(RimFactorySupport.GetThingsFromPRF(map, td));
 			}
 
 			// TODO: Index things that are on corpses. 
@@ -206,45 +203,6 @@ namespace CrunchyDuck.Math {
 
 			return things;
 		}
-
-		// RimFactory CountProducts Support
-		private static List<Thing> GetThingFromPRF(Map map, ThingDef def) {
-			List<Thing> things = new List<Thing>();
-			// Copied and adapted from PRF Patch_RecipeWorkerCounter_CountProducts
-			PRFGameComponent prfGameComponent = Current.Game.GetComponent<PRFGameComponent>();
-			for (int index = 0; index < prfGameComponent.AssemblerQueue.Count; ++index) {
-				if (map == prfGameComponent.AssemblerQueue[index].Map) {
-					foreach (Thing thing in prfGameComponent.AssemblerQueue[index].GetThingQueue()) {
-						Thing innerIfMinified = thing.GetInnerIfMinified();
-						if (innerIfMinified.def == def)
-							things.Add(innerIfMinified);
-					}
-				}
-			}
-
-			foreach (ILinkableStorageParent linkableStorageParent in TradePatchHelper.AllPowered(map)) {
-				if (!linkableStorageParent.AdvancedIOAllowed) {
-					foreach (Thing storedItem in linkableStorageParent.StoredItems) {
-						Thing innerIfMinified = storedItem.GetInnerIfMinified();
-						if (innerIfMinified.def == def)
-							things.Add(innerIfMinified);
-					}
-				}
-			}
-
-			return things;
-		}
-
-		private static bool IsCompositableLoadoutCommand(string command) {
-			return CompositableLoadoutTagsFilter.names.Contains(command);
-		}
-		private static bool GetCompositableLoadoutFilter(string command, BillComponent bc, ref MathFilter filter) {
-			if (!CompositableLoadoutTagsFilter.TryFindTagByName(command, out Tag tag))
-				return false;
-			filter = new CompositableLoadoutTagsFilter(bc, tag);
-			return true;
-		}
-
 	}
 	//public struct SearchVariableReturn {
 	//	public bool success;

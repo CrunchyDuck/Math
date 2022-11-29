@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using CrunchyDuck.Math.ModCompat;
+using UnityEngine;
 using Verse;
 using RimWorld;
 using HarmonyLib;
-using Inventory;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
@@ -290,14 +290,14 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "CD.M.infocard.compositable_loadouts".Translate(), "", "CD.M.infocard.compositable_loadouts.description".Translate(), display_priority--));
 			
 			cat = catExamples;
-			LoadoutManager loadoutManager = Current.Game.GetComponent<LoadoutManager>();
-			if (loadoutManager.tags.Count == 0) {
+			IReadOnlyList<object> tags = CompositableLoadoutsSupport.GetTags(); 
+			if (tags.Count == 0) {
 				stats.Add(new StatDrawEntry(cat, "CD.M.infocard.compositable_loadouts.no_tags".Translate(), "", "CD.M.infocard.compositable_loadouts.no_tags.description".Translate(), display_priority--));
 			}
 			else {
 				var tagNames = new SortedSet<string>();
-				foreach (Tag tag in loadoutManager.tags) {
-					tagNames.Add(tag.name);
+				foreach (object tag in tags) {
+					tagNames.Add(CompositableLoadoutsSupport.GetTagName(tag));
 				}
 				foreach (string tag in tagNames) {
 					stats.Add(new StatDrawEntry(cat, "CD.M.infocard.compositable_loadouts.tag".Translate(tag.ToParameter()), "", "CD.M.infocard.compositable_loadouts.tag.description".Translate(tag), display_priority--));

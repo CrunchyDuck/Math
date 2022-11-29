@@ -1,29 +1,17 @@
-﻿using System;
+﻿using CrunchyDuck.Math.ModCompat;
+using System;
 using System.Collections.Generic;
-using Inventory;
-using JetBrains.Annotations;
-using Verse;
-using RimWorld;
+using System.Linq;
 
 namespace CrunchyDuck.Math.MathFilters {
 	class CompositableLoadoutTagsFilter : MathFilter {
 		public static HashSet<string> names = new HashSet<string> { "loadout tags", "lt" };
 		public override bool CanCount { get { return true; } }
 
-		// Use generic object type because otherwise exceptions can get thrown.
 		private object tag;
 		private BillComponent bc;
 
-		[CanBeNull]
-		public static bool TryFindTagByName(string name, out Tag tagResult) {
-			LoadoutManager loadoutManager = Current.Game.GetComponent<LoadoutManager>();
-			// This looks like it uses a for loop internally, and is cleaner.
-			// Also, since tag names are user defined, this will just return the first tag with the name, duplicate tag names are user error.
-			tagResult = loadoutManager.tags.Find(tag => tag.name.ToParameter() == name);
-			return tagResult != null;
-		}
-		
-		public CompositableLoadoutTagsFilter(BillComponent bc, Tag tag) {
+		public CompositableLoadoutTagsFilter(BillComponent bc, object tag) {
 			this.bc = bc;
 			this.tag = tag;
 		}
@@ -32,8 +20,7 @@ namespace CrunchyDuck.Math.MathFilters {
 			if (tag == null) {
 				return 0;
 			}
-			LoadoutManager loadoutManager = Current.Game.GetComponent<LoadoutManager>();
-			return loadoutManager.pawnTags[(Tag)tag].Pawns.Count(p => p != null && !p.Dead && p.IsValidLoadoutHolder() && p.Map == bc.targetBill.Map && p.HostFaction == null);
+			return CompositableLoadoutsSupport.GetPawnsWithTag(tag).Count(p => p != null && !p.Dead && CompositableLoadoutsSupport.IsValidLoadoutHolder(p) && p.Map == bc.targetBill.Map && p.HostFaction == null);
 		}
 
 		public override ReturnType Parse(string command, out object result) {
