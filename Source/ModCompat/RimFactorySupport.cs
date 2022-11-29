@@ -3,7 +3,7 @@ using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Reflection;
 using Verse;
 
 namespace CrunchyDuck.Math.ModCompat {
@@ -14,22 +14,14 @@ namespace CrunchyDuck.Math.ModCompat {
 		private static Type PrfAssemblerQueueType { get; } = Type.GetType("ProjectRimFactory.Common.HarmonyPatches.IAssemblerQueue, ProjectRimFactory");
 		private static Type PrfPatchStorageUtilType { get; } = Type.GetType("ProjectRimFactory.Common.HarmonyPatches.PatchStorageUtil, ProjectRimFactory");
 		private static Type PrfILinkableStorageParentType { get; } = Type.GetType("ProjectRimFactory.Storage.ILinkableStorageParent, ProjectRimFactory");
-		private static AccessTools.FieldRef<GameComponent, IReadOnlyList<object>> PrfGameCompAssemblerQueue = AccessTools.FieldRefAccess<IReadOnlyList<object>>(PrfGameCompType, "AssemblerQueue");
-		private static AccessTools.FieldRef<MapComponent, IReadOnlyList<object>> PrfMapCompColdStorageBuildings = AccessTools.FieldRefAccess<IReadOnlyList<object>>(PrfMapCompType, "ColdStorageBuildings");
 		
-		private static dynamic PrfStorageParentAdvancedIOAllowed = AccessTools.PropertyGetter(PrfILinkableStorageParentType, "AdvancedIOAllowed")
-			.CreateDelegate(Expression.GetDelegateType(PrfILinkableStorageParentType, typeof(bool)));
-		
-		private static dynamic PrfStorageParentStoredItems = AccessTools.PropertyGetter(PrfILinkableStorageParentType, "StoredItems")
-			.CreateDelegate(Expression.GetDelegateType(PrfILinkableStorageParentType, typeof(List<Thing>)));
-		
-		private static dynamic PrfAssemblerQueueMap = AccessTools.PropertyGetter(PrfAssemblerQueueType, "Map")
-			.CreateDelegate(Expression.GetDelegateType(PrfAssemblerQueueType, typeof(Map)));
-		
-		private static dynamic PrfGetAssemblerThingQueue = AccessTools.Method(PrfAssemblerQueueType, "GetThingQueue", Type.EmptyTypes)
-			.CreateDelegate(Expression.GetDelegateType(PrfAssemblerQueueType, typeof(List<Thing>)));
-
-		private static Func<Map, MapComponent> GetPrfMapComp = AccessTools.MethodDelegate<Func<Map, MapComponent>>(
+		private static readonly AccessTools.FieldRef<GameComponent, IReadOnlyList<object>> PrfGameCompAssemblerQueue = AccessTools.FieldRefAccess<IReadOnlyList<object>>(PrfGameCompType, "AssemblerQueue");
+		private static readonly AccessTools.FieldRef<MapComponent, IReadOnlyList<object>> PrfMapCompColdStorageBuildings = AccessTools.FieldRefAccess<IReadOnlyList<object>>(PrfMapCompType, "ColdStorageBuildings");
+		private static readonly PropertyInfo PrfStorageParentAdvancedIoAllowed = AccessTools.Property(PrfILinkableStorageParentType, "AdvancedIOAllowed");
+		private static readonly PropertyInfo PrfStorageParentStoredItems = AccessTools.Property(PrfILinkableStorageParentType, "StoredItems");
+		private static readonly PropertyInfo PrfAssemblerQueueMap = AccessTools.Property(PrfAssemblerQueueType, "Map");
+		private static readonly MethodInfo PrfGetAssemblerThingQueue = AccessTools.Method(PrfAssemblerQueueType, "GetThingQueue", Type.EmptyTypes);
+		private static readonly Func<Map, MapComponent> GetPrfMapComp = AccessTools.MethodDelegate<Func<Map, MapComponent>>(
 			AccessTools.Method(PrfPatchStorageUtilType, "GetPRFMapComponent", new[] { typeof(Map) }));
 		private static GameComponent GetPrfGameComp() => Current.Game.GetComponent(PrfGameCompType);
 		
@@ -38,14 +30,14 @@ namespace CrunchyDuck.Math.ModCompat {
 			// Adapted from PRF Patch_RecipeWorkerCounter_CountProducts
 			GameComponent prfGameComponent = GetPrfGameComp();
 			IEnumerable<Thing> assemblerQueuedThings = PrfGameCompAssemblerQueue(prfGameComponent)
-				.Where(assembler => PrfAssemblerQueueMap(assembler) == map)
-				.SelectMany(assembler => (IEnumerable<Thing>)PrfGetAssemblerThingQueue(assembler));
+				.Where(assembler => PrfAssemblerQueueMap.GetValue(assembler) == map)
+				.SelectMany(assembler => (IEnumerable<Thing>)PrfGetAssemblerThingQueue.Invoke(assembler, null));
 
 			
 			MapComponent prfMapComp = GetPrfMapComp(map);
 			IEnumerable<Thing> coldStoredThings = PrfMapCompColdStorageBuildings(prfMapComp)
-				.Where(storageParent => !PrfStorageParentAdvancedIOAllowed(storageParent))
-				.SelectMany(storageParent => (IEnumerable<Thing>)PrfStorageParentStoredItems(storageParent));
+				.Where(storageParent => !(bool)PrfStorageParentAdvancedIoAllowed.GetValue(storageParent))
+				.SelectMany(storageParent => (IEnumerable<Thing>)PrfStorageParentStoredItems.GetValue(storageParent));
 
 			return assemblerQueuedThings.Concat(coldStoredThings)
 				.Select(thing => thing.GetInnerIfMinified())
