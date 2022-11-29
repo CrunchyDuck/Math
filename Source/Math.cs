@@ -3,10 +3,8 @@ using HarmonyLib;
 using System.Reflection;
 using System.Collections.Generic;
 using Verse;
-using UnityEngine;
 using NCalc;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CrunchyDuck.Math {
@@ -108,6 +106,9 @@ namespace CrunchyDuck.Math {
 			compositableLoadoutsSupportEnabled =
 				LoadedModManager.RunningModsListForReading.Any(mod => mod.PackageId == "wiri.compositableloadouts");
 
+			if (rimfactorySupportEnabled)
+				Log.Message("Math: PRF support enabled.");
+			
 			if (compositableLoadoutsSupportEnabled)
 				Log.Message("Math: Compositable Loadouts Support Enabled.");
 		}
@@ -127,7 +128,6 @@ namespace CrunchyDuck.Math {
 			AddPatch(harmony, typeof(Patch_BillCopying));
 
 			if (rimfactorySupportEnabled)  {
-				Log.Message("Math: PRF support enabled.");
 				AddPatch(harmony, typeof(Patch_RimFactory_RecipeWorkerCounter_CountProducts));
 			}
 		}

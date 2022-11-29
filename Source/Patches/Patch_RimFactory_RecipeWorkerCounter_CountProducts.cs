@@ -1,14 +1,14 @@
 ﻿using System.Reflection;
 using HarmonyLib;
-using ProjectRimFactory.Common.HarmonyPatches;
 using RimWorld;
-using Verse;
+using System;
 
 namespace CrunchyDuck.Math
 {
     public class Patch_RimFactory_RecipeWorkerCounter_CountProducts {
         public static MethodInfo Target() {
-            return AccessTools.Method(typeof(Patch_RecipeWorkerCounter_CountProducts), nameof(Patch_RecipeWorkerCounter_CountProducts.Postfix));
+            Type type = Type.GetType("ProjectRimFactory.Common.HarmonyPatches.Patch_RecipeWorkerCounter_CountProducts, ProjectRimFactory");
+            return AccessTools.Method(type, "Postfix");
         }
 
         public static bool Prefix(Bill_Production bill) {
