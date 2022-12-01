@@ -41,6 +41,12 @@
     <label>Traits</label>
     <displayOrder>100</displayOrder>
   </StatCategoryDef>
+
+  <StatCategoryDef>
+    <defName>CDWorkTags</defName>
+    <label>Work Tags</label>
+    <displayOrder>90</displayOrder>
+  </StatCategoryDef>
   
   <StatCategoryDef>
     <defName>CDBasics</defName>
