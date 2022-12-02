@@ -8,7 +8,8 @@ namespace CrunchyDuck.Math.MathFilters {
 	class PawnFilter : MathFilter {
 		Dictionary<string, Pawn> contains = new Dictionary<string, Pawn>();
 		private bool primedForTrait = false;
-		private bool primedForWorkTag = false;
+		private bool primedIncapable = false;
+		private bool primedCapable = false;
 
         private bool canCount = true;
 		public override bool CanCount { get { return canCount; } }
@@ -83,35 +84,31 @@ namespace CrunchyDuck.Math.MathFilters {
 				return ReturnType.PawnFilter;
 			}
 			// We were expecting a work tag.
-			if (primedForWorkTag) {
-                primedForWorkTag = false;
-                canCount = true;
-				// Get work tag.
-                if (Enum.TryParse(command, true, out WorkTags tag)) {
-                    Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
-					// Is pawn capable of all work?
-					if (tag == WorkTags.None) {
-                        foreach (KeyValuePair<string, Pawn> entry in contains) {
-                            if (entry.Value.CombinedDisabledWorkTags == WorkTags.None) {
-                                filtered_pawns[entry.Key] = entry.Value;
-                            }
-                        }
-                    }
-					// Is pawn incapable of this work?
-					else {
-						foreach (KeyValuePair<string, Pawn> entry in contains) {
-							if (entry.Value.WorkTagIsDisabled(tag)) {
-								filtered_pawns[entry.Key] = entry.Value;
-							}
-						}
-					}
-                    contains = filtered_pawns;
-                    result = this;
-                    return ReturnType.PawnFilter;
-                }
-                else {
-                    return ReturnType.Null;
-                }
+			if (primedIncapable || primedCapable) {
+                // Get work tag.
+				if (!Enum.TryParse(command, true, out WorkTags tag)) {
+					return ReturnType.Null;
+				}
+
+				// Filter pawns.
+				Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
+				foreach (KeyValuePair<string, Pawn> entry in contains) {
+					bool incapable;
+					if (tag == WorkTags.None)
+						incapable = entry.Value.CombinedDisabledWorkTags == WorkTags.None;
+					else
+						incapable = entry.Value.WorkTagIsDisabled(tag);
+
+					if ((primedIncapable && incapable) || (primedCapable && !incapable))
+						filtered_pawns[entry.Key] = entry.Value;
+				}
+
+				primedIncapable = false;
+				primedCapable = false;
+				canCount = true;
+				contains = filtered_pawns;
+				result = this;
+				return ReturnType.PawnFilter;
             }
 			
 			if (command == "traits") {
@@ -122,11 +119,18 @@ namespace CrunchyDuck.Math.MathFilters {
 			}
 
 			if (command == "incapable") {
-                primedForWorkTag = true;
+                primedIncapable = true;
                 result = this;
                 canCount = false;
                 return ReturnType.PawnFilter;
             }
+
+			if (command == "capable") {
+				primedCapable = true;
+				result = this;
+				canCount = false;
+				return ReturnType.PawnFilter;
+			}
 
             // Search pawn.
             if (contains.ContainsKey(command)) {

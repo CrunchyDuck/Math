@@ -24,10 +24,12 @@ namespace CrunchyDuck.Math {
 	// TODO: Maybe allow things like smelting weapons to use Do Until X.
 	// TODO: Look at adding Math to Autoseller mod.
 	// TODO: Potentially move compatibility patches into their own project(s).
+	// TODO: Make changing bill stats from the preview window actually update stuff.
+	// TODO: Get a pawn's list of things they can eat, e.g. "pig.foods"
 
 	[StaticConstructorOnStartup]
 	class Math {
-		public static string version = "1.4.5";
+		public static string version = "1.4.6";
 
 		// Cached variables
 		private static Dictionary<Map, CachedMapData> cachedMaps = new Dictionary<Map, CachedMapData>();

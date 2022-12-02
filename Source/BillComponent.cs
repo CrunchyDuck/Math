@@ -42,6 +42,7 @@ namespace CrunchyDuck.Math {
 				var spts = bill.recipe.specialProducts;
 				if (spts != null) {
 					// Check if butchery
+					// TODO: For some reason the "Count products" on butchery bills doesn't work. Suspect they're using custom counting logic as meat isn't like others.
 					foreach (var spt in bill.recipe.specialProducts) {
 						if (spt == SpecialProductType.Butchery) {
 							itemsToCount.SetAll("\"category meat\"");
