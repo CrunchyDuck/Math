@@ -82,38 +82,25 @@ namespace CrunchyDuck.Math.MathFilters {
 				result = this;
 				return ReturnType.PawnFilter;
 			}
-			if (command == "traits") {
-				primedForTrait = true;
-				result = this;
-				canCount = false;
-				return ReturnType.PawnFilter;
-			}
-
-
-			//Work Disabled
-			if (primedForWorkTag)
-            {
+			// We were expecting a work tag.
+			if (primedForWorkTag) {
                 primedForWorkTag = false;
                 canCount = true;
-                if (Enum.TryParse(command, true, out WorkTags tag))
-                {
+				// Get work tag.
+                if (Enum.TryParse(command, true, out WorkTags tag)) {
                     Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
-					if (tag == WorkTags.None)
-                    {
-                        foreach (KeyValuePair<string, Pawn> entry in contains)
-                        {
-                            if (entry.Value.CombinedDisabledWorkTags == WorkTags.None)
-                            {
+					// Is pawn capable of all work?
+					if (tag == WorkTags.None) {
+                        foreach (KeyValuePair<string, Pawn> entry in contains) {
+                            if (entry.Value.CombinedDisabledWorkTags == WorkTags.None) {
                                 filtered_pawns[entry.Key] = entry.Value;
                             }
                         }
                     }
-					else
-					{
-						foreach (KeyValuePair<string, Pawn> entry in contains)
-						{
-							if (entry.Value.WorkTagIsDisabled(tag))
-							{
+					// Is pawn incapable of this work?
+					else {
+						foreach (KeyValuePair<string, Pawn> entry in contains) {
+							if (entry.Value.WorkTagIsDisabled(tag)) {
 								filtered_pawns[entry.Key] = entry.Value;
 							}
 						}
@@ -122,13 +109,19 @@ namespace CrunchyDuck.Math.MathFilters {
                     result = this;
                     return ReturnType.PawnFilter;
                 }
-                else
-                {
+                else {
                     return ReturnType.Null;
                 }
             }
-            if (command == "workDisabled" || command == "workDis")
-            {
+			
+			if (command == "traits") {
+				primedForTrait = true;
+				result = this;
+				canCount = false;
+				return ReturnType.PawnFilter;
+			}
+
+			if (command == "incapable") {
                 primedForWorkTag = true;
                 result = this;
                 canCount = false;

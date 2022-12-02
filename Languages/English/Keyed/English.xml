@@ -237,7 +237,7 @@ Pawns have access to special stats that other things don't, like "colonists.male
 	
 The full list of traits can be seen at the bottom of this tab.</CD.M.infocard.pawns.tutorials.searching_pawn_traits.description>
 	<CD.M.infocard.pawns.tutorials.searching_pawn_worktags>Searching pawn work tags</CD.M.infocard.pawns.tutorials.searching_pawn_worktags>
-	<CD.M.infocard.pawns.tutorials.searching_pawn_worktags.description>You can search which work tags pawns or pawn groups are incapable of, for example: "colonists.workDis.Violent", "colonists.workDisabled.Cooking"
+	<CD.M.infocard.pawns.tutorials.searching_pawn_worktags.description>You can search which work tags pawns or pawn groups are incapable of, for example: "colonists.incapable.violent", "colonists.incapable.cooking"
 	
 The full list of work tags can be seen closer to the bottom of this tab.</CD.M.infocard.pawns.tutorials.searching_pawn_worktags.description>
 	<CD.M.infocard.pawns.tutorials.filtering>Filtering pawn groups</CD.M.infocard.pawns.tutorials.filtering>
@@ -252,8 +252,8 @@ The full list of work tags can be seen closer to the bottom of this tab.</CD.M.i
 	<CD.M.infocard.pawns.examples.individual_pawn.description>How much MEAT would JOHN give if we CUT HIM UP</CD.M.infocard.pawns.examples.individual_pawn.description>
 	<CD.M.infocard.pawns.examples.trait_searching>"colonists" - "colonists.traits.nudist"</CD.M.infocard.pawns.examples.trait_searching>
 	<CD.M.infocard.pawns.examples.trait_searching.description>Counts how many colonists you have that aren't nudists. Useful for clothing production.</CD.M.infocard.pawns.examples.trait_searching.description>
-	<CD.M.infocard.pawns.examples.worktag_searching>"colonists" - "colonists.workDis.violent"</CD.M.infocard.pawns.examples.worktag_searching>
-	<CD.M.infocard.pawns.examples.worktag_searching.description>"colonists" - "colonists.workDis.violent"
+	<CD.M.infocard.pawns.examples.worktag_searching>"colonists" - "colonists.incapable.violent"</CD.M.infocard.pawns.examples.worktag_searching>
+	<CD.M.infocard.pawns.examples.worktag_searching.description>"colonists" - "colonists.incapable.violent"
   Counts how many colonists are capable of violence. Useful for weapon production.</CD.M.infocard.pawns.examples.worktag_searching.description>
 	<CD.M.infocard.pawns.examples.pawngroup_filtering>"colonists.mechanitors"</CD.M.infocard.pawns.examples.pawngroup_filtering>
 	<CD.M.infocard.pawns.examples.pawngroup_filtering.description>How many colonists in our colony are mechanitors?</CD.M.infocard.pawns.examples.pawngroup_filtering.description>
