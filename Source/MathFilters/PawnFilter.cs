@@ -8,7 +8,9 @@ namespace CrunchyDuck.Math.MathFilters {
 	class PawnFilter : MathFilter {
 		Dictionary<string, Pawn> contains = new Dictionary<string, Pawn>();
 		private bool primedForTrait = false;
-		private bool canCount = true;
+		private bool primedForWorkTag = false;
+
+        private bool canCount = true;
 		public override bool CanCount { get { return canCount; } }
 
 		public static Dictionary<string, Func<Pawn, bool>> filterMethods = new Dictionary<string, Func<Pawn, bool>>() {
@@ -88,8 +90,53 @@ namespace CrunchyDuck.Math.MathFilters {
 			}
 
 
-			// Search pawn.
-			if (contains.ContainsKey(command)) {
+			//Work Disabled
+			if (primedForWorkTag)
+            {
+                primedForWorkTag = false;
+                canCount = true;
+                if (Enum.TryParse(command, true, out WorkTags tag))
+                {
+                    Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
+					if (tag == WorkTags.None)
+                    {
+                        foreach (KeyValuePair<string, Pawn> entry in contains)
+                        {
+                            if (entry.Value.CombinedDisabledWorkTags == WorkTags.None)
+                            {
+                                filtered_pawns[entry.Key] = entry.Value;
+                            }
+                        }
+                    }
+					else
+					{
+						foreach (KeyValuePair<string, Pawn> entry in contains)
+						{
+							if (entry.Value.WorkTagIsDisabled(tag))
+							{
+								filtered_pawns[entry.Key] = entry.Value;
+							}
+						}
+					}
+                    contains = filtered_pawns;
+                    result = this;
+                    return ReturnType.PawnFilter;
+                }
+                else
+                {
+                    return ReturnType.Null;
+                }
+            }
+            if (command == "workDisabled" || command == "workDis")
+            {
+                primedForWorkTag = true;
+                result = this;
+                canCount = false;
+                return ReturnType.PawnFilter;
+            }
+
+            // Search pawn.
+            if (contains.ContainsKey(command)) {
 				contains = new Dictionary<string, Pawn>() {
 					{ command, contains[command] }
 				};

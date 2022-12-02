@@ -6,6 +6,7 @@ using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using System;
 
 namespace CrunchyDuck.Math {
 	// TODO: Possibly add a button to copy a variable directly from infocard.
@@ -25,8 +26,9 @@ namespace CrunchyDuck.Math {
 		public StatCategoryDef catFunctions = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDFunctions");
 		public StatCategoryDef catBasics = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDBasics");
 		public StatCategoryDef catTraits = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDTraits");
+        public StatCategoryDef catWorkTags = DefDatabase<StatCategoryDef>.AllDefs.First(scd => scd.defName == "CDWorkTags");
 
-		public static MethodInfo StatsWorker = AccessTools.Method(typeof(StatsReportUtility), "DrawStatsWorker");
+        public static MethodInfo StatsWorker = AccessTools.Method(typeof(StatsReportUtility), "DrawStatsWorker");
 		public static MethodInfo StatsFinalize = AccessTools.Method(typeof(StatsReportUtility), "FinalizeCachedDrawEntries");
 		public static FieldInfo statsCache = AccessTools.Field(typeof(StatsReportUtility), "cachedDrawEntries");
 #if v1_4
@@ -248,13 +250,15 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawns".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawns.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawn_stats".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawn_stats.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawn_traits".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawn_traits.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.filtering".Translate(), "", "CD.M.infocard.pawns.tutorials.filtering.description".Translate(), display_priority--));
+            stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.searching_pawn_worktags".Translate(), "", "CD.M.infocard.pawns.tutorials.searching_pawn_worktags.description".Translate(), display_priority--));
+            stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.tutorials.filtering".Translate(), "", "CD.M.infocard.pawns.tutorials.filtering.description".Translate(), display_priority--));
 
 			cat = catExamples;
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.individual_pawn".Translate(), "", "CD.M.infocard.pawns.examples.individual_pawn.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.trait_searching".Translate(), "", "CD.M.infocard.pawns.examples.trait_searching.description".Translate(), display_priority--));
-			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup_filtering".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup_filtering.description".Translate(), display_priority--));
+            stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.worktag_searching".Translate(), "", "CD.M.infocard.pawns.examples.worktag_searching.description".Translate(), display_priority--));
+            stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup_filtering".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup_filtering.description".Translate(), display_priority--));
 
 			cat = catPawnGroups;
 			stats.Add(new StatDrawEntry(cat, "​" + "animals", "", "CD.M.infocard.pawns.animals.description".Translate(), display_priority--));
@@ -279,7 +283,14 @@ namespace CrunchyDuck.Math {
 				stats.Add(new StatDrawEntry(cat, "​" + trait_dat.label.ToParameter(), "", trait_dat.description, i++));
 			}
 
-			return stats;
+			// Work Tags
+			cat = catWorkTags;
+            foreach (string tag in Enum.GetNames(typeof(WorkTags)).OrderByDescending(w => w))
+            {
+                stats.Add(new StatDrawEntry(cat, tag, "", CharacterCardUtility.GetWorkTypesDisabledByWorkTag((WorkTags)Enum.Parse(typeof(WorkTags),tag)), i++));
+            }
+
+            return stats;
 		}
 
 		private List<StatDrawEntry> GetCompositableLoadoutsEntries() {
