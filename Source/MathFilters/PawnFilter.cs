@@ -102,8 +102,6 @@ namespace CrunchyDuck.Math.MathFilters {
 				skillString.TrimEnd('|');
 				skillString += ")";
 
-				//Log.Message(skillString);
-
 				Regex rxSkill = new Regex(@skillString);
 
 				Match comparisonMatch = rxComparisonInclusive.Match(command.Clone().ToString().ToLower());
