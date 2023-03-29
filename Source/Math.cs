@@ -39,6 +39,7 @@ namespace CrunchyDuck.Math {
 		public static Dictionary<string, ThingDef> searchableThings = new Dictionary<string, ThingDef>();
 		public static Dictionary<string, StatDef> searchableStats = new Dictionary<string, StatDef>();
 		public static Dictionary<string, (TraitDef traitDef, int index)> searchableTraits = new Dictionary<string, (TraitDef, int)>();
+		public static Dictionary<string, SkillDef> searchableSkills = new Dictionary<string, SkillDef>();
 
 		public static bool rimfactorySupportEnabled = false;
 		public static bool compositableLoadoutsSupportEnabled = false;
@@ -52,6 +53,7 @@ namespace CrunchyDuck.Math {
 			IndexDefs(searchableStats);
 			IndexDefs(MathFilters.CategoryFilter.searchableCategories);
 			IndexDefs(searchableThings);
+			IndexDefs(searchableSkills);
 			// The trait system is stupid. Why all this degrees nonsense? Just to mark incompatible traits? Needless.
 			foreach (TraitDef traitdef in DefDatabase<TraitDef>.AllDefs) {
 				int i = -1;

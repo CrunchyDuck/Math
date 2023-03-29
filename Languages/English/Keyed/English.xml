@@ -254,6 +254,24 @@ The full list of work tags can be seen closer to the bottom of this tab.</CD.M.i
 	<CD.M.infocard.pawns.examples.trait_searching.description>Counts how many colonists you have that aren't nudists. Useful for clothing production.</CD.M.infocard.pawns.examples.trait_searching.description>
 	<CD.M.infocard.pawns.examples.worktag_searching>"colonists.capable.violent"</CD.M.infocard.pawns.examples.worktag_searching>
 	<CD.M.infocard.pawns.examples.worktag_searching.description>Counts how many colonists are capable of violence. Useful for weapon production.</CD.M.infocard.pawns.examples.worktag_searching.description>
+	<CD.M.infocard.pawns.examples.skills>"colonists.skill.shooting &gt; 4"</CD.M.infocard.pawns.examples.skills>
+	<CD.M.infocard.pawns.examples.skills.description>Counts how many colonists have a shooting skill greater than 4.
+
+Any skill name in the Bio tab can be searched for.
+
+The valid comparison types are:
+    Greater than: &gt; or gt
+	Greater than or equal to: &gt;&eq; or gte
+	Less than: &lt; or lt
+	Less than or equal to: &lt;&eq; or lte
+	Equal to: &eq;&eq; or eq
+
+If for some reason you are unable to use logical operator characters, the "colonists.skill.shooting &gt; 4" example could also look like "colonists.skill.shooting gt 4"
+
+To test multiple skills, you can just repeat the skill search.
+
+If you wanted to check for a colonist with greater than 4 shooting and less than 2 cooking, you could do "colonists.skill.shooting gt 4.skill.cooking lt 2"</CD.M.infocard.pawns.examples.skills.description>
+
 	<CD.M.infocard.pawns.examples.pawngroup_filtering>"colonists.mechanitors"</CD.M.infocard.pawns.examples.pawngroup_filtering>
 	<CD.M.infocard.pawns.examples.pawngroup_filtering.description>How many colonists in our colony are mechanitors?</CD.M.infocard.pawns.examples.pawngroup_filtering.description>
 	

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Verse;
 using RimWorld;
 using System.Linq;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CrunchyDuck.Math.MathFilters {
 	class PawnFilter : MathFilter {
@@ -10,6 +12,7 @@ namespace CrunchyDuck.Math.MathFilters {
 		private bool primedForTrait = false;
 		private bool primedIncapable = false;
 		private bool primedCapable = false;
+		private bool primedForSkill = false;
 
         private bool canCount = true;
 		public override bool CanCount { get { return canCount; } }
@@ -52,7 +55,7 @@ namespace CrunchyDuck.Math.MathFilters {
 			{ "intake", GetIntake },
 		};
 
-		public PawnFilter(BillComponent bc) {
+        public PawnFilter(BillComponent bc) {
 			// Pawns who share the same name will only be counted once.
 			//This shouldn't be a problem for most people,
 			// and right now I'm not mentioning it anywhere so people don't complain about it.
@@ -83,6 +86,62 @@ namespace CrunchyDuck.Math.MathFilters {
 				result = this;
 				return ReturnType.PawnFilter;
 			}
+			//We were expecting a skill.
+			if (primedForSkill)
+            {
+				Regex rxLevel = new Regex(@"[0-9]+");
+				Regex rxComparisonInclusive = new Regex(@"(?i)(>=|gte|<=|lte)");
+				Regex rxComparison = new Regex(@"(?i)(>|gt|<|lt|==|eq)");
+
+				string skillString = "(?i)(";
+				foreach (KeyValuePair<string,SkillDef> entry in Math.searchableSkills)
+                {
+					skillString += entry.Value.label + "|";
+                }
+
+				skillString.TrimEnd('|');
+				skillString += ")";
+
+				//Log.Message(skillString);
+
+				Regex rxSkill = new Regex(@skillString);
+
+				Match comparisonMatch = rxComparisonInclusive.Match(command.Clone().ToString().ToLower());
+				if (!comparisonMatch.Success) comparisonMatch = rxComparison.Match(command.Clone().ToString().ToLower());
+				Match levelMatch = rxLevel.Match(command.Clone().ToString());
+				Match skillMatch = rxSkill.Match(command.Clone().ToString());
+				
+				if (!comparisonMatch.Success || !levelMatch.Success || !skillMatch.Success)
+                {
+					return ReturnType.Null;
+                }
+
+				string skillName = skillMatch.Value;
+				string compareLevel = levelMatch.Value;
+				string comparison = comparisonMatch.Value;
+				if (!Math.searchableSkills.ContainsKey(skillName))
+                {
+					return ReturnType.Null;
+                }
+				primedForSkill = false;
+				canCount = true;
+
+				Dictionary<string, Pawn> filtered_pawns = new Dictionary<string, Pawn>();
+				foreach (KeyValuePair<string,Pawn> entry in contains)
+                {
+					if (entry.Value.IsColonist)
+                    {
+						if (((comparison == "gt" || comparison == ">") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level > int.Parse(compareLevel))) || ((comparison == "lt" || comparison == "<") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level < int.Parse(compareLevel))) || ((comparison == "gte" || comparison == ">=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level >= int.Parse(compareLevel))) || ((comparison == "lte" || comparison == "<=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level <= int.Parse(compareLevel))) || ((comparison == "eq" || comparison == "==") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level == int.Parse(compareLevel))))
+                        {
+							filtered_pawns[entry.Key] = entry.Value;
+                        }
+                    }
+                }
+
+				contains = filtered_pawns;
+				result = this;
+				return ReturnType.PawnFilter;
+            }
 			// We were expecting a work tag.
 			if (primedIncapable || primedCapable) {
                 // Get work tag.
@@ -131,6 +190,14 @@ namespace CrunchyDuck.Math.MathFilters {
 				canCount = false;
 				return ReturnType.PawnFilter;
 			}
+
+			if (command == "skill")
+            {
+				primedForSkill = true;
+				result = this;
+				canCount = false;
+				return ReturnType.PawnFilter;
+            }
 
             // Search pawn.
             if (contains.ContainsKey(command)) {

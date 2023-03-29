@@ -140,8 +140,8 @@ namespace CrunchyDuck.Math {
 				statEntries = GetStatDefsEntries();
 			else if (tab == InfoCardTab.CompositableLoadouts)
 				statEntries = GetCompositableLoadoutsEntries();
-			
-			statsCacheValues.SetValue(null, new List<string>());
+
+            statsCacheValues.SetValue(null, new List<string>());
 			statsCache.SetValue(null, statEntries);
 			StatsFinalize.Invoke(null, new object[] { statsCache.GetValue(null) });
 
@@ -257,6 +257,7 @@ namespace CrunchyDuck.Math {
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.individual_pawn".Translate(), "", "CD.M.infocard.pawns.examples.individual_pawn.description".Translate(), display_priority--));
 			stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.trait_searching".Translate(), "", "CD.M.infocard.pawns.examples.trait_searching.description".Translate(), display_priority--));
+			stats.Add(new StatDrawEntry(cat, "" + "CD.M.infocard.pawns.examples.skills".Translate(), "", "CD.M.infocard.pawns.examples.skills.description".Translate(), display_priority--));
             stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.worktag_searching".Translate(), "", "CD.M.infocard.pawns.examples.worktag_searching.description".Translate(), display_priority--));
             stats.Add(new StatDrawEntry(cat, "​" + "CD.M.infocard.pawns.examples.pawngroup_filtering".Translate(), "", "CD.M.infocard.pawns.examples.pawngroup_filtering.description".Translate(), display_priority--));
 
