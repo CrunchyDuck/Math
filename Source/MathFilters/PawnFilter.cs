@@ -99,28 +99,58 @@ namespace CrunchyDuck.Math.MathFilters {
 					skillString += entry.Value.label + "|";
                 }
 
-				skillString.TrimEnd('|');
+                skillString = skillString.CreateTrimmedString(0,skillString.Length-2);
 				skillString += ")";
 
 				Regex rxSkill = new Regex(@skillString);
 
 				Match comparisonMatch = rxComparisonInclusive.Match(command.Clone().ToString().ToLower());
 				if (!comparisonMatch.Success) comparisonMatch = rxComparison.Match(command.Clone().ToString().ToLower());
-				Match levelMatch = rxLevel.Match(command.Clone().ToString());
+
+                Match levelMatch = rxLevel.Match(command.Clone().ToString());
+
 				Match skillMatch = rxSkill.Match(command.Clone().ToString());
-				
-				if (!comparisonMatch.Success || !levelMatch.Success || !skillMatch.Success)
+
+				Match secondSkillMatch = null;
+
+                if (skillMatch.Success)
+                {
+					Regex rxSkill2 = new Regex(@skillString.Replace(skillMatch.Value+"|", ""));
+                    secondSkillMatch = rxSkill2.Match(command.Clone().ToString());
+                }
+
+				if (!comparisonMatch.Success)
+                {
+					return ReturnType.Null;
+                }
+
+				if (!skillMatch.Success)
+				{
+					return ReturnType.Null;
+				}
+
+				if (!levelMatch.Success && !(secondSkillMatch != null && secondSkillMatch.Success))
                 {
 					return ReturnType.Null;
                 }
 
 				string skillName = skillMatch.Value;
-				string compareLevel = levelMatch.Value;
 				string comparison = comparisonMatch.Value;
+
+				string compareLevel = null;
+				if (levelMatch.Success)
+					compareLevel = levelMatch.Value;
+
+				string secondSkillName = null;
+				if (secondSkillMatch != null && secondSkillMatch.Success)
+					secondSkillName = secondSkillMatch.Value;
+
 				if (!Math.searchableSkills.ContainsKey(skillName))
-                {
 					return ReturnType.Null;
-                }
+
+				if (secondSkillName != null && !Math.searchableSkills.ContainsKey(secondSkillName))
+					return ReturnType.Null;
+
 				primedForSkill = false;
 				canCount = true;
 
@@ -129,10 +159,20 @@ namespace CrunchyDuck.Math.MathFilters {
                 {
 					if (entry.Value.IsColonist)
                     {
-						if (((comparison == "gt" || comparison == ">") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level > int.Parse(compareLevel))) || ((comparison == "lt" || comparison == "<") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level < int.Parse(compareLevel))) || ((comparison == "gte" || comparison == ">=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level >= int.Parse(compareLevel))) || ((comparison == "lte" || comparison == "<=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level <= int.Parse(compareLevel))) || ((comparison == "eq" || comparison == "==") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level == int.Parse(compareLevel))))
+						if (secondSkillName != null)
                         {
-							filtered_pawns[entry.Key] = entry.Value;
-                        }
+							if (((comparison == "gt" || comparison == ">") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level) > (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(secondSkillName)).Level)) || ((comparison == "lt" || comparison == "<") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level < (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(secondSkillName)).Level))) || ((comparison == "gte" || comparison == ">=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level >= (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(secondSkillName)).Level))) || ((comparison == "lte" || comparison == "<=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level <= (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(secondSkillName)).Level))) || ((comparison == "eq" || comparison == "==") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level == (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(secondSkillName)).Level))))
+							{
+								filtered_pawns[entry.Key] = entry.Value;
+							}
+						}
+						else
+                        {
+							if (((comparison == "gt" || comparison == ">") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level > int.Parse(compareLevel))) || ((comparison == "lt" || comparison == "<") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level < int.Parse(compareLevel))) || ((comparison == "gte" || comparison == ">=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level >= int.Parse(compareLevel))) || ((comparison == "lte" || comparison == "<=") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level <= int.Parse(compareLevel))) || ((comparison == "eq" || comparison == "==") && (entry.Value.skills.GetSkill(Math.searchableSkills.TryGetValue(skillName)).Level == int.Parse(compareLevel))))
+							{
+								filtered_pawns[entry.Key] = entry.Value;
+							}
+						}
                     }
                 }
 
