@@ -89,8 +89,6 @@ namespace CrunchyDuck.Math.MathFilters {
 			//We were expecting a skill.
 			if (primedForSkill)
             {
-				Log.Message("Skill expected...");
-
 				Regex rxLevel = new Regex(@"[0-9]+");
 				Regex rxComparisonInclusive = new Regex(@"(?i)(>=|gte|<=|lte)");
 				Regex rxComparison = new Regex(@"(?i)(>|gt|<|lt|==|eq)");
@@ -104,19 +102,14 @@ namespace CrunchyDuck.Math.MathFilters {
                 skillString = skillString.CreateTrimmedString(0,skillString.Length-2);
 				skillString += ")";
 
-				Log.Message("Skill String: "+skillString);
-
 				Regex rxSkill = new Regex(@skillString);
 
 				Match comparisonMatch = rxComparisonInclusive.Match(command.Clone().ToString().ToLower());
 				if (!comparisonMatch.Success) comparisonMatch = rxComparison.Match(command.Clone().ToString().ToLower());
-                Log.Message("Comparison Found: " + comparisonMatch.Success);
 
                 Match levelMatch = rxLevel.Match(command.Clone().ToString());
-				Log.Message("Constant Level Found: " + levelMatch.Success);
 
 				Match skillMatch = rxSkill.Match(command.Clone().ToString());
-				Log.Message("Skill 1 Found: " + skillMatch.Success);
 
 				Match secondSkillMatch = null;
 
@@ -127,21 +120,18 @@ namespace CrunchyDuck.Math.MathFilters {
 					Log.Message("Skill 2 Found: " + secondSkillMatch.Success);
                 }
 
-				if (!comparisonMatch.Success)// || !levelMatch.Success || !skillMatch.Success)
+				if (!comparisonMatch.Success)
                 {
-					Log.Message("ERR: Couldn't find required component 'Comaprison'.");
 					return ReturnType.Null;
                 }
 
 				if (!skillMatch.Success)
 				{
-					Log.Message("ERR: Couldn't find required component 'Skill 1'.");
 					return ReturnType.Null;
 				}
 
 				if (!levelMatch.Success && !(secondSkillMatch != null && secondSkillMatch.Success))
                 {
-					Log.Message("ERR: Couldn't find required component 'Skill 2 or Level Constant'.");
 					return ReturnType.Null;
                 }
 
