@@ -260,13 +260,13 @@ The full list of work tags can be seen closer to the bottom of this tab.</CD.M.i
 Any skill name in the Bio tab can be searched for.
 
 The valid comparison types are:
-    Greater than: &gt; or gt
-	Greater than or equal to: &gt;&eq; or gte
+	Greater than: &gt; or gt
+	Greater than or equal to: &gt;= or gte
 	Less than: &lt; or lt
-	Less than or equal to: &lt;&eq; or lte
-	Equal to: &eq;&eq; or eq
+	Less than or equal to: &lt;= or lte
+	Equal to: == or eq
 
-If for some reason you are unable to use logical operator characters, the "colonists.skill.shooting &gt; 4" example could also look like "colonists.skill.shooting gt 4"
+If for some reason you are unable to use logical operator characters, the "colonists.skill.shooting &lt; 4" example could also look like "colonists.skill.shooting lt 4"
 
 To test multiple skills, you can just repeat the skill search.
 
