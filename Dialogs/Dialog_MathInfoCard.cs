@@ -214,7 +214,6 @@ namespace CrunchyDuck.Math {
 
 			cat = catBasics;
 			var stats_sorted = Math.searchableStats.Values.OrderBy(t => t.label);
-			int i = 0;
 			foreach (StatDef statdef in stats_sorted) {
 				stats.Add(new StatDrawEntry(cat, "​" + statdef.label.ToParameter(), "", statdef.description ?? "", display_priority--));
 			}
@@ -231,7 +230,6 @@ namespace CrunchyDuck.Math {
 
 			cat = catBasics;
 			var cats_sorted = MathFilters.CategoryFilter.searchableCategories.Values.OrderBy(t => t.label);
-			int i = 0;
 			foreach (ThingCategoryDef catdef in cats_sorted) {
 				stats.Add(new StatDrawEntry(cat, "​" + catdef.label.ToParameter(), "", catdef.description ?? "", display_priority--));
 			}

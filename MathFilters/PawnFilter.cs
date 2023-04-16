@@ -117,7 +117,6 @@ namespace CrunchyDuck.Math.MathFilters {
                 {
 					Regex rxSkill2 = new Regex(@skillString.Replace(skillMatch.Value+"|", ""));
                     secondSkillMatch = rxSkill2.Match(command.Clone().ToString());
-					Log.Message("Skill 2 Found: " + secondSkillMatch.Success);
                 }
 
 				if (!comparisonMatch.Success)
